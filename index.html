@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/png" href="logo-hku.png" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+   <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+    .screen { border: 1px solid #ccc; padding: 20px; border-radius: 5px; margin-bottom: 20px; }
+    #game-screen { display: none; }
+    .pronoun-button { margin: 5px; padding: 5px 10px; cursor: pointer; }
+    .pronoun-button.selected { background-color: #007bff; color: white; }
+    #question-prompt { font-size: 1.2em; margin-bottom: 20px; }
+    button { margin: 5px; padding: 5px 10px; }
+    input[type="text"] { padding: 5px; width: 200px; }
+  </style>
+
+<link  rel="stylesheet" href="style.css">
+<audio id="sound-correct" src="sounds/correct.mp3"></audio>
+<audio id="sound-wrong" src="sounds/wrong.mp3"></audio>
+<audio id="sound-click" src="sounds/click.mp3"></audio>
+<audio id="sound-start" src="sounds/start-verb.mp3"></audio>
+</head>
+  
+
+<body>
+    <header class="main-header">
+       <h1 class="glitch-title">THE CONJUGATOR</h1>
+    </header>	
+<div class="music-controls">
+    <button id="music-toggle" class="music-button" title="Toggle music">🔊</button>
+	
+  </div>
+<input  type="range" id="volume-slider"
+    min="0" max="1" step="0.05" value="0.6"
+    style="position:fixed; bottom:20px; right:130px; width:120px;
+          cursor:pointer; display:none;">
+		  
+<!-- 🔘 BOTONES DE MODO -->
+<div id="setup-screen" class="screen">
+  <div id="game-modes" class="mode-selector">
+    <button class="mode-button selected-mode" data-mode="infinite">♾️Infinite♾️</button>
+    <button class="mode-button" data-mode="timer">⏱️Timer 4m⏱️</button>
+    <button class="mode-button" data-mode="lives">5x💖</button>
+  </div>
+
+  <form id="setup-form">
+    <p><strong>Settings:</strong></p>
+    <button type="button" class="mode-button config-button selected-mode" data-mode="productive">⌨️Produce⌨️</button>
+    <button type="button" class="mode-button config-button" data-mode="receptive">💭Recall💭</button>
+
+    <p><strong>Tense:</strong></p>
+    <select id="tense-select">
+      <option value="present">Present</option>
+      <option value="past_simple">Past Simple</option>
+      <option value="present_perfect">Present Perfect</option>
+    </select>
+
+    <p><strong>Verb Types:</strong></p>
+    <div id="verb-type-buttons" class="verb-type-selector">
+      <!-- botones generados dinámicamente -->
+    </div>
+
+    <label>
+      <input type="checkbox" id="ignore-accents" checked>
+      Ignore accents (remember that accents give extra points)
+    </label>
+    <div style="text-align:center; margin-top:20px;">
+    <button type="submit">Start Game</button>
+  </form>
+</div>
+	  <!-- SETUP RECORDS -->
+  <div id="setup-records" style="margin-top:20px;">
+    <h3>🏆 Los mejores de los mejores / Best of the Best 🏆</h3>
+    <div class="mode-records" data-mode="infinite">
+      <h4>♾️InFiNiTeRs♾️</h4>
+      <ul class="record-list"></ul>
+    </div>
+    <div class="mode-records" data-mode="timer">
+      <h4>⏱️RaPiDiToS⏱️</h4>
+      <ul class="record-list"></ul>
+    </div>
+    <div class="mode-records" data-mode="lives">
+      <h4>💖SuRvIvOrS💖</h4>
+      <ul class="record-list"></ul>
+    </div>
+  </div>
+  </div>
+
+  <div id="game-screen" class="screen">
+    <h2 id="game-title"></h2>
+    <div id="question-area">
+      <p>Question:</p>
+      <div id="question-prompt">Loading…</div>
+      </div>
+    <div id="answer-area">
+      <div id="input-es-container">
+        <label for="answer-input-es">Answer in Spanish:</label>
+        <input type="text" id="answer-input-es">
+      </div>
+      <div id="input-en-container" style="display:none;">
+        <label for="answer-input-en">Translate (pronoun + verb):</label>
+        <input 
+           type="text" 
+           id="answer-input-en" 
+           placeholder="they eat" 
+           autocomplete="off"
+          >
+      </div>
+      <button id="check-button">Check Answer</button>
+      <button id="skip-button">Skip</button>
+      <div id="feedback-area"></div>
+
+      <div id="score-container">
+         <div id="score-display"></div>
+		 <div id="streak-display"></div>
+		 <div id="flames"></div>
+      </div>
+
+      <div id="ranking-box"></div>
+      <button id="end-button">Finish</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const title = document.querySelector('.glitch-title');
+  const text = title.textContent.trim();
+  title.innerHTML = '';
+
+  for (let i = 0; i < text.length; i++) {
+    const span = document.createElement('span');
+    span.textContent = text[i];
+    span.style.color = (i % 2 === 0) ? 'red' : 'gold';
+    title.appendChild(span);
+  }
+});
+</script>
