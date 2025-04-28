@@ -42,7 +42,8 @@ body {
 
 /* Contenedor del Título Principal (para alinear con logo si se añade) */
 .main-header .glitch-title {
-  font-size: 2.8em;        /* Prueba subir/bajar este valor hasta que ocupe casi todo el ancho */
+	
+  font-size: 3.8em;        /* Prueba subir/bajar este valor hasta que ocupe casi todo el ancho */
   letter-spacing: 0.15em;  /* Incrementa el espacio entre letras */
   white-space: nowrap;     /* Evita que se rompa en varias líneas */
   max-width: 100%;         /* Que no sobrepase el contenedor */
@@ -790,7 +791,7 @@ button:active {
 .mode-button.config-button:hover:not(.selected-mode) {
   background-color: #555 !important;
 }
-
+/* --- AJUSTES PARA MÓVIL --- */
 @media (max-width: 768px) {
   
   body {
@@ -886,4 +887,33 @@ button:active {
     padding: 8px 14px;
     font-size: 24px;
   }
+}
+/* Alternar rojo/amarillo y glow */
+.glitch-title .letter:nth-child(odd) {
+  color: #AA151B;           /* rojo */
+  text-shadow:
+    0 0 8px #AA151B,        /* glow rojo */
+    2px 2px 4px rgba(0,0,0,0.7);
+}
+.glitch-title .letter:nth-child(even) {
+  color: #F1BF00;           /* amarillo */
+  text-shadow:
+    0 0 8px #F1BF00,        /* glow amarillo */
+    2px 2px 4px rgba(0,0,0,0.7);
+}
+.glitch-title .letter {
+  display: inline-block;    /* para que text-shadow no se solape demasiado */
+  /* opcional: un leve desplazamiento en hover */
+  transition: transform .2s;
+}
+.glitch-title .letter:hover {
+  transform: scale(1.1) rotate(-2deg);
+}
+/* Reservar ancho para espacios */
+.glitch-title .letter.space {
+  display: inline-block;
+  width: 0.5em;        /* ajusta a cuánto quieras el espacio */
+}
+.hidden {
+  display: none !important;
 }

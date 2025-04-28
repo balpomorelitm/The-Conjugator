@@ -66,7 +66,8 @@
       Ignore accents (remember that accents give extra points)
     </label>
     <div style="text-align:center; margin-top:20px;">
-    <button type="submit">Start Game</button>
+      <button type="submit">Start Game</button>
+    </div>
   </form>
 </div>
 	  <!-- SETUP RECORDS -->
@@ -84,7 +85,6 @@
       <h4>💖SuRvIvOrS💖</h4>
       <ul class="record-list"></ul>
     </div>
-  </div>
   </div>
 
   <div id="game-screen" class="screen">
@@ -122,20 +122,29 @@
     </div>
   </div>
 
+<!-- Cargar los SDKs de Firebase (NO usar "import", usar "src") -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-analytics-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+<script>
+  // Tu configuración de Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyAhM7lmdO1TN__8X6728EPJfqxBXjFE5ds",
+    authDomain: "el-conjugador.firebaseapp.com",
+    projectId: "el-conjugador",
+    storageBucket: "el-conjugador.appspot.com",
+    messagingSenderId: "1042408130577",
+    appId: "1:1042408130577:web:ecfdf6121cf191282689b0",
+    measurementId: "G-GCCQW0PMH9"
+  };
+
+  // Inicializar Firebase
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+</script>
   <script src="script.js"></script>
 </body>
-</html>
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  const title = document.querySelector('.glitch-title');
-  const text = title.textContent.trim();
-  title.innerHTML = '';
-
-  for (let i = 0; i < text.length; i++) {
-    const span = document.createElement('span');
-    span.textContent = text[i];
-    span.style.color = (i % 2 === 0) ? 'red' : 'gold';
-    title.appendChild(span);
-  }
-});
 </script>
+</html>
+

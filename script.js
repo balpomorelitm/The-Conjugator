@@ -33,6 +33,20 @@ document.addEventListener('DOMContentLoaded', () => {
       titleElement.classList.remove('glitch-active');
     }, 600); // Glitch dura 0.5s
   }, 3000); // Cada 4s se activa el glitch
+  // ===== envolver cada letra en un <span> =====
+  const titleEl = document.querySelector('.glitch-title, #main-title');
+  if (titleEl) {
+    const letters = Array.from(titleEl.textContent);
+    titleEl.innerHTML = letters
+      .map(ch => {
+        if (ch === ' ') {
+          // span “espacio” con entidad NBSP
+          return '<span class="letter space">&nbsp;</span>';
+        }
+        return `<span class="letter">${ch}</span>`;
+      })
+      .join('');
+  }
   const pronouns = ['yo','tú','él','nosotros','vosotros','ellos'];
   const pronounMap = {
     yo: ['I'],
@@ -247,15 +261,23 @@ async function loadVerbs() {
 // ---> FIN REEMPLAZO <---
 
   function updateRanking() {
-    const key = `rankingHkuVerbGame_${selectedGameMode}`;
-    const R   = JSON.parse(localStorage.getItem(key) || '[]');
     rankingBox.innerHTML = '<h3>🏆 Top 5</h3>';
-    R.forEach(entry => {
-      rankingBox.innerHTML += `<div>${entry.name}: ${entry.score}</div>`;
+  
+    db.collection("records")
+      .where("mode", "==", selectedGameMode)
+      .orderBy("score", "desc")
+      .limit(5)
+      .get()
+      .then(snapshot => {
+        snapshot.forEach(doc => {
+          const entry = doc.data();
+          rankingBox.innerHTML += `<div>${entry.name}: ${entry.score}</div>`;
+        });
+    })
+    .catch((error) => {
+      console.error("Error loading rankings:", error);
     });
-    // ← Aquí, tras actualizar el cuadro en juego, refrescamos el Setup
-    renderSetupRecords();
-  }
+  } 
 
   function updateScore() {
     scoreDisplay.innerHTML =
@@ -283,11 +305,9 @@ async function loadVerbs() {
     }
 }
 
-// --- Función para preparar y mostrar la siguiente pregunta (CORREGIDA para tu versión) ---
 let usedVerbs = [];  // Array para almacenar los verbos ya seleccionados
 
-// --- Función para preparar y mostrar la siguiente pregunta (CORREGIDA para Pronombres) ---
-// --- Función para preparar y mostrar la siguiente pregunta (CORREGIDA para Pronombres y Texto Productivo) ---
+
 function prepareNextQuestion() {
     // --- Validación de datos ---
     if (!allVerbData || allVerbData.length === 0) {
@@ -497,8 +517,9 @@ function checkAnswer() {
     }
 	feedbackText += `<br>Points: ${pts}`;
     feedback.innerHTML = feedbackText;
-    feedback.classList.add('vibrate'); // 💡 NUEVO
-
+    feedback.classList.add('vibrate'); 
+	
+    return;    // ← así detenemos aquí la función
   } else {
     // 3) RESPUESTA INCORRECTA
     soundWrong.play();
@@ -520,18 +541,54 @@ function checkAnswer() {
           R.sort((a, b) => b.score - a.score);
           localStorage.setItem(key, JSON.stringify(R.slice(0, 5)));
           updateRanking();
+		  
+		  db.collection("records").add({
+            name: name,
+            score: score,
+            mode: selectedGameMode,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+          })
+          .then(() => {
+            console.log("Record saved online!");
+          })
+          .catch((error) => {
+            console.error("Error saving record:", error);
+          });
         }
         checkButton.disabled = true;
         skipButton.disabled  = true;
         endButton.disabled   = true;  // evita volver a pulsar Finish
         quitToSettings();
         return;
+	}
       } else {
         updateGameTitle();
       }
     }
 
     updateScore();
+    if (currentOptions.mode === 'receptive') {
+      if (currentQuestion.hintLevel === 0) {
+        // Pista 1: infinitivo en inglés
+        feedback.innerHTML =
+          `❌ Incorrect. <em>Clue 1:</em> infinitive is ` +
+          `<strong>${currentQuestion.verb.infinitive_en}</strong>.`;
+        currentQuestion.hintLevel = 1;
+      } else if (currentQuestion.hintLevel === 1) {
+        // Pista 2: todas las conjugaciones en español menos la del pronombre actual
+        const conj = currentQuestion.verb.conjugations[currentOptions.tense];
+        const botones = Object.entries(conj)
+          .filter(([pr]) => pr !== currentQuestion.pronoun)
+          .map(([, form]) => `<span class="hint-btn">${form}</span>`)
+          .join('');
+        feedback.innerHTML =
+          `❌ Incorrect. <em>Clue 2:</em> ` + botones;
+        currentQuestion.hintLevel = 2;
+      }
+      ansEN.value = '';
+      setTimeout(() => ansEN.focus(), 0);
+      return;
+    }
     if (currentOptions.mode === 'productive') {
       if (currentQuestion.hintLevel === 0) {
         feedback.innerHTML = 
@@ -549,7 +606,7 @@ function checkAnswer() {
       }        
       ansES.value = '';
       setTimeout(() => ansES.focus(), 0);
-    }
+    
   }
 }
 function startTimerMode() {
@@ -612,9 +669,22 @@ function startTimerMode() {
         R.push({ name, score });
         R.sort((a, b) => b.score - a.score);
         localStorage.setItem(key, JSON.stringify(R.slice(0, 5)));
+		
+		db.collection("records").add({
+          name: name,
+          score: score,
+          mode: selectedGameMode,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        })
+        .then(() => {
+          console.log("Record saved online!");
+        })
+        .catch((error) => {
+          console.error("Error saving record:", error);
+        });
+    }
       }
       quitToSettings();
-    }
   }, 1000);
 }
 function skipQuestion() {
@@ -647,6 +717,7 @@ function quitToSettings() {
 
   gameScreen.style.display = 'none';
   setupScreen.style.display = 'block';
+  document.getElementById('setup-records').classList.remove('hidden');
 
   // Resetea el formulario y las variables
   setupForm.reset();
@@ -672,6 +743,8 @@ function quitToSettings() {
 }
   setupForm.addEventListener('submit', async e => {
   e.preventDefault();
+  // 1) OCULTAR RÉCORDS al empezar
+  document.getElementById('setup-records').classList.add('hidden');
   currentOptions = {
     mode: document.querySelector('.config-button.selected-mode').dataset.mode,
     tense: tenseSelect.value,
@@ -747,6 +820,18 @@ updateGameTitle();
       localStorage.setItem(key, JSON.stringify(R.slice(0,5)));
       updateRanking();
     }
+	  db.collection("records").add({
+        name: name,
+        score: score,
+        mode: selectedGameMode,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      })
+      .then(() => {
+        console.log("Record saved online!");
+      })
+      .catch((error) => {
+       console.error("Error saving record:", error);
+      });
     quitToSettings();
   });
 
@@ -801,22 +886,6 @@ function typewriterEffect(textElement, text, interval) {
   }, interval);
 }
 
-function showExample(mode) {
-  const exampleText = document.getElementById('example-text');
-  exampleText.textContent = 'Conjugate + tú';  // Mostrar "Conjugate tú" de forma estática
-
-  const animatedText = document.getElementById('animated-text');
-  animatedText.textContent = ''; // Limpiar cualquier texto anterior
-
-  if (mode === 'produce') {
-    // Después de un retraso, mostrar "conjugas" con efecto de máquina de escribir
-    setTimeout(() => {
-      typewriterEffect(animatedText, 'CONJUGAS', 200);  // Animar la palabra "conjugas"
-    }, 400);  // Retraso de 0.5 segundos después de mostrar "Conjugate tú"
-  } else if (mode === 'recall') {
-    exampleText.textContent = 'Recuerdas: You remember'; // Mostrar el ejemplo de Recall
-  }
-}
 
 document.querySelectorAll('.mode-button').forEach(button => {
   button.addEventListener('click', () => {
