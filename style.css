@@ -1,9 +1,7 @@
-/* --- Cargar Fuente Local --- */
+
 @font-face {
-  font-family: 'm6x11'; /* Este es el nombre que TÚ le das para usarla en CSS */
-  src: url('m6x11.ttf') format('truetype'); /* Si no, carga TTF */
-  /* Asegúrate de que el nombre del archivo en url() coincida EXACTAMENTE con el que descargaste */
-  /* Si pusiste la fuente en una subcarpeta 'fonts', la ruta sería url('fonts/m6x11.woff2') */
+  font-family: 'PixelSerif';
+  src: url('fonts/PixelSerif_16px_v02.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
 }
@@ -20,7 +18,7 @@
   --border-color: #4a5a4a; /* Color de borde sutil */
   --feedback-correct: #40c040; /* Verde para feedback correcto */
   --feedback-incorrect: var(--accent-color-red); /* Rojo para feedback incorrecto */
-  --font-pixel: 'VT323', m6x11; /* Fuente principal */
+  --font-pixel: 'PixelSerif', sans-serif; /* Fuente principal */
 }
 
 /* Estilos generales del cuerpo */
@@ -332,7 +330,7 @@ button:active {
 }
 
 .wobble-text {
-  font-family: 'm6x11', monospace;
+  font-family: 'PixelSerif', sans-serif;
   font-size: 24px;
   color: #ffffff;
   animation: wobble 1s infinite ease-in-out;
@@ -586,9 +584,10 @@ button:active {
   z-index: 1;
 }
 #score-container #score-display {
-  color: white;   /* o cualquier otro valor hex/RGBA */
-  text-shadow: 2px 2px #111; /* Sombra sutil para darle profundidad */
-  -webkit-text-stroke: 1px rgba(0,0,0,0.8); /* contorno negro semitransparente */
+  color: white;
+  text-shadow: 1px 1px 0 #111; /* Sombra más pequeña y nítida */
+  -webkit-text-stroke: 0.5px rgba(0,0,0,0.6); /* Borde más fino y suave */
+  font-weight: bold; /* Opcional: fuerza ligeramente el trazo sin perder píxel */
 }
 /* 1) Centrar encabezados y cajas */
 .screen {

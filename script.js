@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
 ];
   const tenses = [
     { value: 'present',        name: 'Present'       },
-    { value: 'past_simple',    name: 'Past Simple'   },
+    { value: 'past_simple',    name: 'Simple Past'   },
     { value: 'present_perfect',name: 'Present Perfect'}
 ];
 
