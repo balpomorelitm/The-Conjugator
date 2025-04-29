@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const checkButton  = document.getElementById('check-button');
   const skipButton   = document.getElementById('skip-button');
   const endButton    = document.getElementById('end-button');
-  const tenseSelect  = document.getElementById('tense-select');
   const scoreDisplay = document.getElementById('score-display');
   const rankingBox   = document.getElementById('ranking-box');
   const flameEl      = document.getElementById('flames');
@@ -72,6 +71,31 @@ document.addEventListener('DOMContentLoaded', () => {
     { value: 'totally_irregular', name: 'Totally Irreg.', times: ['past_simple'], hint: '⚙️ ser/ir -> fui' }, // Añadí esta que vi en tu JSON
     { value: 'irregular_participle', name: 'Irreg. Participle', times: ['present_perfect'], hint: '⚙️ ver -> visto' }
 ];
+  const tenses = [
+    { value: 'present',        name: 'Present'       },
+    { value: 'past_simple',    name: 'Past Simple'   },
+    { value: 'present_perfect',name: 'Present Perfect'}
+];
+
+  function renderTenseButtons() {
+    const container = document.getElementById('tense-buttons');
+    container.innerHTML = '';
+    tenses.forEach(t => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.classList.add('tense-button');
+      btn.dataset.value = t.value;
+      btn.textContent = t.name;
+      // por defecto solo el present está seleccionado
+      if (t.value === 'present') btn.classList.add('selected');
+      btn.addEventListener('click', () => {
+        soundClick.play();
+        btn.classList.toggle('selected');
+        filterVerbTypes();  // re-filtra tipos tras cambiar los tiempos
+      });
+      container.appendChild(btn);
+    });
+}
 // ---> FIN AÑADIDO <---  
   const verbTypeLabels = Array.from(document.querySelectorAll('label[data-times]'));
   const soundCorrect = new Audio('sounds/correct.mp3');
@@ -82,12 +106,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const music = new Audio('sounds/music.mp3');
   const soundGameOver = new Audio('sounds/gameover.mp3');
   music.loop = true;
-  music.volume=0;             // empieza en silencio
-  tenseSelect.addEventListener('change', filterVerbTypes);
-  renderVerbTypeButtons(); // <<< --- LLAMAR AQUÍ
-  filterVerbTypes(); // Mantener esto para el estado inicial
-  tenseSelect.addEventListener('change', filterVerbTypes);
-  // ... resto del código DOMContentLoaded ...
+  music.volume=0;             
+  renderTenseButtons();
+  renderVerbTypeButtons();
+  filterVerbTypes(); 
+  renderSetupRecords();
+  
   document.querySelectorAll('input[type="checkbox"], input[type="radio"], select')
     .forEach(el => {
       el.addEventListener('change', () => {
@@ -95,22 +119,25 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
-  // ---> REEMPLAZAR ESTA FUNCIÓN <---
+  
 function filterVerbTypes() {
-  const selectedTense = tenseSelect.value;
+  const selTenses = Array.from(document.querySelectorAll('.tense-button.selected'))
+                         .map(btn => btn.dataset.value);
   document.querySelectorAll('.verb-type-button').forEach(button => {
-    const applicableTenses = button.dataset.times.split(',');
-    if (applicableTenses.includes(selectedTense)) {
-      // Habilitar y volver a seleccionar por defecto
+    const app = button.dataset.times.split(',');
+    const ok = app.some(t => selTenses.includes(t));
+	
+    if (ok) {
       button.disabled = false;
       button.classList.remove('disabled');
-      button.classList.add('selected');
     } else {
-      // Deshabilitar y desmarcar
       button.disabled = true;
       button.classList.add('disabled');
       button.classList.remove('selected');
     }
+     if (ok) {
+       button.classList.add('selected');
+     }	
   });
 }
 
@@ -164,41 +191,57 @@ musicToggle.addEventListener('click', () => {
     volumeSlider.disabled = true;
   }
 });
- // 1) Asegura que existen 3 "archivos" de ranking en localStorage
-  function initRankingStorage() {
-    ['infinite', 'timer', 'lives'].forEach(mode => {
-      const key = `rankingHkuVerbGame_${mode}`;
-      if (!localStorage.getItem(key)) {
-        localStorage.setItem(key, JSON.stringify([]));
-      }
-    });
-  }
+function renderSetupRecords() {
+  const container = document.getElementById('setup-records');
+  if (!container) return;
 
-  // 2) Renderiza en pantalla de Setup los top-5 de cada modo
-  function renderSetupRecords() {
-    const container = document.getElementById('setup-records');
-    if (!container) return;  // Si no existe, salimos
-    container.querySelectorAll('.mode-records').forEach(div => {
-      const mode = div.dataset.mode;
-      const key = `rankingHkuVerbGame_${mode}`;
-      const R = JSON.parse(localStorage.getItem(key) || '[]').slice(0, 5);
-      const ul = div.querySelector('.record-list');
-      ul.innerHTML = ''; // limpia lista anterior
-      R.forEach((entry, i) => {
-        const medal = i === 0 ? '🥇'
-                    : i === 1 ? '🥈'
-                    : i === 2 ? '🥉'
-                    : '';
-        const li = document.createElement('li');
-        li.textContent = `${medal} ${entry.name}: ${entry.score}`;
-        ul.appendChild(li);
+  container.querySelectorAll('.mode-records').forEach(div => {
+    const mode = div.dataset.mode;
+    const ul = div.querySelector('.record-list');
+    ul.innerHTML = '';
+
+    db.collection('records')
+      .where('mode', '==', mode)
+      .orderBy('score', 'desc')
+      .limit(5)
+      .get()
+      .then(snapshot => {
+        if (snapshot.empty) {
+          ul.innerHTML = '<li>No hay récords aún</li>';
+          return;
+        }
+        snapshot.forEach((doc, i) => {
+          const { name, score, timestamp, streak } = doc.data();
+          const date = timestamp?.toDate();
+          // Solo la fecha, sin la parte de la hora:
+          const dateStr = date
+            ? date.toLocaleDateString()
+            : '–';
+
+          const medal = i === 0 ? '🥇'
+                      : i === 1 ? '🥈'
+                      : i === 2 ? '🥉'
+                      : '';
+          const li = document.createElement('li');
+          li.innerHTML = `
+            <div class="record-item">
+              <span class="medal">${medal}</span>
+              <strong>${name}:</strong> ${score} pts
+              <span class="record-date">${dateStr}</span>
+              ${streak
+                ? `<span class="record-streak">· 🔥 Racha: ${streak}</span>`
+                : ''}
+            </div>
+          `;
+          ul.appendChild(li);
+        });
+      })
+      .catch(error => {
+        console.error('Error al cargar récords:', error);
+        ul.innerHTML = '<li>Error cargando récords</li>';
       });
-    });
-  }
-
-  // 3) Inicializar y mostrar al cargar
-  initRankingStorage();
-  renderSetupRecords();
+  });
+}
 
   function removeAccents(str) {
     return str.normalize('NFD').replace(/[\u0300-\u036f]/g,'');
@@ -240,22 +283,19 @@ async function loadVerbs() {
     return false; // O simplemente no permitir continuar
   }
 
-  // Filtrar los datos crudos según los tipos seleccionados Y el tiempo actual
   const filtered = rawVerbData.filter(v => {
-    // Obtener los tipos definidos para este verbo EN EL TIEMPO ACTUAL
-    const typesForTense = v.types[currentOptions.tense] || [];
-    // Comprobar si ALGUNO de los tipos del verbo para este tiempo está en la lista de seleccionados
-    return typesForTense.some(t => selectedTypes.includes(t));
+    return currentOptions.tenses.some(tense => {
+      const typesForTense = v.types[tense] || [];
+      return typesForTense.some(t => selectedTypes.includes(t));
+    });
   });
 
   if (filtered.length === 0) {
     alert('No verbs available for the selected tense and verb types.');
     return false;
   }
-
-  // Guardar los verbos filtrados para usar en el juego
   allVerbData = filtered;
-  console.log(`Filtered down to ${allVerbData.length} verbs for tense '${currentOptions.tense}' and types:`, selectedTypes);
+  console.log(`Filtered down to ${allVerbData.length} verbs for tense '${currentOptions.tenses}' and types:`, selectedTypes);
   return true; // Indicar éxito
 }
 // ---> FIN REEMPLAZO <---
@@ -309,124 +349,100 @@ let usedVerbs = [];  // Array para almacenar los verbos ya seleccionados
 
 
 function prepareNextQuestion() {
-    // --- Validación de datos ---
-    if (!allVerbData || allVerbData.length === 0) {
-        console.error("No hay datos de verbos válidos para preparar la pregunta.");
-        feedback.textContent = "Error: No se pudieron cargar los datos de los verbos.";
-        return;
-    }
-    console.log("Preparando nueva pregunta...");
+  // 1) Sanity checks
+  if (!allVerbData || allVerbData.length === 0) {
+    console.error("No valid verb data.");
+    feedback.textContent = "Error: Could not load verb data.";
+    return;
+  }
 
-    // --- Selección aleatoria (Verbo - manteniendo tu lógica de no repetición) ---
-    const unusedVerbs = allVerbData.filter(v => !usedVerbs.includes(v.infinitive_es));
-    if (unusedVerbs.length === 0 && allVerbData.length > 0) {
-        console.log("Reiniciando lista de verbos usados.");
-        usedVerbs = []; // Reiniciar si se usaron todos
-    }
-     // Seleccionar de los no usados si hay, si no, de todos
-    const sourceArray = unusedVerbs.length > 0 ? unusedVerbs : allVerbData;
-    if (sourceArray.length === 0) {
-         console.error("Error crítico: No hay verbos en sourceArray.");
-         feedback.textContent = "Error: No hay verbos disponibles.";
-         return;
-    }
-    const v = sourceArray[Math.floor(Math.random() * sourceArray.length)];
+  // 2) Pick an unused verb (and reset if we’ve cycled through)
+  const unusedVerbs = allVerbData.filter(v => !usedVerbs.includes(v.infinitive_es));
+  if (unusedVerbs.length === 0) usedVerbs = [];
+  const sourceArray = unusedVerbs.length > 0 ? unusedVerbs : allVerbData;
 
-    if (!v || !v.conjugations || !v.infinitive_en) {
-         console.error("Error: Verbo seleccionado al azar es inválido o incompleto.", v);
-         setTimeout(prepareNextQuestion, 50); // Intentar de nuevo
-         return;
-    }
-    // Añadir a usados (si no estaba ya por el fallback)
-    if (!usedVerbs.includes(v.infinitive_es)){
-         usedVerbs.push(v.infinitive_es);
-    }
+  // 3) **Grab one at random** before you start referencing it
+     // Pick one at random, then sanity-check it
+     const v = sourceArray[Math.floor(Math.random() * sourceArray.length)];
+     if (!v || !v.conjugations || !v.infinitive_en) {
+       console.error("Selected verb is invalid:", v);
+       setTimeout(prepareNextQuestion, 50);
+       return;
+     }
 
+     if (!usedVerbs.includes(v.infinitive_es)){
+          usedVerbs.push(v.infinitive_es);
+     }
+     usedVerbs.push(v.infinitive_es);
 
-    // --- Selección aleatoria (Pronombre ORIGINAL y DE MUESTRA) ---
-    // const basePronouns = ['yo', 'tú', 'él', 'nosotros', 'vosotros', 'ellos']; // Ya definida globalmente como 'pronouns'
-    const originalPronoun = pronouns[Math.floor(Math.random() * pronouns.length)]; // Clave para JSON
-
-    let displayPronoun = originalPronoun; // Pronombre a mostrar (puede cambiar)
-    const elVariations = ['él', 'ella', 'usted'];
-    const nosotrosVariations = ['nosotros', 'nosotras'];
-    const vosotrosVariations = ['vosotros', 'vosotras']; // Asegúrate si quieres variar 'vosotros'
-    const ellosVariations = ['ellos', 'ellas', 'ustedes'];
-
-    if (originalPronoun === 'él') {
-        displayPronoun = elVariations[Math.floor(Math.random() * elVariations.length)];
-    } else if (originalPronoun === 'nosotros') {
-        displayPronoun = nosotrosVariations[Math.floor(Math.random() * nosotrosVariations.length)];
-    } else if (originalPronoun === 'vosotros') {
-         // Habilita la siguiente línea si quieres que 'vosotros' varíe a 'vosotras'
-         // displayPronoun = vosotrosVariations[Math.floor(Math.random() * vosotrosVariations.length)];
-    } else if (originalPronoun === 'ellos') {
-        displayPronoun = ellosVariations[Math.floor(Math.random() * ellosVariations.length)];
-    }
-
-    // --- Obtener datos (Usar originalPronoun para lookup) ---
-    const tenseKey = currentOptions.tense;
-    const conjugationsForTense = v.conjugations[tenseKey];
-
-    if (!conjugationsForTense) {
-         console.error(`Error: No se encontraron conjugaciones para el tiempo '${tenseKey}' en el verbo '${v.infinitive_es}'. Revisar verbos.json.`);
-         feedback.textContent = `Error interno: Faltan datos para ${v.infinitive_es} en ${tenseKey}.`;
-         setTimeout(prepareNextQuestion, 50);
-         return;
-    }
-
-    const correctAnswerES = conjugationsForTense[originalPronoun]; // <-- **USA EL ORIGINAL AQUÍ**
-
-    if (correctAnswerES === undefined || correctAnswerES === null) {
-         console.error(`Error: No se encontró conjugación para el pronombre ORIGINAL '${originalPronoun}' en el tiempo '${tenseKey}' del verbo '${v.infinitive_es}'. Revisar verbos.json.`);
-         feedback.textContent = `Error interno: Faltan datos para ${v.infinitive_es} / ${tenseKey} / ${originalPronoun}.`;
-         setTimeout(prepareNextQuestion, 50);
-         return;
-    }
-
-    const infinitiveEN = v.infinitive_en;
-    // const infinitiveES = v.infinitive_es; // No se usa directamente en la lógica siguiente
-
-    // --- Guardar datos ---
-    currentQuestion = {
-        verb: v,
-        pronoun: originalPronoun,
-        displayPronoun: displayPronoun, // Guardar también el que se muestra
-        answer: correctAnswerES,
-        expectedEN: infinitiveEN.toLowerCase(),
-        hintLevel: 0
+  // 4) Pick a pronoun and tense
+  const originalPronoun = pronouns[Math.floor(Math.random() * pronouns.length)];
+  const displayPronoun = (function() {
+    const map = {
+      él: ['él','ella','usted'],
+      nosotros: ['nosotros','nosotras'],
+      ellos: ['ellos','ellas','ustedes']
     };
-    console.log(`Pregunta: ${displayPronoun} - ${correctAnswerES} (${v.infinitive_es})`); // Log simple
+    return (map[originalPronoun] || [originalPronoun])
+           [Math.floor(Math.random() * (map[originalPronoun]?.length||1))];
+  })();
+  const tKey = currentOptions.tenses[Math.floor(Math.random() * currentOptions.tenses.length)];
+  const tenseObj = tenses.find(t => t.value === tKey);
+  const tenseLabel = tenseObj ? tenseObj.name : tKey;
 
-    // --- Limpieza ---
-    ansES.value = '';
-    ansEN.value = '';
-    startTime = Date.now();
+  // 5) Lookup the correct form
+  const forms = v.conjugations[tKey];
+  if (!forms) {
+    console.error(`Missing conjugations for ${v.infinitive_es} in ${tKey}`);
+    setTimeout(prepareNextQuestion, 50);
+    return;
+  }
+  const correctES = forms[originalPronoun];
+  if (!correctES) {
+    console.error(`Missing ${originalPronoun} form for ${v.infinitive_es} in ${tKey}`);
+    setTimeout(prepareNextQuestion, 50);
+    return;
+  }
 
-    // --- Configurar UI y Mostrar Pregunta ---
-    let promptText = "";
-    if (currentOptions.mode === 'productive') {
-        // **USA EL PRONOMBRE DE MUESTRA Y SINTAXIS CORRECTA**
-        promptText = `"${infinitiveEN}" – <span class="pronoun" id="pronoun-${displayPronoun}">${displayPronoun}</span>`;
-        qPrompt.innerHTML = promptText; // innerHTML para que funcione el <span>
-        esContainer.style.display = 'block';
-        enContainer.style.display = 'none';
-        setTimeout(() => ansES.focus(), 0);
+  // 6) Save question state
+  currentQuestion = {
+    verb: v,
+    pronoun: originalPronoun,
+    displayPronoun,
+    answer: correctES,
+    expectedEN: v.infinitive_en.toLowerCase(),
+	tenseKey: tKey,      // <— store it here
+    hintLevel: 0
+  };
+  startTime = Date.now();
+  ansES.value = '';
+  ansEN.value = '';
 
-    } else { // modo 'receptivo'
-        promptText = `"${correctAnswerES}"`;
-        qPrompt.textContent = promptText;
-        esContainer.style.display = 'none';
-        enContainer.style.display = 'block';
-        setTimeout(() => ansEN.focus(), 0);
-    }
+  // 7) Render the prompt
+  let promptText;
+  if (currentOptions.mode === 'productive') {
+    promptText = `<span class="tense-label">${tenseLabel}:</span> `
+               + `"${v.infinitive_en}" – `
+               + `<span class="pronoun">${displayPronoun}</span>`;
+    qPrompt.innerHTML = promptText;
+    esContainer.style.display = 'block';
+    enContainer.style.display = 'none';
+    ansES.focus();
+  } else {
+    promptText = `<span class="tense-label">${tenseLabel}:</span> `
+               + `"${correctES}"`;
+    qPrompt.innerHTML = promptText;
+    esContainer.style.display = 'none';
+    enContainer.style.display = 'block';
+    ansEN.focus();
+  }
 }
 
 function checkAnswer() {
   const rt    = (Date.now() - startTime) / 1000;
   const bonus = Math.max(1, 2 - Math.max(0, rt - 5) * 0.1); // 💡 NUEVO
   // Buscar las irregularidades del verbo actual en el tiempo actual
-  const irregularities = currentQuestion.verb.types[currentOptions.tense] || [];
+  const irregularities = currentQuestion.verb.types[currentQuestion.tenseKey] || [];
   let correct  = false;
   let accentBonus = 0;
   const rawAnswerES = ansES.value.trim();
@@ -451,21 +467,59 @@ function checkAnswer() {
       }
     }
   } else {
-    // lectura del texto completo, e.g. "they eat" o "she eats"
-    const ans = ansEN.value.trim().toLowerCase();
+  const ans = ansEN.value.trim().toLowerCase();
 
-    // construye la forma inglesa: base del verbo + posible -s en third person
-    const infinitive = currentQuestion.verb.infinitive_en.replace(/^to\s+/, ''); 
-    const isThirdSingular = currentQuestion.pronoun === 'él';
-    const verbForm = isThirdSingular
-      ? (infinitive.endsWith('s') ? infinitive : infinitive + 's')
-      : infinitive;
+  // 1) Obtenemos la cadena cruda, ej. "to do/make" o "to do or to make"
+  const rawInf = currentQuestion.verb.infinitive_en;
 
-    const validPronouns = pronounMap[currentQuestion.pronoun];
-    const expectedForms = validPronouns.map(pr => `${pr.toLowerCase()} ${verbForm}`);
+  // 2) La dividimos en sinónimos (por "/" o " or ")
+  const synonyms = rawInf.split(/\/| or /i).map(s => s.trim());
 
-    correct = expectedForms.includes(ans);
-  }
+  // 3) Eliminamos el "to " para quedarnos con la raíz
+  const baseVerbs = synonyms.map(s => s.replace(/^to\s+/i, ''));
+
+  // 4) Comprobamos si es tercera persona singular
+  const isThirdSingular = currentQuestion.pronoun === 'él';
+
+  // 5) Obtenemos los pronombres válidos para este originalPronoun
+  const validPronouns = pronounMap[currentQuestion.pronoun] || [];
+
+  // 6) Construimos todas las formas posibles
+  const expectedForms = [];
+  validPronouns.forEach(pr => {
+     baseVerbs.forEach(base => {
+       let form;
+
+       // Caso especial para “to be”
+       if (
+         currentQuestion.verb.infinitive_en.trim().toLowerCase() === 'to be'
+       ) {
+         // pr es el pronombre en inglés, ej. "I","you","he","they"
+         switch (pr.toLowerCase()) {
+           case 'i':
+             form = 'am';
+             break;
+           case 'he':
+           case 'she':
+             form = 'is';
+             break;
+           default:
+             form = 'are';
+         }
+       } else {
+         // Lógica general: añade “s” en 3ª pers. singular
+         form = isThirdSingular
+           ? (base.endsWith('s') ? base : base + 's')
+           : base;
+       }
+
+       expectedForms.push(`${pr.toLowerCase()} ${form}`);
+     });
+  });
+
+  // 7) Marcamos correcto si coincide con alguna forma válida
+  correct = expectedForms.includes(ans);
+}
 
   if (correct) {
     soundCorrect.play();
@@ -535,32 +589,27 @@ function checkAnswer() {
 		gameTitle.textContent = '💀 ¡Estás MUERTO!';
         const name = prompt('💀 ¿Cómo te llamas? 💀');
         if (name) {
-          const key = `rankingHkuVerbGame_${selectedGameMode}`;
-          const R   = JSON.parse(localStorage.getItem(key) || '[]');
-          R.push({ name, score });
-          R.sort((a, b) => b.score - a.score);
-          localStorage.setItem(key, JSON.stringify(R.slice(0, 5)));
-          updateRanking();
-		  
 		  db.collection("records").add({
-            name: name,
-            score: score,
-            mode: selectedGameMode,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-          })
-          .then(() => {
-            console.log("Record saved online!");
-          })
-          .catch((error) => {
-            console.error("Error saving record:", error);
-          });
+        name: name,
+        score: score,
+        mode: selectedGameMode,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+		tense: currentOptions.tenses,
+		verb: currentQuestion.verb.infinitive_es,
+		streak: streak
+      })
+      .then(() => {
+        console.log("Record saved online!");
+		renderSetupRecords(); // refresca la lista con el nuevo récord
+      })
+      .catch(error => console.error("Error saving record:", error));
+	}
         }
         checkButton.disabled = true;
         skipButton.disabled  = true;
         endButton.disabled   = true;  // evita volver a pulsar Finish
         quitToSettings();
         return;
-	}
       } else {
         updateGameTitle();
       }
@@ -576,7 +625,7 @@ function checkAnswer() {
         currentQuestion.hintLevel = 1;
       } else if (currentQuestion.hintLevel === 1) {
         // Pista 2: todas las conjugaciones en español menos la del pronombre actual
-        const conj = currentQuestion.verb.conjugations[currentOptions.tense];
+        const conj = currentQuestion.verb.conjugations[currentOptions.tenses];
         const botones = Object.entries(conj)
           .filter(([pr]) => pr !== currentQuestion.pronoun)
           .map(([, form]) => `<span class="hint-btn">${form}</span>`)
@@ -596,7 +645,7 @@ function checkAnswer() {
           `<strong>${currentQuestion.verb.infinitive_es}</strong>.`;
         currentQuestion.hintLevel = 1;
       } else if (currentQuestion.hintLevel === 1) {
-        const conj    = currentQuestion.verb.conjugations[currentOptions.tense];
+        const conj    = currentQuestion.verb.conjugations[currentOptions.tenses];
         const botones = Object.entries(conj)
             .filter(([pr]) => pr !== currentQuestion.pronoun)
             .map(([, form]) => `<span class="hint-btn">${form}</span>`)
@@ -664,27 +713,25 @@ function startTimerMode() {
 	  soundGameOver.play();  // Reproducir el sonido de game over
       const name = prompt('⏱️ Time is up! Your name?');
       if (name) {
-        const key = `rankingHkuVerbGame_${selectedGameMode}`;
-        const R = JSON.parse(localStorage.getItem(key) || '[]');
-        R.push({ name, score });
-        R.sort((a, b) => b.score - a.score);
-        localStorage.setItem(key, JSON.stringify(R.slice(0, 5)));
-		
-		db.collection("records").add({
+        db.collection("records").add({
           name: name,
           score: score,
           mode: selectedGameMode,
-          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+          tense: currentOptions.tenses,
+          verb: currentQuestion.verb.infinitive_es,
+          streak: streak
         })
         .then(() => {
           console.log("Record saved online!");
+          renderSetupRecords();
         })
-        .catch((error) => {
-          console.error("Error saving record:", error);
-        });
-    }
+        .catch(error => console.error("Error saving record:", error));
       }
+
+      // ¡OJO! quitToSettings SOLO aquí
       quitToSettings();
+    }
   }, 1000);
 }
 function skipQuestion() {
@@ -722,6 +769,9 @@ function quitToSettings() {
   // Resetea el formulario y las variables
   setupForm.reset();
   selectedGameMode = 'infinite';
+  renderTenseButtons();
+  renderVerbTypeButtons();
+  filterVerbTypes();
 
   // Elimina el resaltado de TODOS los botones de modo
   document.querySelectorAll('#game-modes .mode-button').forEach(btn => {
@@ -742,12 +792,15 @@ function quitToSettings() {
   remainingLives = 5;
 }
   setupForm.addEventListener('submit', async e => {
+  e.preventDefault
   e.preventDefault();
-  // 1) OCULTAR RÉCORDS al empezar
+  const selTenses = Array.from(
+    document.querySelectorAll('.tense-button.selected')
+  ).map(btn => btn.dataset.value);
   document.getElementById('setup-records').classList.add('hidden');
   currentOptions = {
     mode: document.querySelector('.config-button.selected-mode').dataset.mode,
-    tense: tenseSelect.value,
+    tenses:  selTenses,
     ignoreAccents: document.getElementById('ignore-accents').checked
 };
   if (!await loadVerbs()) return;
@@ -813,25 +866,21 @@ updateGameTitle();
   endButton.addEventListener('click', () => {
     const name = prompt('¿Cómo te llamas?');
     if (name) {
-      const key = `rankingHkuVerbGame_${selectedGameMode}`;
-      const R   = JSON.parse(localStorage.getItem(key) || '[]');
-      R.push({ name, score });
-      R.sort((a,b)=>b.score - a.score);
-      localStorage.setItem(key, JSON.stringify(R.slice(0,5)));
-      updateRanking();
-    }
 	  db.collection("records").add({
         name: name,
         score: score,
         mode: selectedGameMode,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+		tense: currentOptions.tenses,
+		verb: currentQuestion.verb.infinitive_es,
+		streak: streak
       })
       .then(() => {
         console.log("Record saved online!");
+		renderSetupRecords(); // refresca la lista con el nuevo récord
       })
-      .catch((error) => {
-       console.error("Error saving record:", error);
-      });
+      .catch(error => console.error("Error saving record:", error));
+	}
     quitToSettings();
   });
 
@@ -869,12 +918,11 @@ function renderVerbTypeButtons() {
 }
 // ---> FIN NUEVA FUNCIÓN <---
 function updateGameTitle() {
-  let title = `Mode: ${currentOptions.mode} | Tense: ${currentOptions.tense}`;
-  if (selectedGameMode === 'lives') {
-    title += ` | 💖 ${remainingLives}`;
-  }                       // 🇧🇷 Cierra el if
+  const tm = currentOptions.tenses.map(t => t.replace('_',' ')).join(', ');
+  let title = `Mode: ${currentOptions.mode} | Tenses: ${tm}`;
+  if (selectedGameMode === 'lives') title += ` | 💖 ${remainingLives}`;
   gameTitle.textContent = title;
-}                         // cierra updateGameTitle()
+}                       // cierra updateGameTitle()
 function typewriterEffect(textElement, text, interval) {
   let index = 0;
   const typeInterval = setInterval(() => {
@@ -887,10 +935,5 @@ function typewriterEffect(textElement, text, interval) {
 }
 
 
-document.querySelectorAll('.mode-button').forEach(button => {
-  button.addEventListener('click', () => {
-    const mode = button.getAttribute('data-mode');
-    showExample(mode); // Mostrar ejemplo cuando se hace clic en un botón
-  });
-});
+
 });                      // cierra DOMContentLoaded', …)

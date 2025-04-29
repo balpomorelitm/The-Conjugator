@@ -1,8 +1,7 @@
 /* --- Cargar Fuente Local --- */
 @font-face {
   font-family: 'm6x11'; /* Este es el nombre que TÚ le das para usarla en CSS */
-  src: url('m6x11.woff2') format('woff2'), /* Intenta cargar WOFF2 primero (mejor) */
-       url('m6x11.ttf') format('truetype'); /* Si no, carga TTF */
+  src: url('m6x11.ttf') format('truetype'); /* Si no, carga TTF */
   /* Asegúrate de que el nombre del archivo en url() coincida EXACTAMENTE con el que descargaste */
   /* Si pusiste la fuente en una subcarpeta 'fonts', la ruta sería url('fonts/m6x11.woff2') */
   font-weight: normal;
@@ -916,4 +915,36 @@ button:active {
 }
 .hidden {
   display: none !important;
+}
+/* Estilo base para los botones de tiempo */
+#tense-buttons .tense-button {
+  background-color: #e0e0e0;    /* gris claro */
+  color: #555;                  /* texto oscuro suave */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 6px 12px;
+  margin: 0 4px;
+  opacity: 0.5;                 /* aspecto “desactivado” */
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+/* Cuando está seleccionado, rojo y opacidad completa */
+#tense-buttons .tense-button.selected {
+  background-color: #d32f2f;    /* rojo vivo */
+  color: #fff;                  /* texto blanco */
+  border-color: #b71c1c;
+  opacity: 1;
+}
+
+/* (Opcional) si quieres cambiar el cursor cuando no está activo */
+#tense-buttons .tense-button:not(.selected) {
+  cursor: pointer;
+}
+.tense-label {
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+  color: #fff;              /* adjust for contrast */
+  text-transform: uppercase;
 }

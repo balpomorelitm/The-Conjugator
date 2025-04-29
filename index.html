@@ -20,6 +20,7 @@
 <audio id="sound-wrong" src="sounds/wrong.mp3"></audio>
 <audio id="sound-click" src="sounds/click.mp3"></audio>
 <audio id="sound-start" src="sounds/start-verb.mp3"></audio>
+<script src="https://www.google.com/recaptcha/enterprise.js?render=6LeocycrAAAAAADtYPa2_d2PCH5mpEi-zx1yw_j4"></script>
 </head>
   
 
@@ -49,12 +50,8 @@
     <button type="button" class="mode-button config-button selected-mode" data-mode="productive">⌨️Produce⌨️</button>
     <button type="button" class="mode-button config-button" data-mode="receptive">💭Recall💭</button>
 
-    <p><strong>Tense:</strong></p>
-    <select id="tense-select">
-      <option value="present">Present</option>
-      <option value="past_simple">Past Simple</option>
-      <option value="present_perfect">Present Perfect</option>
-    </select>
+    <p><strong>Tenses:</strong></p>
+    <div id="tense-buttons" class="verb-type-selector"></div>
 
     <p><strong>Verb Types:</strong></p>
     <div id="verb-type-buttons" class="verb-type-selector">
@@ -90,8 +87,9 @@
   <div id="game-screen" class="screen">
     <h2 id="game-title"></h2>
     <div id="question-area">
+	<div id="tense-label" class="tense-label"></div>
+    <div id="question-prompt">Loading…</div>
       <p>Question:</p>
-      <div id="question-prompt">Loading…</div>
       </div>
     <div id="answer-area">
       <div id="input-es-container">
@@ -99,12 +97,15 @@
         <input type="text" id="answer-input-es">
       </div>
       <div id="input-en-container" style="display:none;">
-        <label for="answer-input-en">Translate (pronoun + verb):</label>
+        <label for="answer-input-en">Translate (pronoun + verb) Only present tense!:</label>
         <input 
-           type="text" 
-           id="answer-input-en" 
-           placeholder="they eat" 
+           type="text"
+           id="answer-input-en"
+           placeholder="they eat"
            autocomplete="off"
+           autocapitalize="none"
+           autocorrect="off"
+           spellcheck="false"
           >
       </div>
       <button id="check-button">Check Answer</button>
@@ -126,9 +127,14 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-analytics-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-check-compat.js"></script>
 
 <script>
-  // Tu configuración de Firebase
+  //self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+</script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-check-compat.js"></script>
+<script>
+  // 1. Config de Firebase
   const firebaseConfig = {
     apiKey: "AIzaSyAhM7lmdO1TN__8X6728EPJfqxBXjFE5ds",
     authDomain: "el-conjugador.firebaseapp.com",
@@ -138,13 +144,23 @@
     appId: "1:1042408130577:web:ecfdf6121cf191282689b0",
     measurementId: "G-GCCQW0PMH9"
   };
-
-  // Inicializar Firebase
   firebase.initializeApp(firebaseConfig);
+
+  // 2. Inicializa App Check con el provider correcto
+  const appCheck = firebase.appCheck();
+   appCheck.activate(
+      new firebase.appCheck.ReCaptchaEnterpriseProvider(
+        '6LeocycrAAAAAADtYPa2_d2PCH5mpEi-z1yw_j4'
+      ),
+      true  // auto-refresh
+    );
+
+  // 3. Ahora sí crea tu instancia de Firestore
   const db = firebase.firestore();
 </script>
-  <script src="script.js"></script>
+
+<!-- Y por último carga tu propio script -->
+<script src="script.js"></script>
 </body>
-</script>
 </html>
 
