@@ -105,6 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const soundSkip = new Audio('sounds/skip.mp3');
   const music = new Audio('sounds/music.mp3');
   const soundGameOver = new Audio('sounds/gameover.mp3');
+  const soundBubblePop = new Audio('sounds/soundBubblePop.mp3');
   music.loop = true;
   music.volume=0;             
   renderTenseButtons();
@@ -935,10 +936,29 @@ function typewriterEffect(textElement, text, interval) {
 }
 
 
-// 🎈 BURBUJAS DE VERBOS LATERALES
 const leftBubbles = document.getElementById('left-bubbles');
 const rightBubbles = document.getElementById('right-bubbles');
+let bubblesActive = false;
+let leftBubbleInterval, rightBubbleInterval;
 
+function startBubbles() {
+  if (bubblesActive) return;   // ya arrancadas
+  bubblesActive = true;
+  leftBubbleInterval = setInterval(() => {
+    createBubble('left');
+  }, 1800);
+  rightBubbleInterval = setInterval(() => {
+    createBubble('right');
+  }, 2100);
+}
+
+function stopBubbles() {
+  bubblesActive = false;
+  clearInterval(leftBubbleInterval);
+  clearInterval(rightBubbleInterval);
+  leftBubbles.innerHTML  = '';
+  rightBubbles.innerHTML = '';
+}
 function createBubble(side) {
   const bubble = document.createElement('div');
   bubble.classList.add('bubble');
@@ -958,22 +978,21 @@ function createBubble(side) {
   const container = side === 'left' ? leftBubbles : rightBubbles;
   container.appendChild(bubble);
   bubble.addEventListener('click', () => {
-    soundBubblePop.currentTime = 0;
-    soundBubblePop.play();
-    bubble.classList.add('pop-animation');
-  });
+  // 1) Reproducir solo el sonido
+  soundBubblePop.currentTime = 0;
+  soundBubblePop.play();
 
-  // Al terminar la animación “pop”, eliminamos el elemento
-  bubble.addEventListener('animationend', e => {
-    if (e.animationName === 'pop') bubble.remove();
-  });
-  bubble.addEventListener('animationend', () => {
-    bubble.remove();
+  // 2) Quitar la burbuja
+  bubble.remove();
   });
 }
 
-// Lanzar burbujas de cada lado
-setInterval(() => createBubble('left'), 1800);
-setInterval(() => createBubble('right'), 2100);
-
+window.addEventListener('resize', () => {
+  if (window.innerWidth <= 1200) {
+    stopBubbles();
+  } else {
+    startBubbles();
+  }
+});
+if (window.innerWidth > 1200) startBubbles();
 });                      // cierra DOMContentLoaded', …)
