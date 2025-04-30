@@ -397,9 +397,7 @@ button:active {
   border: 2px solid #0d6efd;
   text-shadow: 2px 2px #111; /* Sombra sutil para darle profundidad */
 }
-/* ---> AÑADIR ESTAS REGLAS AL FINAL DE style.css <--- */
 
-/* Contenedor para los botones de tipo de verbo */
 .verb-type-selector {
   display: grid; /* Usar grid para organizar en columnas */
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Columnas auto-ajustables */
@@ -578,7 +576,6 @@ button:active {
 }
 
 
-/*--- que el texto de score quede por encima ---*/
 #score-display {
   position: relative;
   z-index: 1;
@@ -589,12 +586,10 @@ button:active {
   -webkit-text-stroke: 0.5px rgba(0,0,0,0.6); /* Borde más fino y suave */
   font-weight: bold; /* Opcional: fuerza ligeramente el trazo sin perder píxel */
 }
-/* 1) Centrar encabezados y cajas */
 .screen {
   text-align: center;      /* centra títulos, botones inline, etc. */
 }
 
-/* 2) Centrar el prompt y los contenedores de input */
 #question-prompt,
 #feedback-area,
 #score-container,
@@ -602,7 +597,6 @@ button:active {
   margin: 0 auto 20px;     /* margen automático a los lados, 20px abajo */
 }
 
-/* 3) Inputs y prompt con ancho fijo y centrados */
 #question-prompt {
   width: 80%;              /* ajusta al 80% del ancho de la pantalla */
 }
@@ -612,25 +606,21 @@ button:active {
   margin: 0 auto 15px;
 }
 
-/* 4) Botones inline-block con espacio y centrados */
 #answer-area button,
 #game-modes .mode-button {
   display: inline-block;
   margin: 10px 8px;        /* separación uniforme entre botones */
 }
 
-/* 5) Asegúrate de que el contenedor principal ocupe todo el ancho */
 #answer-area {
   width: 100%;
 }
 
-/* 6) (Opcional) Ajusta el ancho de #game-screen para que no quede muy estrecho */
 #game-screen {
   max-width: 800px;        /* o el valor que prefieras */
   margin: 0 auto;          /* centra la pantalla dentro del body */
 }
-/* Contenedor: tres columnas */
-/* Contenedor: tres columnas, permitiendo salto de línea */
+
 #setup-records {
   display: flex;
   flex-wrap: wrap;    /* permite que el h3 ocupe la primera “fila” */
@@ -638,7 +628,7 @@ button:active {
   margin-top: 20px;
 }
 
-/* El título ocupa el 100% del ancho y queda centrado */
+
 #setup-records > h3 {
   flex: 1 1 100%;
   text-align: center;
@@ -946,4 +936,83 @@ button:active {
   margin-bottom: 0.5em;
   color: #fff;              /* adjust for contrast */
   text-transform: uppercase;
+}
+.game-footer {
+  text-align: center;
+  font-size: 0.8em;
+  color: #888;            /* un gris discreto */
+  margin: 30px auto 10px;
+}
+.game-footer p {
+  margin: 0;
+}
+/* 🎈 BURBUJAS VERBALES */
+#left-bubbles, #right-bubbles {
+  position: fixed;
+  top: 0;
+  width: 80px;               /* Más estrecho que antes */
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+#left-bubbles {
+  left: 100px;               /* Empieza más hacia dentro */
+}
+
+#right-bubbles {
+  right: 100px;              /* También más hacia dentro */
+}
+
+.bubble {
+  position: absolute;
+  bottom: -50px;
+  width: 70px;
+  height: 70px;
+  background: radial-gradient(circle, rgba(255,255,255,0.3), rgba(255,255,255,0.05));
+  border: 2px solid rgba(255,255,255,0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: white;
+  font-family: inherit;
+  text-align: center;
+  animation: rise 8s linear forwards;
+  box-shadow: 0 0 10px rgba(255,255,255,0.1);
+  opacity: 0.85;
+  text-shadow: 1px 1px 2px #000;
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(255,255,255,0.8),
+    rgba(173,216,230,0.3),
+    rgba(255,255,255,0.05)
+  );
+  border: 1px solid rgba(255,255,255,0.5);
+}
+
+@keyframes rise {
+  0% {
+    transform: translateY(0);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(-110vh);
+    opacity: 0;
+  }
+}
+
+/* 🌟 Solo mostrar en pantallas anchas */
+@media (max-width: 768px) {
+  #left-bubbles, #right-bubbles {
+    display: none;
+  }
+}
+@keyframes pop {
+  from { transform: scale(1); opacity: 1; }
+  to   { transform: scale(1.5); opacity: 0; }
+}
+.bubble.pop-animation {
+  animation: pop 0.3s ease-out forwards;
 }

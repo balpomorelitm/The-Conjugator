@@ -421,9 +421,9 @@ function prepareNextQuestion() {
   // 7) Render the prompt
   let promptText;
   if (currentOptions.mode === 'productive') {
-    promptText = `<span class="tense-label">${tenseLabel}:</span> `
-               + `"${v.infinitive_en}" – `
-               + `<span class="pronoun">${displayPronoun}</span>`;
+     promptText = `<span class="tense-label">${tenseLabel}:</span> `
+                + `"${v.infinitive_en}" – `
+                + `<span class="pronoun" id="${displayPronoun}">${displayPronoun}</span>`;
     qPrompt.innerHTML = promptText;
     esContainer.style.display = 'block';
     enContainer.style.display = 'none';
@@ -935,5 +935,45 @@ function typewriterEffect(textElement, text, interval) {
 }
 
 
+// 🎈 BURBUJAS DE VERBOS LATERALES
+const leftBubbles = document.getElementById('left-bubbles');
+const rightBubbles = document.getElementById('right-bubbles');
+
+function createBubble(side) {
+  const bubble = document.createElement('div');
+  bubble.classList.add('bubble');
+
+  const verb = allVerbData[Math.floor(Math.random() * allVerbData.length)];
+  if (!verb) return;
+
+  const tense = Math.random() < 0.5 ? 'present' : 'past_simple';
+  const pronoun = Object.keys(verb.conjugations[tense] || {})[Math.floor(Math.random() * 6)];
+  const conjugation = verb.conjugations[tense]?.[pronoun];
+
+  bubble.textContent = conjugation || verb.infinitive_es;
+
+  bubble.style.left = Math.random() * 70 + 'px'; // margen interno
+  bubble.style.fontSize = (Math.random() * 6 + 14) + 'px'; // variar tamaño
+
+  const container = side === 'left' ? leftBubbles : rightBubbles;
+  container.appendChild(bubble);
+  bubble.addEventListener('click', () => {
+    soundBubblePop.currentTime = 0;
+    soundBubblePop.play();
+    bubble.classList.add('pop-animation');
+  });
+
+  // Al terminar la animación “pop”, eliminamos el elemento
+  bubble.addEventListener('animationend', e => {
+    if (e.animationName === 'pop') bubble.remove();
+  });
+  bubble.addEventListener('animationend', () => {
+    bubble.remove();
+  });
+}
+
+// Lanzar burbujas de cada lado
+setInterval(() => createBubble('left'), 1800);
+setInterval(() => createBubble('right'), 2100);
 
 });                      // cierra DOMContentLoaded', …)

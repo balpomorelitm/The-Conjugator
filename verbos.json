@@ -1328,5 +1328,705 @@
         "ellos": "han nadado"
       }
     }
+  },
+  {
+    "infinitive_es": "ver",
+    "infinitive_en": "to see",
+    "types": {
+      "present": ["first_person_irregular"],
+      "present_perfect": ["irregular_participle"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": {
+        "yo": "veo",
+        "tú": "ves",
+        "él": "ve",
+        "nosotros": "vemos",
+        "vosotros": "veis",
+        "ellos": "ven"
+      },
+      "past_simple": {
+        "yo": "vi",
+        "tú": "viste",
+        "él": "vio",
+        "nosotros": "vimos",
+        "vosotros": "visteis",
+        "ellos": "vieron"
+      },
+      "present_perfect": {
+        "yo": "he visto",
+        "tú": "has visto",
+        "él": "ha visto",
+        "nosotros": "hemos visto",
+        "vosotros": "habéis visto",
+        "ellos": "han visto"
+      }
+    }
+  },
+  {
+    "infinitive_es": "parecer",
+    "infinitive_en": "to seem",
+    "types": {
+      "present": ["first_person_irregular"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": {
+        "yo": "parezco",
+        "tú": "pareces",
+        "él": "parece",
+        "nosotros": "parecemos",
+        "vosotros": "parecéis",
+        "ellos": "parecen"
+      },
+      "past_simple": {
+        "yo": "parecí",
+        "tú": "pareciste",
+        "él": "pareció",
+        "nosotros": "parecimos",
+        "vosotros": "parecisteis",
+        "ellos": "parecieron"
+      },
+      "present_perfect": {
+        "yo": "he parecido",
+        "tú": "has parecido",
+        "él": "ha parecido",
+        "nosotros": "hemos parecido",
+        "vosotros": "habéis parecido",
+        "ellos": "han parecido"
+      }
+    }
+  },
+  {
+    "infinitive_es": "creer",
+    "infinitive_en": "to believe",
+    "types": {
+      "present": ["regular"],
+      "present_perfect": ["regular"],
+      "past_simple": ["y_change"]
+    },
+    "conjugations": {
+      "present": {
+        "yo": "creo",
+        "tú": "crees",
+        "él": "cree",
+        "nosotros": "creemos",
+        "vosotros": "creéis",
+        "ellos": "creen"
+      },
+      "past_simple": {
+        "yo": "creí",
+        "tú": "creíste",
+        "él": "creyó",
+        "nosotros": "creímos",
+        "vosotros": "creísteis",
+        "ellos": "creyeron"
+      },
+      "present_perfect": {
+        "yo": "he creído",
+        "tú": "has creído",
+        "él": "ha creído",
+        "nosotros": "hemos creído",
+        "vosotros": "habéis creído",
+        "ellos": "han creído"
+      }
+    }
+  },
+  {
+    "infinitive_es": "llevar",
+    "infinitive_en": "to carry / to take",
+    "types": {
+      "present": ["regular"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": {
+        "yo": "llevo",
+        "tú": "llevas",
+        "él": "lleva",
+        "nosotros": "llevamos",
+        "vosotros": "lleváis",
+        "ellos": "llevan"
+      },
+      "past_simple": {
+        "yo": "llevé",
+        "tú": "llevaste",
+        "él": "llevó",
+        "nosotros": "llevamos",
+        "vosotros": "llevasteis",
+        "ellos": "llevaron"
+      },
+      "present_perfect": {
+        "yo": "he llevado",
+        "tú": "has llevado",
+        "él": "ha llevado",
+        "nosotros": "hemos llevado",
+        "vosotros": "habéis llevado",
+        "ellos": "han llevado"
+      }
+    }
+  },
+  {
+    "infinitive_es": "dejar",
+    "infinitive_en": "to leave / to let",
+    "types": {
+      "present": ["regular"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": {
+        "yo": "dejo",
+        "tú": "dejas",
+        "él": "deja",
+        "nosotros": "dejamos",
+        "vosotros": "dejáis",
+        "ellos": "dejan"
+      },
+      "past_simple": {
+        "yo": "dejé",
+        "tú": "dejaste",
+        "él": "dejó",
+        "nosotros": "dejamos",
+        "vosotros": "dejasteis",
+        "ellos": "dejaron"
+      },
+      "present_perfect": {
+        "yo": "he dejado",
+        "tú": "has dejado",
+        "él": "ha dejado",
+        "nosotros": "hemos dejado",
+        "vosotros": "habéis dejado",
+        "ellos": "han dejado"
+      }
+    }
+  },
+  {
+    "infinitive_es": "encontrar",
+    "infinitive_en": "to find",
+    "types": {
+      "present": ["stem_changing"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": {
+        "yo": "encuentro",
+        "tú": "encuentras",
+        "él": "encuentra",
+        "nosotros": "encontramos",
+        "vosotros": "encontráis",
+        "ellos": "encuentran"
+      },
+      "past_simple": {
+        "yo": "encontré",
+        "tú": "encontraste",
+        "él": "encontró",
+        "nosotros": "encontramos",
+        "vosotros": "encontrasteis",
+        "ellos": "encontraron"
+      },
+      "present_perfect": {
+        "yo": "he encontrado",
+        "tú": "has encontrado",
+        "él": "ha encontrado",
+        "nosotros": "hemos encontrado",
+        "vosotros": "habéis encontrado",
+        "ellos": "han encontrado"
+      }
+    }
+  },
+  {
+    "infinitive_es": "empezar",
+    "infinitive_en": "to begin",
+    "types": {
+      "present": ["stem_changing"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": {
+        "yo": "empiezo",
+        "tú": "empiezas",
+        "él": "empieza",
+        "nosotros": "empezamos",
+        "vosotros": "empezáis",
+        "ellos": "empiezan"
+      },
+      "past_simple": {
+        "yo": "empecé",
+        "tú": "empezaste",
+        "él": "empezó",
+        "nosotros": "empezamos",
+        "vosotros": "empezasteis",
+        "ellos": "empezaron"
+      },
+      "present_perfect": {
+        "yo": "he empezado",
+        "tú": "has empezado",
+        "él": "ha empezado",
+        "nosotros": "hemos empezado",
+        "vosotros": "habéis empezado",
+        "ellos": "han empezado"
+      }
+    }
+  },
+  {
+    "infinitive_es": "esperar",
+    "infinitive_en": "to wait / to hope",
+    "types": {
+      "present": ["regular"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": {
+        "yo": "espero",
+        "tú": "esperas",
+        "él": "espera",
+        "nosotros": "esperamos",
+        "vosotros": "esperáis",
+        "ellos": "esperan"
+      },
+      "past_simple": {
+        "yo": "esperé",
+        "tú": "esperaste",
+        "él": "esperó",
+        "nosotros": "esperamos",
+        "vosotros": "esperasteis",
+        "ellos": "esperaron"
+      },
+      "present_perfect": {
+        "yo": "he esperado",
+        "tú": "has esperado",
+        "él": "ha esperado",
+        "nosotros": "hemos esperado",
+        "vosotros": "habéis esperado",
+        "ellos": "han esperado"
+      }
+    }
+  },
+  {
+    "infinitive_es": "necesitar",
+    "infinitive_en": "to need",
+    "types": {
+      "present": ["regular"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": {
+        "yo": "necesito",
+        "tú": "necesitas",
+        "él": "necesita",
+        "nosotros": "necesitamos",
+        "vosotros": "necesitáis",
+        "ellos": "necesitan"
+      },
+      "past_simple": {
+        "yo": "necesité",
+        "tú": "necesitaste",
+        "él": "necesitó",
+        "nosotros": "necesitamos",
+        "vosotros": "necesitasteis",
+        "ellos": "necesitaron"
+      },
+      "present_perfect": {
+        "yo": "he necesitado",
+        "tú": "has necesitado",
+        "él": "ha necesitado",
+        "nosotros": "hemos necesitado",
+        "vosotros": "habéis necesitado",
+        "ellos": "han necesitado"
+      }
+    }
+  },
+  {
+    "infinitive_es": "usar",
+    "infinitive_en": "to use",
+    "types": {
+      "present": ["regular"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": {
+        "yo": "uso",
+        "tú": "usas",
+        "él": "usa",
+        "nosotros": "usamos",
+        "vosotros": "usáis",
+        "ellos": "usan"
+      },
+      "past_simple": {
+        "yo": "usé",
+        "tú": "usaste",
+        "él": "usó",
+        "nosotros": "usamos",
+        "vosotros": "usasteis",
+        "ellos": "usaron"
+      },
+      "present_perfect": {
+        "yo": "he usado",
+        "tú": "has usado",
+        "él": "ha usado",
+        "nosotros": "hemos usado",
+        "vosotros": "habéis usado",
+        "ellos": "han usado"
+      }
+    }
+  },
+  {
+    "infinitive_es": "recibir",
+    "infinitive_en": "to receive",
+    "types": {
+      "present": ["regular"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": {
+        "yo": "recibo",
+        "tú": "recibes",
+        "él": "recibe",
+        "nosotros": "recibimos",
+        "vosotros": "recibís",
+        "ellos": "reciben"
+      },
+      "past_simple": {
+        "yo": "recibí",
+        "tú": "recibiste",
+        "él": "recibió",
+        "nosotros": "recibimos",
+        "vosotros": "recibisteis",
+        "ellos": "recibieron"
+      },
+      "present_perfect": {
+        "yo": "he recibido",
+        "tú": "has recibido",
+        "él": "ha recibido",
+        "nosotros": "hemos recibido",
+        "vosotros": "habéis recibido",
+        "ellos": "han recibido"
+      }
+    }
+  },
+  {
+    "infinitive_es": "recordar",
+    "infinitive_en": "to remember",
+    "types": {
+      "present": ["stem_changing"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": {
+        "yo": "recuerdo",
+        "tú": "recuerdas",
+        "él": "recuerda",
+        "nosotros": "recordamos",
+        "vosotros": "recordáis",
+        "ellos": "recuerdan"
+      },
+      "past_simple": {
+        "yo": "recordé",
+        "tú": "recordaste",
+        "él": "recordó",
+        "nosotros": "recordamos",
+        "vosotros": "recordasteis",
+        "ellos": "recordaron"
+      },
+      "present_perfect": {
+        "yo": "he recordado",
+        "tú": "has recordado",
+        "él": "ha recordado",
+        "nosotros": "hemos recordado",
+        "vosotros": "habéis recordado",
+        "ellos": "han recordado"
+      }
+    }
+  },
+  {
+    "infinitive_es": "permitir",
+    "infinitive_en": "to allow",
+    "types": {
+      "present": ["regular"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": {
+        "yo": "permito",
+        "tú": "permites",
+        "él": "permite",
+        "nosotros": "permitimos",
+        "vosotros": "permitís",
+        "ellos": "permiten"
+      },
+      "past_simple": {
+        "yo": "permití",
+        "tú": "permitiste",
+        "él": "permitió",
+        "nosotros": "permitimos",
+        "vosotros": "permitisteis",
+        "ellos": "permitieron"
+      },
+      "present_perfect": {
+        "yo": "he permitido",
+        "tú": "has permitido",
+        "él": "ha permitido",
+        "nosotros": "hemos permitido",
+        "vosotros": "habéis permitido",
+        "ellos": "han permitido"
+      }
+    }
+  },
+  {
+    "infinitive_es": "conseguir",
+    "infinitive_en": "to get / to achieve",
+    "types": {
+      "present": ["stem_changing"],
+      "present_perfect": ["regular"],
+      "past_simple": ["stem_change_3rd_person"]
+    },
+    "conjugations": {
+      "present": {
+        "yo": "consigo",
+        "tú": "consigues",
+        "él": "consigue",
+        "nosotros": "conseguimos",
+        "vosotros": "conseguís",
+        "ellos": "consiguen"
+      },
+      "past_simple": {
+        "yo": "conseguí",
+        "tú": "conseguiste",
+        "él": "consiguió",
+        "nosotros": "conseguimos",
+        "vosotros": "conseguisteis",
+        "ellos": "consiguieron"
+      },
+      "present_perfect": {
+        "yo": "he conseguido",
+        "tú": "has conseguido",
+        "él": "ha conseguido",
+        "nosotros": "hemos conseguido",
+        "vosotros": "habéis conseguido",
+        "ellos": "han conseguido"
+      }
+    }
+  },
+  {
+    "infinitive_es": "viajar",
+    "infinitive_en": "to travel",
+    "types": {
+      "present": ["regular"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": {
+        "yo": "viajo",
+        "tú": "viajas",
+        "él": "viaja",
+        "nosotros": "viajamos",
+        "vosotros": "viajáis",
+        "ellos": "viajan"
+      },
+      "past_simple": {
+        "yo": "viajé",
+        "tú": "viajaste",
+        "él": "viajó",
+        "nosotros": "viajamos",
+        "vosotros": "viajasteis",
+        "ellos": "viajaron"
+      },
+      "present_perfect": {
+        "yo": "he viajado",
+        "tú": "has viajado",
+        "él": "ha viajado",
+        "nosotros": "hemos viajado",
+        "vosotros": "habéis viajado",
+        "ellos": "han viajado"
+      }
+    }
+  },
+  {
+    "infinitive_es": "ayudar",
+    "infinitive_en": "to help",
+    "types": {
+      "present": ["regular"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": {
+        "yo": "ayudo",
+        "tú": "ayudas",
+        "él": "ayuda",
+        "nosotros": "ayudamos",
+        "vosotros": "ayudáis",
+        "ellos": "ayudan"
+      },
+      "past_simple": {
+        "yo": "ayudé",
+        "tú": "ayudaste",
+        "él": "ayudó",
+        "nosotros": "ayudamos",
+        "vosotros": "ayudasteis",
+        "ellos": "ayudaron"
+      },
+      "present_perfect": {
+        "yo": "he ayudado",
+        "tú": "has ayudado",
+        "él": "ha ayudado",
+        "nosotros": "hemos ayudado",
+        "vosotros": "habéis ayudado",
+        "ellos": "han ayudado"
+      }
+    }
+  },
+  {
+    "infinitive_es": "beber",
+    "infinitive_en": "to drink",
+    "types": {
+      "present": ["regular"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": {
+        "yo": "bebo",
+        "tú": "bebes",
+        "él": "bebe",
+        "nosotros": "bebemos",
+        "vosotros": "bebéis",
+        "ellos": "beben"
+      },
+      "past_simple": {
+        "yo": "bebí",
+        "tú": "bebiste",
+        "él": "bebió",
+        "nosotros": "bebimos",
+        "vosotros": "bebisteis",
+        "ellos": "bebieron"
+      },
+      "present_perfect": {
+        "yo": "he bebido",
+        "tú": "has bebido",
+        "él": "ha bebido",
+        "nosotros": "hemos bebido",
+        "vosotros": "habéis bebido",
+        "ellos": "han bebido"
+      }
+    }
+  },
+  {
+    "infinitive_es": "querer",
+    "infinitive_en": "to want",
+    "types": {
+      "present": ["stem_changing"],
+      "present_perfect": ["regular"],
+      "past_simple": ["irregular_root"]
+    },
+    "conjugations": {
+      "present": {
+        "yo": "quiero",
+        "tú": "quieres",
+        "él": "quiere",
+        "nosotros": "queremos",
+        "vosotros": "queréis",
+        "ellos": "quieren"
+      },
+      "past_simple": {
+        "yo": "quise",
+        "tú": "quisiste",
+        "él": "quiso",
+        "nosotros": "quisimos",
+        "vosotros": "quisisteis",
+        "ellos": "quisieron"
+      },
+      "present_perfect": {
+        "yo": "he querido",
+        "tú": "has querido",
+        "él": "ha querido",
+        "nosotros": "hemos querido",
+        "vosotros": "habéis querido",
+        "ellos": "han querido"
+      }
+    }
+  },
+  {
+    "infinitive_es": "obtener",
+    "infinitive_en": "to obtain",
+    "types": {
+      "present": ["multiple_irregularities"],
+      "present_perfect": ["regular"],
+      "past_simple": ["irregular_root"]
+    },
+    "conjugations": {
+      "present": {
+        "yo": "obtengo",
+        "tú": "obtienes",
+        "él": "obtiene",
+        "nosotros": "obtenemos",
+        "vosotros": "obtenéis",
+        "ellos": "obtienen"
+      },
+      "past_simple": {
+        "yo": "obtuve",
+        "tú": "obtuviste",
+        "él": "obtuvo",
+        "nosotros": "obtuvimos",
+        "vosotros": "obtuvisteis",
+        "ellos": "obtuvieron"
+      },
+      "present_perfect": {
+        "yo": "he obtenido",
+        "tú": "has obtenido",
+        "él": "ha obtenido",
+        "nosotros": "hemos obtenido",
+        "vosotros": "habéis obtenido",
+        "ellos": "han obtenido"
+      }
+    }
+  },
+  {
+    "infinitive_es": "componer",
+    "infinitive_en": "to compose",
+    "types": {
+      "present": ["first_person_irregular"],
+      "present_perfect": ["irregular_participle"],
+      "past_simple": ["irregular_root"]
+    },
+    "conjugations": {
+      "present": {
+        "yo": "compongo",
+        "tú": "compones",
+        "él": "compone",
+        "nosotros": "componemos",
+        "vosotros": "componéis",
+        "ellos": "componen"
+      },
+      "past_simple": {
+        "yo": "compuse",
+        "tú": "compusiste",
+        "él": "compuso",
+        "nosotros": "compusimos",
+        "vosotros": "compusisteis",
+        "ellos": "compusieron"
+      },
+      "present_perfect": {
+        "yo": "he compuesto",
+        "tú": "has compuesto",
+        "él": "ha compuesto",
+        "nosotros": "hemos compuesto",
+        "vosotros": "habéis compuesto",
+        "ellos": "han compuesto"
+     }
+    }
   }
 ]
