@@ -27,14 +27,80 @@ body {
   background-color: var(--bg-color);
   color: var(--text-color);
   max-width: 800px;
-  margin: 20px auto; /* Centrar y añadir margen superior/inferior */
+  margin: 20px auto;
   padding: 20px;
-  font-size: 20px; /* Tamaño base un poco más grande para fuente pixel */
-  /* Para que la fuente pixelada se vea más nítida (puede variar por navegador) */
+  font-size: 20px;
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
-  text-shadow: 1px 2px #111; /* Sombra sutil para darle profundidad */
+  text-shadow: 1px 2px #111;
+
+  /* Curvatura de pantalla simulada */
+  border-radius: 20px;
+  box-shadow:
+    inset 0 0 60px rgba(0, 255, 128, 0.1),
+    inset 0 0 200px rgba(0, 255, 128, 0.05),
+    0 0 60px rgba(0, 255, 128, 0.2);
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: relative;
+}
+
+/* Efecto de escaneo descendente */
+body::before {
+  content: "";
+  position: absolute;
+  top: -100%;
+  left: 0;
+  width: 100%;
+  height: 100%; /* ← antes era 200% */
+  background: linear-gradient(
+    rgba(0, 255, 128, 0) 0%,
+    rgba(0, 255, 128, 0.05) 45%,
+    rgba(0, 255, 128, 0.1) 50%,
+    rgba(0, 255, 128, 0.05) 55%,
+    rgba(0, 255, 128, 0) 100%
+  );
+  animation: scan 5s linear infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes scan {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+body::after {
+  content: "";
+  position: absolute; /* Cambiado de fixed */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 255, 128, 0.02),
+    rgba(0, 255, 128, 0.02) 1px,
+    transparent 2px,
+    transparent 3px
+  );
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Animación del escaneo */
+@keyframes scan {
+  0% {
+    top: -100%;
+  }
+  100% {
+    top: 100%;
+  }
 }
 
 /* Contenedor del Título Principal (para alinear con logo si se añade) */
@@ -1004,3 +1070,5 @@ button:active {
     display: none;
   }
 }
+
+
