@@ -831,8 +831,7 @@ button:active {
 }
 /* --- AJUSTES PARA MÓVIL --- */
 @media (max-width: 768px) {
-  
-  body {
+    body {
     margin: 0;
     padding: 10px;
     width: 100%;
@@ -850,14 +849,14 @@ button:active {
   }
 
   .glitch-title {
-    font-size: 1.5em;
+    font-size: 1.0em;
     white-space: normal;
     word-break: break-word;
     text-align: center;
   }
 
   #main-title {
-    font-size: 1.5em;
+    font-size: 1.0em;
   }
 
   .screen {
@@ -1089,6 +1088,182 @@ button:active {
   position: relative; /* ← MUY IMPORTANTE para contener el ::before */
   overflow: hidden;   /* ← Esto evita que el rayo se “escape” */
 }
+/* Style for the new Help Button */
+#help-button {
+  font-family: var(--font-pixel);
+  font-size: 1.1em;
+  background-color: #ffc107; /* Distinct yellow */
+  color: #333;
+  border: none;
+  padding: 10px 18px;
+  margin: 10px 5px 5px 0;
+  cursor: help;
+  border-radius: 8px;      /* esquinas redondeadas */
+  box-shadow: 2px 2px 0px rgba(0,0,0,0.4);
+  transition: background-color 0.2s, box-shadow 0.2s, transform 0.1s;
+  display: inline-block; /* Ensures it aligns correctly */
+  vertical-align: top; /* Align with the top of sibling buttons */
+  width: auto; /* Let width be determined by content */
+  line-height: normal; /* Reset line height if needed */
+  height: auto; /* Adjust height to fit content */
+  min-height: 45px; /* Approximate height of other buttons */
+  position: relative; /* Needed for potential pseudo-elements if added later */
+  top: 70px;             /* baja el botón 15px */
+  left: 30px;            /* muévelo 20px hacia la derecha */
+  }
+
+#help-button:hover {
+  background-color: #e0a800; /* Darker yellow on hover */
+  box-shadow: 1px 1px 0px rgba(0,0,0,0.4);
+  transform: translate(1px, 1px);
+}
+
+#help-button:active {
+    box-shadow: none;
+    transform: translate(2px, 2px);
+}
+
+
+.tooltip-popup {
+  display: none; /* Hidden by default */
+  position: absolute; /* Positioned relative to the nearest positioned ancestor (body or a wrapper) */
+  background-color: rgba(26, 42, 26, 0.8); /* 80% de opacidad */  
+  color: var(--text-color);
+  border: 2px solid var(--border-color); /* Match screen border */
+  padding: 10px; /* Padding for the overall tooltip container */
+  border-radius: 0; /* Match screen style */
+  box-shadow: 4px 4px 0px rgba(0,0,0,0.5); /* Match screen shadow */
+  z-index: 100; /* Ensure it's on top */
+  font-size: 0.95em; /* Base font size for tooltip */
+  width: auto; /* Let width adjust to content */
+  max-width: 600px; /* Maximum width for the entire tooltip */
+  pointer-events: none; /* Tooltip shouldn't block interactions with elements behind (if any) */
+  text-shadow: 1px 1px #111; /* Consistent text shadow */
+  position: fixed; /* asegura posición respecto a la pantalla */
+  top: 50%;        /* centrado verticalmente */
+  left: 50%;       /* centrado horizontalmente */
+  transform: translate(-50%, -50%); /* truco sencillo para centrarlo perfectamente */
+  max-width: 600px; /* límite del ancho para no exceder pantalla */
+  width: 80%;       /* ancho adaptado a pantallas pequeñas también */
+  box-sizing: border-box; /* asegura padding dentro del ancho */
+  z-index: 1000;    /* muy encima para que nada tape */
+  display: none;    /* inicialmente oculto */
+}
+
+/* Style for rows within the tooltip */
+.tooltip-row {
+    display: flex;
+    justify-content: center; /* Center boxes horizontally */
+    gap: 10px; /* Space between boxes in a row */
+    margin-bottom: 10px; /* Space between rows */
+}
+.tooltip-row:last-child {
+    margin-bottom: 0; /* No margin below the last row */
+}
+
+/* Style for individual boxes within the tooltip (mimicking .screen) */
+.tooltip-box {
+    flex: 1; /* Allow boxes to share space equally */
+    background-color: var(--container-bg); /* Match screen background */
+    border: 2px solid var(--border-color); /* Match screen border */
+    padding: 15px; /* Inner padding for box content */
+    box-shadow: 3px 3px 0px rgba(0,0,0,0.3); /* Match screen shadow */
+    min-width: 150px; /* Minimum width to prevent excessive squeezing */
+    text-align: left; /* Align text left within boxes */
+    display: flex; /* Use flexbox for vertical alignment */
+    flex-direction: column; /* Stack title, p, animation vertically */
+}
+
+.tooltip-box h5 { /* Title within each box */
+    font-family: var(--font-pixel);
+    color: var(--title-color);
+    font-size: 1.2em;
+    margin-top: 0;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 5px;
+    text-align: center;
+}
+
+.tooltip-box p { /* Description text */
+    margin-bottom: 10px;
+    line-height: 1.4;
+    font-size: 0.9em;
+    flex-grow: 1; /* Allow paragraphs to take available space, pushing animation down */
+}
+.tooltip-box p:last-of-type { /* Adjust margin for last paragraph before animation */
+    margin-bottom: 15px;
+}
+
+/* Styles for animation elements */
+.example-prompt {
+    font-size: 0.9em;
+    color: #ccc; /* Lighter color for the example prompt */
+    margin-bottom: 8px;
+    font-style: italic;
+    text-align: center;
+}
+
+.typing-animation {
+    font-family: monospace; /* Monospace font looks like typing */
+    font-size: 1.1em;
+    color: var(--feedback-correct); 
+    background-color: var(--input-bg); /* Dark background like an input field */
+    padding: 5px 8px;
+    border: 1px solid var(--border-color);
+    min-height: 1.5em; /* Ensure it has some height even when empty */
+    text-align: center;
+    white-space: pre; /* Preserve spaces in the animation */
+    margin-top: auto; /* Push animation to bottom if box has extra space */
+}
+
+.typing-cursor {
+    display: inline-block;
+    background-color: var(--feedback-correct); /* Cursor color */
+    width: 8px; /* Cursor width */
+    height: 1.1em; /* Match font height */
+    animation: blink 1s step-end infinite;
+    vertical-align: bottom; /* Align cursor nicely with text baseline */
+    margin-left: 2px; /* Small space before cursor */
+}
+
+@keyframes blink {
+    from, to { background-color: transparent } /* Invisible state */
+    50% { background-color: var(--feedback-correct); } /* Visible state */
+}
+
+/* Responsive adjustments for the tooltip */
+ @media (max-width: 768px) { /* Adjust breakpoint if needed */
+    .tooltip-popup {
+        max-width: 90%; /* Allow slightly wider on medium screens */
+        left: 5% !important; /* Force centering somewhat */
+        transform: translateX(0); /* Override potential adjustments */
+    }
+ }
+ @media (max-width: 600px) { /* Stricter stacking on small screens */
+    .tooltip-popup {
+        max-width: 95%;
+        left: 2.5% !important;
+        padding: 5px; /* Reduce padding */
+    }
+    .tooltip-row {
+        flex-direction: column; /* Stack boxes vertically */
+        margin-bottom: 5px;
+        gap: 5px;
+    }
+    .tooltip-box {
+        min-width: unset; /* Remove min-width */
+        width: calc(100% - 10px); /* Take full width minus padding */
+        margin: 0 auto; /* Center stacked boxes */
+        padding: 10px;
+    }
+     .tooltip-box h5 {
+        font-size: 1.1em;
+     }
+      .tooltip-box p {
+        font-size: 0.85em;
+     }
+ }
 
 
 

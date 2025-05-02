@@ -1,3 +1,41 @@
+let typeInterval; // Variable global para controlar el intervalo de la animación
+
+/**
+ * Simulates a typewriter effect on an HTML element.
+ * @param {HTMLElement} element - The target element to display the typing.
+ * @param {string} text - The text to type out.
+ * @param {number} [speed=150] - The delay between characters in milliseconds.
+ */
+function typeWriter(element, text, speed = 120) {
+  // limpia sólo el intervalo de este elemento
+  if (element._twInterval) clearInterval(element._twInterval);
+
+  element.innerHTML = '';
+  let i = 0, cursorVisible = true;
+
+  const cursorSpan = document.createElement('span');
+  cursorSpan.className = 'typing-cursor';
+
+  // nodo de texto inicial
+  element.appendChild(document.createTextNode(''));
+
+  // guardamos el intervalo en element._twInterval
+  element._twInterval = setInterval(() => {
+    if (element.contains(cursorSpan)) {
+      element.removeChild(cursorSpan);
+    }
+
+    if (i < text.length) {
+      element.firstChild.nodeValue += text.charAt(i++);
+      element.appendChild(cursorSpan);
+    } else {
+      cursorSpan.style.visibility = cursorVisible ? 'visible' : 'hidden';
+      cursorVisible = !cursorVisible;
+      if (!element.contains(cursorSpan)) element.appendChild(cursorSpan);
+    }
+  }, speed);
+}
+// --- INICIO DEL DOMContentLoaded ---
 document.addEventListener('DOMContentLoaded', () => {
   let selectedGameMode = 'infinite'; // Valor por defecto
   let allVerbData = [];
@@ -25,6 +63,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const esContainer  = document.getElementById('input-es-container');
   const enContainer  = document.getElementById('input-en-container');
   const feedback     = document.getElementById('feedback-area');
+  const helpButton = document.getElementById('help-button'); // Referencia al botón ?
+  const tooltip = document.getElementById('tooltip');       // Referencia al div del tooltip
   const titleElement = document.querySelector('.glitch-title');
   setInterval(() => {
     titleElement.classList.add('glitch-active');
@@ -793,7 +833,6 @@ function quitToSettings() {
   remainingLives = 5;
 }
   setupForm.addEventListener('submit', async e => {
-  e.preventDefault
   e.preventDefault();
   const selTenses = Array.from(
     document.querySelectorAll('.tense-button.selected')
@@ -917,7 +956,7 @@ function renderVerbTypeButtons() {
     container.appendChild(button);
   });
 }
-// ---> FIN NUEVA FUNCIÓN <---
+
 function updateGameTitle() {
   const tm = currentOptions.tenses.map(t => t.replace('_',' ')).join(', ');
   let title = `Mode: ${currentOptions.mode} | Tenses: ${tm}`;
@@ -935,6 +974,102 @@ function typewriterEffect(textElement, text, interval) {
   }, interval);
 }
 
+
+  if (helpButton && tooltip) {
+      helpButton.addEventListener('mouseover', (event) => {
+          // 1. Definir la estructura HTML del contenido del tooltip
+          const tooltipContentHTML = `
+              <div class="tooltip-row">
+                  <div class="tooltip-box">
+                      <h5>♾️ Infinite Mode</h5>
+                      <p>Play without time or life limits. Aim for the highest score and longest streak!</p>
+                  </div>
+                  <div class="tooltip-box">
+                      <h5>⏱️ Timer Mode</h5>
+                      <p>Score as many points as possible within the 4-minute time limit.</p>
+                  </div>
+                  <div class="tooltip-box">
+                      <h5>💖 Lives Mode</h5>
+                      <p>You have 5 lives. Each incorrect answer costs one life. Survive as long as you can!</p>
+                  </div>
+              </div>
+              <div class="tooltip-row">
+                  <div class="tooltip-box">
+                      <h5>⌨️ Produce Setting</h5>
+                      <p>Given the English verb and a Spanish pronoun, type the correct Spanish conjugation.</p>
+                      <div class="example-prompt">Example: "to practice" - yo</div>
+                      <div class="typing-animation" id="produce-anim"></div>
+                  </div>
+                  <div class="tooltip-box">
+                      <h5>💭 Recall Setting</h5>
+                      <p>Given a Spanish tense and conjugation, type the corresponding English pronoun and <strong>present tense</strong> verb.</p>
+                      <div class="example-prompt">Example: "SIMPLE PAST: Comí"</div>
+                      <div class="typing-animation" id="recall-anim"></div>
+                  </div>
+              </div>
+          `;
+          tooltip.innerHTML = tooltipContentHTML; // Insertar el HTML en el div tooltip
+
+          // 2. Posicionar el tooltip cerca del botón
+          const btnRect = helpButton.getBoundingClientRect(); // Posición del botón
+          const bodyRect = document.body.getBoundingClientRect(); // Posición del body
+          const scrollOffsetY = window.scrollY; // Cuánto se ha hecho scroll vertical
+          const scrollOffsetX = window.scrollX; // Cuánto se ha hecho scroll horizontal
+		  
+
+          // Intento inicial: colocar debajo del botón
+          let topPos = btnRect.bottom + scrollOffsetY + 10; // Más margen hacia abajo
+          let leftPos = btnRect.left + scrollOffsetX - 50;  // Desplaza a la izquierda
+          
+
+          // Aplicar posición inicial y mostrar ANTES de calcular ajustes
+          tooltip.style.top = `${topPos}px`;
+          tooltip.style.left = `${leftPos}px`;
+          tooltip.style.display = 'block';
+
+          // 3. Ajustar posición si se sale de la pantalla (después de mostrar para obtener tamaño real)
+          const tooltipRect = tooltip.getBoundingClientRect(); // Tamaño y posición REAL del tooltip mostrado
+
+          // Ajustar izquierda si se sale por la derecha
+          if (tooltipRect.right > window.innerWidth - 10) {
+             leftPos = window.innerWidth - tooltipRect.width - 10 - bodyRect.left + scrollOffsetX;
+          }
+          // Ajustar arriba si se sale por abajo (preferir ponerlo arriba del botón)
+          if (tooltipRect.bottom > window.innerHeight - 10) {
+             topPos = btnRect.top - bodyRect.top + scrollOffsetY - tooltipRect.height - 5; // Arriba - 5px margen
+          }
+          // Asegurar que no se salga por la izquierda
+          leftPos = Math.max(10 + scrollOffsetX, leftPos);
+
+          // Reaplica la posición ajustada
+          tooltip.style.top = `${topPos}px`;
+          tooltip.style.left = `${leftPos}px`;
+
+          // 4. Iniciar las animaciones DESPUÉS de que el tooltip sea visible
+          const produceAnimElement = document.getElementById('produce-anim');
+          const recallAnimElement = document.getElementById('recall-anim');
+
+          if (produceAnimElement) {
+              // Usar setTimeout pequeño para asegurar que el DOM se actualice antes de animar
+              setTimeout(() => typeWriter(produceAnimElement, 'practico', 300), 50);
+          }
+          if (recallAnimElement) {
+               setTimeout(() => typeWriter(recallAnimElement, 'I  eat', 300), 50);
+          }
+
+      }); // Fin del listener 'mouseover'
+
+      helpButton.addEventListener('mouseout', () => {
+          tooltip.style.display = 'none'; // Ocultar el tooltip
+          clearInterval(typeInterval); // DETENER la animación de escritura si está en curso
+          tooltip.innerHTML = ''; // Limpiar el contenido para evitar problemas
+      }); // Fin del listener 'mouseout'
+
+
+  } else {
+      // Este console.error ahora sí debería poder encontrar los elementos
+      console.error("Help button (?) or tooltip container (#tooltip) not found OR script order issue.");
+  }
 
 const leftBubbles = document.getElementById('left-bubbles');
 const rightBubbles = document.getElementById('right-bubbles');
