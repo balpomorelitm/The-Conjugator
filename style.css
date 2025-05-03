@@ -1240,7 +1240,7 @@ button:active {
         transform: translateX(0); /* Override potential adjustments */
     }
 	.main-header .glitch-title {
-        font-size: 2.5em;    /* ajústalo hasta que te guste */
+        font-size: 1.7em;    /* ajústalo hasta que te guste */
         white-space: normal;
         word-break: break-word;
         text-align: center;
