@@ -624,11 +624,13 @@ function checkAnswer() {
     // 4) MODO 5 VIDAS: resto vida y, si 0, game over
     if (selectedGameMode === 'lives') {
       remainingLives--;
-
-      if (remainingLives <= 0) {
+       updateGameTitle();               // actualiza racha y corazones
+      if (remainingLives === 0) {
         soundGameOver.play();  // Reproducir el sonido de game over
 		gameTitle.textContent = '💀 ¡Estás MUERTO!';
-        const name = prompt('💀 ¿Cómo te llamas? 💀');
+		checkButton.disabled = true;
+        skipButton.disabled  = true;
+
         if (name) {
 		  db.collection("records").add({
         name: name,
@@ -642,20 +644,16 @@ function checkAnswer() {
       .then(() => {
         console.log("Record saved online!");
 		renderSetupRecords(); // refresca la lista con el nuevo récord
+		quitToSettings();
       })
       .catch(error => console.error("Error saving record:", error));
+
 	}
         }
-        checkButton.disabled = true;
-        skipButton.disabled  = true;
-        endButton.disabled   = true;  // evita volver a pulsar Finish
-        quitToSettings();
-        return;
       } else {
         updateGameTitle();
       }
     }
-
     updateScore();
     if (currentOptions.mode === 'receptive') {
       if (currentQuestion.hintLevel === 0) {

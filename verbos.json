@@ -2026,7 +2026,42 @@
         "nosotros": "hemos compuesto",
         "vosotros": "habéis compuesto",
         "ellos": "han compuesto"
-     }
+      }
+    }
+  },
+  {
+	"infinitive_es": "dar",
+	"infinitive_en": "to give",
+	"types": {
+		"present": ["first_person_irregular"],
+		"present_perfect": ["regular"],
+		"past_simple": ["totally_irregular"]
+	},
+	"conjugations": {
+	  "present": {
+		"yo": "doy",
+		"tú": "das",
+		"él": "da",
+		"nosotros": "damos",
+		"vosotros": "dais",
+		"ellos": "dan"
+		},
+	  "present_perfect": {
+		"yo": "he dado",
+		"tú": "has dado",
+		"él": "ha dado",
+		"nosotros": "hemos dado",
+		"vosotros": "habéis dado",
+		"ellos": "han dado"
+		},
+	  "past_simple": {
+		"yo": "di",
+		"tú": "diste",
+		"él": "dio",
+		"nosotros": "dimos",
+		"vosotros": "disteis",
+		"ellos": "dieron"
+      }
     }
   }
 ]

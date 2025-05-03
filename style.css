@@ -1239,6 +1239,18 @@ button:active {
         left: 5% !important; /* Force centering somewhat */
         transform: translateX(0); /* Override potential adjustments */
     }
+	.main-header .glitch-title {
+        font-size: 2.5em;    /* ajústalo hasta que te guste */
+        white-space: normal;
+        word-break: break-word;
+        text-align: center;
+    }
+    #help-button {
+       position: static;     /* quita top/left relativos */
+       order: 4;             /* tras los 3 .mode-button */
+       margin: 8px 0 16px;   /* separa verticalmente */
+       transform: none;      /* anula cualquier translate */
+  }
  }
  @media (max-width: 600px) { /* Stricter stacking on small screens */
     .tooltip-popup {
