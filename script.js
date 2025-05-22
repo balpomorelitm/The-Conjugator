@@ -7,12 +7,9 @@ let typeInterval; // Variable global para controlar el intervalo de la animació
  * @param {number} [speed=150] - The delay between characters in milliseconds.
  */
 function typeWriter(element, text, speed = 120) {
-  // limpia sólo el intervalo de este elemento
   if (element._twInterval) clearInterval(element._twInterval);
-
   element.innerHTML = '';
   let i = 0, cursorVisible = true;
-
   const cursorSpan = document.createElement('span');
   cursorSpan.className = 'typing-cursor';
 
@@ -35,17 +32,61 @@ function typeWriter(element, text, speed = 120) {
     }
   }, speed);
 }
-// --- INICIO DEL DOMContentLoaded ---
+
+// Función para manejar el clic en el botón de verbos reflexivos
+function handleReflexiveToggle() {
+    const toggleReflexiveBtn = document.getElementById('toggle-reflexive');
+	
+    if (!toggleReflexiveBtn) return;
+
+    toggleReflexiveBtn.classList.toggle('selected');
+    // El efecto del filtro se aplicará cuando loadVerbs() sea llamado (al iniciar juego o salir de ajustes)
+    if (typeof soundClick !== 'undefined') soundClick.play();
+}
+const soundClick = document.getElementById('sound-click');
 document.addEventListener('DOMContentLoaded', () => {
-  let selectedGameMode = 'infinite'; // Valor por defecto
+  let selectedGameMode = 'infinite'; 
   let allVerbData = [];
   let currentQuestion = {};
   let currentOptions = {};
   let score = 0, streak = 0, multiplier = 1.0, startTime = 0;
+  let bestStreak = 0;
   let countdownTimer;
   let countdownTime = 240; // 4 minutes = 240 seconds
   let remainingLives = 5;
-  let targetVolume=0.05;
+  let targetVolume=0.2;
+  let timerTimeLeft = 0;            // segundos restantes
+	function formatTime(sec) {
+	  const m = Math.floor(sec / 60);
+	  const s = sec % 60;
+	  return `${m}:${s.toString().padStart(2,'0')}`;
+	}
+
+
+	function showTimeChange(amount) {
+	  const clockEl = document.getElementById('timer-clock');
+	  const el      = document.getElementById('time-change');
+	  if (!clockEl || !el) return;
+
+	  // Texto y color
+	  el.textContent = `${amount > 0 ? '+' : ''}${amount}s`;
+	  el.style.color = amount < 0 ? 'red' : 'lightgreen';
+
+	  // Mostrar con clase y ocultar tras 2s
+	  clockEl.classList.add('show-time-change');
+	  clearTimeout(clockEl._timeChangeTimeout);
+	  clockEl._timeChangeTimeout = setTimeout(() => {
+		clockEl.classList.remove('show-time-change');
+	  }, 2000);
+
+	  // Vibración
+	  el.classList.remove('vibrate');
+	  void el.offsetWidth;         // forzar reflow
+	  el.classList.add('vibrate');
+	}
+  let totalPlayedSeconds = 0;       
+  let totalQuestions = 0;           
+  let totalCorrect = 0;             
   const setupScreen  = document.getElementById('setup-screen');
   const gameScreen   = document.getElementById('game-screen');
   const setupForm    = document.getElementById('setup-form');
@@ -63,29 +104,30 @@ document.addEventListener('DOMContentLoaded', () => {
   const esContainer  = document.getElementById('input-es-container');
   const enContainer  = document.getElementById('input-en-container');
   const feedback     = document.getElementById('feedback-area');
-  const helpButton = document.getElementById('help-button'); // Referencia al botón ?
-  const tooltip = document.getElementById('tooltip');       // Referencia al div del tooltip
+  const helpButton = document.getElementById('help-button'); 
+  const tooltip = document.getElementById('tooltip');       
   const titleElement = document.querySelector('.glitch-title');
+  
   setInterval(() => {
     titleElement.classList.add('glitch-active');
     setTimeout(() => {
       titleElement.classList.remove('glitch-active');
     }, 600); // Glitch dura 0.5s
   }, 3000); // Cada 4s se activa el glitch
-  // ===== envolver cada letra en un <span> =====
+
   const titleEl = document.querySelector('.glitch-title, #main-title');
   if (titleEl) {
     const letters = Array.from(titleEl.textContent);
     titleEl.innerHTML = letters
       .map(ch => {
         if (ch === ' ') {
-          // span “espacio” con entidad NBSP
           return '<span class="letter space">&nbsp;</span>';
         }
         return `<span class="letter">${ch}</span>`;
       })
       .join('');
   }
+  
   const pronouns = ['yo','tú','él','nosotros','vosotros','ellos'];
   const pronounMap = {
     yo: ['I'],
@@ -95,10 +137,10 @@ document.addEventListener('DOMContentLoaded', () => {
     nosotros: ['we'],
     vosotros: ['you'],
     ellos: ['they'],
-    nosotras: ['we'], // Femenino plural
-    vosotras: ['you'], // Femenino plural
-    ellas: ['they'], // Femenino plural
-    ustedes: ['you'] // Formal plural
+    nosotras: ['we'], 
+    vosotras: ['you'], 
+    ellas: ['they'], 
+    ustedes: ['you'] 
 };
   const irregularityTypes = [
     { value: 'regular', name: 'Regular', times: ['present', 'past_simple', 'present_perfect'], hint: '' }, // Sin pista específica
@@ -116,6 +158,46 @@ document.addEventListener('DOMContentLoaded', () => {
     { value: 'past_simple',    name: 'Simple Past'   },
     { value: 'present_perfect',name: 'Present Perfect'}
 ];
+
+  let totalCorrectAnswersForLife = 0; // Para Mecánica 1
+  let correctAnswersToNextLife = 10;  // Objetivo inicial para Mecánica 1
+  let nextLifeIncrement = 10;         // El 'n' inicial para la progresión de Mecánica 1
+
+  let currentStreakForLife = 0;       // Para Mecánica 2
+  let streakGoalForLife = 5;          // Objetivo inicial para Mecánica 2
+  let lastStreakGoalAchieved = 0;     // Para recordar la última meta de racha alcanzada
+
+  let isPrizeVerbActive = false;      // Para Mecánica 3
+
+
+  const verbTypeLabels = Array.from(document.querySelectorAll('label[data-times]'));
+  const soundCorrect = new Audio('sounds/correct.mp3');
+  const soundWrong = new Audio('sounds/wrong.mp3');
+  const soundClick = new Audio('sounds/click.mp3');
+  const soundStart = new Audio('sounds/start-verb.mp3');
+  const soundSkip = new Audio('sounds/skip.mp3');
+  const music = new Audio('sounds/music.mp3');
+  const soundGameOver = new Audio('sounds/gameover.mp3');
+  const soundbubblepop = new Audio('sounds/soundbubblepop.mp3');
+  const soundLifeGained = new Audio('sounds/soundLifeGained.mp3');
+  music.loop = true;
+           
+  renderTenseButtons();
+  renderVerbTypeButtons();
+  filterVerbTypes(); 
+  renderSetupRecords();
+
+  const toggleReflexiveBtn = document.getElementById('toggle-reflexive');
+  if (toggleReflexiveBtn) {
+      toggleReflexiveBtn.addEventListener('click', handleReflexiveToggle);
+  }
+  
+  document.querySelectorAll('input[type="checkbox"], input[type="radio"], select')
+    .forEach(el => {
+      el.addEventListener('change', () => {
+        soundClick.play();
+      });
+    });
 
   function renderTenseButtons() {
     const container = document.getElementById('tense-buttons');
@@ -136,30 +218,6 @@ document.addEventListener('DOMContentLoaded', () => {
       container.appendChild(btn);
     });
 }
-// ---> FIN AÑADIDO <---  
-  const verbTypeLabels = Array.from(document.querySelectorAll('label[data-times]'));
-  const soundCorrect = new Audio('sounds/correct.mp3');
-  const soundWrong = new Audio('sounds/wrong.mp3');
-  const soundClick = new Audio('sounds/click.mp3');
-  const soundStart = new Audio('sounds/start-verb.mp3');
-  const soundSkip = new Audio('sounds/skip.mp3');
-  const music = new Audio('sounds/music.mp3');
-  const soundGameOver = new Audio('sounds/gameover.mp3');
-  const soundBubblePop = new Audio('sounds/soundBubblePop.mp3');
-  music.loop = true;
-  music.volume=0;             
-  renderTenseButtons();
-  renderVerbTypeButtons();
-  filterVerbTypes(); 
-  renderSetupRecords();
-  
-  document.querySelectorAll('input[type="checkbox"], input[type="radio"], select')
-    .forEach(el => {
-      el.addEventListener('change', () => {
-        soundClick.play();
-      });
-    });
-
   
 function filterVerbTypes() {
   const selTenses = Array.from(document.querySelectorAll('.tense-button.selected'))
@@ -167,22 +225,13 @@ function filterVerbTypes() {
   document.querySelectorAll('.verb-type-button').forEach(button => {
     const app = button.dataset.times.split(',');
     const ok = app.some(t => selTenses.includes(t));
-	
-    if (ok) {
-      button.disabled = false;
-      button.classList.remove('disabled');
-    } else {
-      button.disabled = true;
-      button.classList.add('disabled');
-      button.classList.remove('selected');
-    }
-     if (ok) {
-       button.classList.add('selected');
-     }	
-  });
-}
+      button.disabled = !ok;
+      button.classList.toggle('disabled', !ok);
+      if (!ok) button.classList.remove('selected');
+      else button.classList.add('selected'); // Mantener seleccionado si está habilitado (o según lógica previa)
+    });
+  }
 
-  // 1) Game-mode buttons (Infinite/Timer/Lives)
   const gameModeButtons = document.querySelectorAll('#game-modes .mode-button');
   gameModeButtons.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -190,14 +239,12 @@ function filterVerbTypes() {
       soundClick.play();
       gameModeButtons.forEach(b => b.classList.remove('selected-mode'));
       btn.classList.add('selected-mode');
-      // … resto de tu lógica actual (filterVerbTypes, console.log, etc.)
       document.getElementById('setup-screen').style.display = 'block';
       filterVerbTypes();
       console.log('Selected mode:', selectedGameMode);
     });
   });
 
-  // 2) Config-mode buttons (Produce/Recall)
   const configButtons = document.querySelectorAll('.config-button');
   configButtons.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -205,7 +252,6 @@ function filterVerbTypes() {
       soundClick.play();
       configButtons.forEach(b => b.classList.remove('selected-mode'));
       btn.classList.add('selected-mode');
-      // aquí pones sólo lo que quieras al cambiar Produce/Recall
       console.log('Selected config mode:', currentOptions.mode);
     });
   });
@@ -218,7 +264,8 @@ volumeSlider.addEventListener('input', () => {
   targetVolume = parseFloat(volumeSlider.value);
   music.volume = targetVolume;
 });
-let musicPlaying = false;
+
+let musicPlaying = true;
 
 musicToggle.addEventListener('click', () => {
   if (music.paused) {
@@ -232,6 +279,7 @@ musicToggle.addEventListener('click', () => {
     volumeSlider.disabled = true;
   }
 });
+
 function renderSetupRecords() {
   const container = document.getElementById('setup-records');
   if (!container) return;
@@ -244,7 +292,7 @@ function renderSetupRecords() {
     db.collection('records')
       .where('mode', '==', mode)
       .orderBy('score', 'desc')
-      .limit(5)
+      .limit(10)
       .get()
       .then(snapshot => {
         if (snapshot.empty) {
@@ -270,7 +318,7 @@ function renderSetupRecords() {
               <strong>${name}:</strong> ${score} pts
               <span class="record-date">${dateStr}</span>
               ${streak
-                ? `<span class="record-streak">· 🔥 Racha: ${streak}</span>`
+                ? `<span class="record-streak">· Max🔥: ${streak}</span>`
                 : ''}
             </div>
           `;
@@ -287,59 +335,59 @@ function renderSetupRecords() {
   function removeAccents(str) {
     return str.normalize('NFD').replace(/[\u0300-\u036f]/g,'');
   }
-function fadeIn(audio, to = 0.6, ms = 2000) {
-  const steps = 30;
-  const step = (to - audio.volume) / steps;
-  let count = 0;
-  const id = setInterval(() => {
-    audio.volume = Math.min(to, audio.volume + step);
-    if (++count >= steps) clearInterval(id);
-  }, ms / steps);
-}
-// ---> REEMPLAZAR ESTA FUNCIÓN <---
+
+
 async function loadVerbs() {
   let rawVerbData = [];
   try {
       const resp = await fetch(`verbos.json?cb=${Date.now()}`);
       if (!resp.ok) throw new Error('Network response was not ok');
-      rawVerbData = await resp.json();
+      initialRawVerbData = await resp.json();
   } catch (error) {
       console.error("Error fetching raw verb data:", error);
       alert("Could not load verb data file.");
-      return false; // Indicar fallo
+      return false; 
   }
 
+    const toggleReflexiveBtn = document.getElementById('toggle-reflexive');
+    const excludeReflexive = !toggleReflexiveBtn.classList.contains('selected');
+    const selectedVerbTypeButtons = Array.from(
+        document.querySelectorAll('.verb-type-button.selected')
+    );
+    const selectedTypes = selectedVerbTypeButtons.map(button => button.dataset.value);
 
-  // Obtener tipos seleccionados desde los BOTONES
-  const selectedTypes = Array.from(
-    document.querySelectorAll('.verb-type-button.selected') // Buscar botones con clase 'selected'
-  ).map(button => button.dataset.value); // Obtener el valor guardado en data-value
+    if (selectedTypes.length === 0) {
+        alert('Please select at least one verb irregularity type (e.g., Regular, Stem Change).');
+        return false;
+    }
 
-  if (selectedTypes.length === 0) {
-    alert('Please select at least one verb type.');
-    // Reactivar el botón 'regular' por defecto si no hay nada seleccionado? Opcional.
-    // const regularButton = document.querySelector('.verb-type-button[data-value="regular"]');
-    // if(regularButton) regularButton.classList.add('selected');
-    // selectedTypes.push('regular'); // Forzar selección de regular
-    return false; // O simplemente no permitir continuar
-  }
+    const filteredVerbs = initialRawVerbData.filter(v => {
+        const isVerbReflexive = (v.types.present && v.types.present.includes('reflexive')) ||
+                               (v.types.present_perfect && v.types.present_perfect.includes('reflexive')) ||
+                               (v.types.past_simple && v.types.past_simple.includes('reflexive'));
 
-  const filtered = rawVerbData.filter(v => {
-    return currentOptions.tenses.some(tense => {
-      const typesForTense = v.types[tense] || [];
-      return typesForTense.some(t => selectedTypes.includes(t));
+        if (excludeReflexive && isVerbReflexive) {
+            return false; // Si se deben excluir los reflexivos y este verbo lo es, filtrarlo.
+        }
+
+        // El verbo debe ser aplicable para al menos uno de los tiempos seleccionados
+        return currentOptions.tenses.some(tenseKey => {
+            const typesForTenseInVerb = v.types[tenseKey] || [];
+            // El verbo debe coincidir con alguno de los tipos de irregularidad seleccionados para ese tiempo.
+            return typesForTenseInVerb.some(verbType => selectedTypes.includes(verbType));
+        });
     });
-  });
 
-  if (filtered.length === 0) {
-    alert('No verbs available for the selected tense and verb types.');
-    return false;
-  }
-  allVerbData = filtered;
-  console.log(`Filtered down to ${allVerbData.length} verbs for tense '${currentOptions.tenses}' and types:`, selectedTypes);
-  return true; // Indicar éxito
+    if (filteredVerbs.length === 0) {
+        alert('No verbs available for the selected criteria (reflexive setting, tense, and verb types).');
+        allVerbData = [];
+        return false;
+    }
+
+    allVerbData = filteredVerbs;
+    console.log(`Filtered down to ${allVerbData.length} verbs. Reflexive setting: ${toggleReflexiveBtn.classList.contains('selected') ? 'Include' : 'Exclude'}. Selected tenses: ${currentOptions.tenses.join(', ')}. Selected types: ${selectedTypes.join(', ')}`);
+    return true;
 }
-// ---> FIN REEMPLAZO <---
 
   function updateRanking() {
     rankingBox.innerHTML = '<h3>🏆 Top 5</h3>';
@@ -347,7 +395,7 @@ async function loadVerbs() {
     db.collection("records")
       .where("mode", "==", selectedGameMode)
       .orderBy("score", "desc")
-      .limit(5)
+      .limit(10)
       .get()
       .then(snapshot => {
         snapshot.forEach(doc => {
@@ -363,10 +411,9 @@ async function loadVerbs() {
   function updateScore() {
     scoreDisplay.innerHTML =
       `<strong>🎯 Score:</strong> ${score}`
-      + ` | <strong>🔥 Streak:</strong> ${streak}`
-      + ` | <strong>×${multiplier.toFixed(1)}</strong>`;
+      + `  <strong>🔥 Streak:</strong> ${streak}`
+      + ` = <strong>×${multiplier.toFixed(1)}</strong>`;
     
-    // Aquí agregamos el control de la vibración progresiva
     const maxStreakForFullFire = 15;
     const container = document.getElementById('score-container');
     const containerHeight = container.clientHeight;  // altura real incluyendo padding
@@ -377,7 +424,6 @@ async function loadVerbs() {
     flameEl.style.height = `${fireHeight}px`;
     flameEl.style.opacity = streak > 0 ? '1' : '0';
 
-    // Añadir vibración progresiva a la racha
     const streakElement = document.getElementById('streak-display');
     if (streak >= 2 && streak <= 8) {
         streakElement.classList.add('vibrate');
@@ -386,24 +432,23 @@ async function loadVerbs() {
     }
 }
 
-let usedVerbs = [];  // Array para almacenar los verbos ya seleccionados
+let usedVerbs = [];  
 
 
 function prepareNextQuestion() {
-  // 1) Sanity checks
+  const oldNote = document.getElementById('prize-note');
+  if (oldNote) oldNote.remove();
+  
   if (!allVerbData || allVerbData.length === 0) {
     console.error("No valid verb data.");
     feedback.textContent = "Error: Could not load verb data.";
     return;
   }
 
-  // 2) Pick an unused verb (and reset if we’ve cycled through)
   const unusedVerbs = allVerbData.filter(v => !usedVerbs.includes(v.infinitive_es));
   if (unusedVerbs.length === 0) usedVerbs = [];
   const sourceArray = unusedVerbs.length > 0 ? unusedVerbs : allVerbData;
 
-  // 3) **Grab one at random** before you start referencing it
-     // Pick one at random, then sanity-check it
      const v = sourceArray[Math.floor(Math.random() * sourceArray.length)];
      if (!v || !v.conjugations || !v.infinitive_en) {
        console.error("Selected verb is invalid:", v);
@@ -416,7 +461,6 @@ function prepareNextQuestion() {
      }
      usedVerbs.push(v.infinitive_es);
 
-  // 4) Pick a pronoun and tense
   const originalPronoun = pronouns[Math.floor(Math.random() * pronouns.length)];
   const displayPronoun = (function() {
     const map = {
@@ -431,7 +475,6 @@ function prepareNextQuestion() {
   const tenseObj = tenses.find(t => t.value === tKey);
   const tenseLabel = tenseObj ? tenseObj.name : tKey;
 
-  // 5) Lookup the correct form
   const forms = v.conjugations[tKey];
   if (!forms) {
     console.error(`Missing conjugations for ${v.infinitive_es} in ${tKey}`);
@@ -445,21 +488,46 @@ function prepareNextQuestion() {
     return;
   }
 
-  // 6) Save question state
   currentQuestion = {
     verb: v,
     pronoun: originalPronoun,
     displayPronoun,
     answer: correctES,
-    expectedEN: v.infinitive_en.toLowerCase(),
+    expectedEN: v.infinitive_en.toLowerCase().replace(/^to\s+/, ''),
 	tenseKey: tKey,      // <— store it here
     hintLevel: 0
   };
   startTime = Date.now();
   ansES.value = '';
   ansEN.value = '';
+    isPrizeVerbActive = false; // Reset por defecto
+	qPrompt.classList.remove('prize-verb-active'); // Quitar estilo especial
 
-  // 7) Render the prompt
+	if (selectedGameMode === 'lives' && (currentOptions.mode === 'productive_easy' || currentOptions.mode === 'productive')) {
+	  let prizeChance = 0;
+	  if (currentOptions.mode === 'productive_easy') { // Conjugate
+		prizeChance = 1/40;
+	  } else if (currentOptions.mode === 'productive') { // Produce
+		prizeChance = 1/3;
+	  }
+
+	  const isVerbReflexive = currentQuestion.verb.infinitive_es.endsWith('se');
+	  const typesForCurrentTense = currentQuestion.verb.types[currentQuestion.tenseKey] || [];
+	  const isVerbIrregular = typesForCurrentTense.some(type => type !== 'regular') || typesForCurrentTense.length === 0; // Asume que si no tiene 'regular', es irregular.
+
+	  if (Math.random() < prizeChance && (isVerbIrregular || isVerbReflexive)) {
+		isPrizeVerbActive = true;
+		// Aplicar estilo visual especial (ver punto 🧩3)
+		qPrompt.classList.add('prize-verb-active'); // Añadir clase para CSS
+		 const prizeNote = document.createElement('div');
+		 prizeNote.id = 'prize-note';
+		 prizeNote.textContent = '🎁Lucky life if you conjugate this one correctly🎁!';
+		 qPrompt.parentNode.insertBefore(prizeNote, qPrompt.nextSibling);
+		// TODO: Modificar promptText para indicar que es premio
+		console.log("VERBO PREMIO ACTIVADO!");
+	  }
+	}
+
   let promptText;
   if (currentOptions.mode === 'productive') {
      promptText = `<span class="tense-label">${tenseLabel}:</span> `
@@ -469,9 +537,18 @@ function prepareNextQuestion() {
     esContainer.style.display = 'block';
     enContainer.style.display = 'none';
     ansES.focus();
-  } else {
+  } else if (currentOptions.mode === 'productive_easy') {
     promptText = `<span class="tense-label">${tenseLabel}:</span> `
-               + `"${correctES}"`;
+               + `"${v.infinitive_es}" – `
+               + `<span class="pronoun" id="${displayPronoun}">${displayPronoun}</span>`;
+    qPrompt.innerHTML = promptText;
+    esContainer.style.display = 'block';
+    enContainer.style.display = 'none';
+    ansES.focus();
+  } else {
+  // sólo la forma en español, p.ej. “come”
+    promptText = `<span class="tense-label">${tenseLabel}:</span> `
+               + `"${currentQuestion.answer}"`;
     qPrompt.innerHTML = promptText;
     esContainer.style.display = 'none';
     enContainer.style.display = 'block';
@@ -480,19 +557,25 @@ function prepareNextQuestion() {
 }
 
 function checkAnswer() {
+  let possibleCorrectAnswers = [];
   const rt    = (Date.now() - startTime) / 1000;
-  const bonus = Math.max(1, 2 - Math.max(0, rt - 5) * 0.1); // 💡 NUEVO
-  // Buscar las irregularidades del verbo actual en el tiempo actual
+  const bonus = Math.max(1, 2 - Math.max(0, rt - 5) * 0.1); 
   const irregularities = currentQuestion.verb.types[currentQuestion.tenseKey] || [];
   let correct  = false;
   let accentBonus = 0;
   const rawAnswerES = ansES.value.trim();
   let irregularBonus = 0;
+  let reflexiveBonus  = 0;
   if (irregularities.length > 0 && !irregularities.includes('regular')) {
-    irregularBonus = 5 * irregularities.length;  // 5 puntos por cada tipo de irregularidad
+    irregularBonus = 10 * irregularities.length;  // 5 puntos por cada tipo de irregularidad
   }
-  // 1.a) Comprobación de la respuesta
-  if (currentOptions.mode === 'productive') {
+  
+  const isReflexive = currentQuestion.verb.infinitive_es.endsWith('se');
+  if (isReflexive && toggleReflexiveBtn.classList.contains('selected')) {
+  reflexiveBonus = 10;
+  }
+
+  if (currentOptions.mode === 'productive' || currentOptions.mode === 'productive_easy') {
     let ans = ansES.value.trim().toLowerCase();
     let cor = currentQuestion.answer.toLowerCase();
     if (currentOptions.ignoreAccents) {
@@ -501,82 +584,153 @@ function checkAnswer() {
     }
     correct = ans === cor;
 
-    // Solo se asigna el bonus de tilde si la respuesta es correcta y lleva tilde
     if (correct && !currentOptions.ignoreAccents) {
       if (/[áéíóúÁÉÍÓÚ]/.test(currentQuestion.answer)) {
-        accentBonus = 5; // ajusta el valor si quieres
+        accentBonus = 8; 
       }
     }
   } else {
-  const ans = ansEN.value.trim().toLowerCase();
+    const ans = ansEN.value.trim().toLowerCase();
+    const tense = currentQuestion.tenseKey;        // p.ej. 'present'
+    const spanishForm = currentQuestion.answer;    
+    const verbData = currentQuestion.verb;
+	
+    if (ans === '' && currentQuestion.hintLevel === 0) {
+        feedback.innerHTML = `💡 The English infinitive is <strong>${verbData.infinitive_en}</strong>.`;
+		timerTimeLeft = Math.max(0, timerTimeLeft - 3);
+        currentQuestion.hintLevel = 1; // Marcar que la pista ha sido solicitada/dada
+        ansEN.focus();
+        return; 
+    }
 
-  // 1) Obtenemos la cadena cruda, ej. "to do/make" o "to do or to make"
-  const rawInf = currentQuestion.verb.infinitive_en;
+    const allForms = verbData.conjugations[tense];
+    if (!allForms) {
+        console.error(`Modo Receptivo: Faltan conjugaciones para ${verbData.infinitive_es} en ${tense}`);
+		timerTimeLeft = Math.max(0, timerTimeLeft - 3);
+        feedback.innerHTML = "Error: Datos del verbo incompletos para esta pregunta.";
+        return;
+    }
+    const spPronouns = Object.keys(allForms).filter(p => allForms[p] === spanishForm);
 
-  // 2) La dividimos en sinónimos (por "/" o " or ")
-  const synonyms = rawInf.split(/\/| or /i).map(s => s.trim());
+    const pronounGroupMap = {
+        yo:     ['I'],
+        tú:     ['you'],
+        él:     ['he','she','you'], 
+        ella:   ['he','she','you'],
+        usted:  ['you'], 
+        nosotros:['we'],
+        nosotras:['we'],
+        vosotros:['you all'], 
+        vosotras:['you all'],
+        ellos:  ['they','you'], 
+        ellas:  ['they','you'],
+        ustedes:['you all']         
+    };
 
-  // 3) Eliminamos el "to " para quedarnos con la raíz
-  const baseVerbs = synonyms.map(s => s.replace(/^to\s+/i, ''));
+    const engProns = Array.from(new Set(
+        spPronouns.flatMap(sp => pronounGroupMap[sp] || [])
+    ));
 
-  // 4) Comprobamos si es tercera persona singular
-  const isThirdSingular = currentQuestion.pronoun === 'él';
+    if (engProns.length === 0 && spPronouns.length > 0) {
+        console.warn(`Modo Receptivo: No se mapearon pronombres ingleses para la forma '${spanishForm}' (pronombres ES: ${spPronouns.join(', ')}). Usando infinitivo como pista.`);
+        if (ans !== '') { 
+            timerTimeLeft = Math.max(0, timerTimeLeft - 3);
+			feedback.innerHTML = `❌ Incorrecto. La pista es el infinitivo: <strong>${verbData.infinitive_en}</strong>.`;
+            currentQuestion.hintLevel = 1;
+            ansEN.value = '';
+            ansEN.focus();
+        }
+        return;
+    } else if (engProns.length === 0 && spPronouns.length === 0) {
+       console.error(`Modo Receptivo: No se encontraron pronombres en español para la forma '<span class="math-inline">\{spanishForm\}' del verbo '</span>{verbData.infinitive_es}'.`);
+       feedback.innerHTML = `Error: No se pudo procesar la pregunta. La pista es el infinitivo: <strong>${verbData.infinitive_en}</strong>.`;
+       currentQuestion.hintLevel = 1;
+       ansEN.value = '';
+       ansEN.focus();
+       return;
+    }
 
-  // 5) Obtenemos los pronombres válidos para este originalPronoun
-  const validPronouns = pronounMap[currentQuestion.pronoun] || [];
+	const formsForCurrentTenseEN = verbData.conjugations_en[tense];
 
-  // 6) Construimos todas las formas posibles
-  const expectedForms = [];
-  validPronouns.forEach(pr => {
-     baseVerbs.forEach(base => {
-       let form;
+	if (!formsForCurrentTenseEN) {
+		console.error(`Receptive Mode: Missing ENGLISH conjugations for ${verbData.infinitive_en} in tense ${tense}`);
+		feedback.innerHTML = `Error: English conjugation data is missing for the tense '${tense}'.`; // English
+		return;
+	}
 
-       // Caso especial para “to be”
-       if (
-         currentQuestion.verb.infinitive_en.trim().toLowerCase() === 'to be'
-       ) {
-         // pr es el pronombre en inglés, ej. "I","you","he","they"
-         switch (pr.toLowerCase()) {
-           case 'i':
-             form = 'am';
-             break;
-           case 'he':
-           case 'she':
-             form = 'is';
-             break;
-           default:
-             form = 'are';
-         }
-       } else {
-         // Lógica general: añade “s” en 3ª pers. singular
-         form = isThirdSingular
-           ? (base.endsWith('s') ? base : base + 's')
-           : base;
-       }
+	possibleCorrectAnswers = engProns.flatMap(englishPronoun => {
+		let formKey = englishPronoun.toLowerCase();
+		if (englishPronoun === 'I') { 
+			formKey = 'I';
+		}
 
-       expectedForms.push(`${pr.toLowerCase()} ${form}`);
-     });
-  });
+		const conjugatedVerbEN = formsForCurrentTenseEN[formKey];
 
-  // 7) Marcamos correcto si coincide con alguna forma válida
-  correct = expectedForms.includes(ans);
+		if (conjugatedVerbEN) {
+			return [`${englishPronoun.toLowerCase()} ${conjugatedVerbEN.toLowerCase()}`];
+		} else {
+			return []; 
+		}
+	});
+
+	if (possibleCorrectAnswers.length === 0 && engProns.length > 0) {
+		console.error(`Receptive Mode: Could not form any English answers for ${verbData.infinitive_en} (tense: ${tense}) with English pronouns: ${engProns.join(', ')}. Check conjugations_en in verbos.json.`);
+		feedback.innerHTML = `Error: No English conjugated forms found for the tense '${tense}'.`; // English
+		return;
+	}
+
+	correct = possibleCorrectAnswers.includes(ans);
 }
 
   if (correct) {
     soundCorrect.play();
+	
+	if (soundCorrect) {
+	  soundCorrect.pause();
+	  soundCorrect.currentTime = 0;
+	  soundCorrect.play().catch(()=>{/* ignora errores por autoplay */});
+}
+	
     streak++;
+	if (streak > bestStreak) bestStreak = streak;
     multiplier = Math.min(5, multiplier + 0.5);
-    // Añadir bonus de acentos a los puntos
-    const pts = Math.round(10 * multiplier * bonus) + accentBonus + irregularBonus;
+
+    
+	let basePoints = 10;  
+	if (currentOptions.mode === 'receptive') {  
+
+	  basePoints = 5;  
+	} else if (currentOptions.mode === 'productive') {  
+  
+ 	 basePoints = 15;  
+	}  
+  
+	multiplier = 1 + 0.1 * streak;  // o el incremento que prefieras
+	
+	const pts = Math.round(basePoints * multiplier * bonus)
+			  + accentBonus
+			  + irregularBonus
+			  + reflexiveBonus;
+	
     score += pts;
     let feedbackText = `✅ ¡Correcto!<br>Time: ${rt.toFixed(1)}s ×${bonus.toFixed(1)}`;
     if (accentBonus > 0) {
-       feedbackText += ` +${accentBonus} accent bonus!`; // <-- Mostrar bonus
+       feedbackText += ` +${accentBonus} accent bonus!`; 
     }
-
+	
+	let timeBonus;
+	if (streak <= 2)       timeBonus = 5;
+	else if (streak <= 4)  timeBonus = 6;
+	else if (streak <= 6)  timeBonus = 7;
+	else if (streak <= 8)  timeBonus = 8;
+	else if (streak <= 10) timeBonus = 9;
+	else                   timeBonus = 10;
+	// opcional: máximo 240 s
+	timerTimeLeft = Math.min(240, timerTimeLeft + timeBonus);
+	showTimeChange(timeBonus);
 
     updateScore();
-    setTimeout(prepareNextQuestion, 1500);
+    setTimeout(prepareNextQuestion, 200);
 	
     const irregularityEmojis = {
       "first_person_irregular": "🧏‍♀️",
@@ -604,32 +758,108 @@ function checkAnswer() {
      .filter(type => type !== 'regular')
      .map(type => `${irregularityEmojis[type] || ''} ${type.replace(/_/g, ' ')}`)
      .join('<br>');
+   
+   if (selectedGameMode === 'lives') {
+    // ---> INICIO MECÁNICA 1 <---
+    totalCorrectAnswersForLife++; // Este es el que acumula para esta mecánica específica
 
-    // luego en el feedback:
+    if (totalCorrectAnswersForLife >= correctAnswersToNextLife) {
+      remainingLives++;
+      // TODO: Llamar a función para animación/sonido de ganar vida
+      console.log("VIDA EXTRA por acumulación! Vidas:", remainingLives);
+	  // refrescar UI de vidas y título ANTES de la animación
+      updateTotalCorrectForLifeDisplay();
+      updateGameTitle();
+      showLifeGainedAnimation(); // Implementar esta función más adelante
+
+      nextLifeIncrement++; // El siguiente incremento es uno más
+      correctAnswersToNextLife += nextLifeIncrement; // Nuevo objetivo
+    }
+    updateTotalCorrectForLifeDisplay(); // Actualizar visualización
+    // ---> FIN MECÁNICA 1 <---
+	    // ---> INICIO MECÁNICA 2 <---
+    currentStreakForLife++;
+    if (currentStreakForLife >= streakGoalForLife) {
+      remainingLives++;
+      console.log("VIDA EXTRA por racha! Vidas:", remainingLives);
+	  updateGameTitle();
+	  updateStreakForLifeDisplay();
+	  updateTotalCorrectForLifeDisplay();
+      showLifeGainedAnimation();
+
+      lastStreakGoalAchieved = streakGoalForLife; // Guardar el objetivo que acabamos de alcanzar
+      streakGoalForLife += 2; // Siguiente objetivo
+      currentStreakForLife = 0;
+	  updateGameTitle();
+      updateStreakForLifeDisplay();
+    }
+    updateStreakForLifeDisplay();
+    // ---> FIN MECÁNICA 2 <---
+	// ---> INICIO MECÁNICA 3 <---
+    if (isPrizeVerbActive) {
+      remainingLives++;
+      // TODO: Llamar a función para animación/sonido de ganar vida (SONIDO ESPECIAL)
+      console.log("VIDA EXTRA por VERBO PREMIO! Vidas:", remainingLives);
+      showLifeGainedAnimation(true); // true indica que es por verbo premio para sonido especial
+
+      isPrizeVerbActive = false; // Se consume el premio
+      qPrompt.classList.remove('prize-verb-active'); // Quitar estilo
+    }
+    // ---> FIN MECÁNICA 3 <---
+    }
+
 	if (irregularBonus > 0) {
        feedbackText += `<br>+${irregularBonus} irregularity bonus!`;
        feedbackText += `<br><small>${irregularityDescriptions}</small>`;
     }
+	
+	if (reflexiveBonus > 0) {
+  	  feedbackText += `<br>+${reflexiveBonus} 🧩reflexive bonus!`;
+    }
+	
 	feedbackText += `<br>Points: ${pts}`;
     feedback.innerHTML = feedbackText;
     feedback.classList.add('vibrate'); 
 	
-    return;    // ← así detenemos aquí la función
+    return;   
   } else {
-    // 3) RESPUESTA INCORRECTA
     soundWrong.play();
     streak = 0;
     multiplier = 1.0;
-
-    // 4) MODO 5 VIDAS: resto vida y, si 0, game over
+	
+    if (isPrizeVerbActive) {
+      isPrizeVerbActive = false; // Se pierde la oportunidad del verbo premio
+      qPrompt.classList.remove('prize-verb-active'); // Quitar estilo
+    }
+	// ⌛ Penalización por error
+	timerTimeLeft = Math.max(0, timerTimeLeft - 3);
+	showTimeChange(-3);
+	
     if (selectedGameMode === 'lives') {
       remainingLives--;
-       updateGameTitle();               // actualiza racha y corazones
-      if (remainingLives === 0) {
-        soundGameOver.play();  // Reproducir el sonido de game over
+
+	  currentStreakForLife = 0;
+
+
+	  isPrizeVerbActive = false;
+	  // Actualizar los contadores visuales a su estado inicial
+	  updateTotalCorrectForLifeDisplay();
+	  updateStreakForLifeDisplay();
+	  // ---> FIN RESETEO <---
+	  currentStreakForLife = 0;
+      updateStreakForLifeDisplay();
+    // ---> FIN RESETEO MECÁNICA 2 <---
+
+	
+
+       updateGameTitle();              
+      if (remainingLives <= 0) {
+        soundGameOver.play();  
 		gameTitle.textContent = '💀 ¡Estás MUERTO!';
 		checkButton.disabled = true;
         skipButton.disabled  = true;
+		ansEN.disabled = true;
+		ansES.disabled = true;
 
         if (name) {
 		  db.collection("records").add({
@@ -639,65 +869,66 @@ function checkAnswer() {
         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
 		tense: currentOptions.tenses,
 		verb: currentQuestion.verb.infinitive_es,
-		streak: streak
+		streak: bestStreak
       })
       .then(() => {
         console.log("Record saved online!");
-		renderSetupRecords(); // refresca la lista con el nuevo récord
+		renderSetupRecords(); 
 		quitToSettings();
       })
       .catch(error => console.error("Error saving record:", error));
-
 	}
+	   return; 
+
         }
       } else {
         updateGameTitle();
       }
     }
     updateScore();
-    if (currentOptions.mode === 'receptive') {
-      if (currentQuestion.hintLevel === 0) {
-        // Pista 1: infinitivo en inglés
-        feedback.innerHTML =
-          `❌ Incorrect. <em>Clue 1:</em> infinitive is ` +
-          `<strong>${currentQuestion.verb.infinitive_en}</strong>.`;
-        currentQuestion.hintLevel = 1;
-      } else if (currentQuestion.hintLevel === 1) {
-        // Pista 2: todas las conjugaciones en español menos la del pronombre actual
-        const conj = currentQuestion.verb.conjugations[currentOptions.tenses];
-        const botones = Object.entries(conj)
-          .filter(([pr]) => pr !== currentQuestion.pronoun)
-          .map(([, form]) => `<span class="hint-btn">${form}</span>`)
-          .join('');
-        feedback.innerHTML =
-          `❌ Incorrect. <em>Clue 2:</em> ` + botones;
-        currentQuestion.hintLevel = 2;
-      }
-      ansEN.value = '';
-      setTimeout(() => ansEN.focus(), 0);
-      return;
-    }
-    if (currentOptions.mode === 'productive') {
-      if (currentQuestion.hintLevel === 0) {
-        feedback.innerHTML = 
-          `❌ Incorrect. <em>Clue 1:</em> infinitive is ` +
-          `<strong>${currentQuestion.verb.infinitive_es}</strong>.`;
-        currentQuestion.hintLevel = 1;
-      } else if (currentQuestion.hintLevel === 1) {
-        const conj    = currentQuestion.verb.conjugations[currentOptions.tenses];
-        const botones = Object.entries(conj)
-            .filter(([pr]) => pr !== currentQuestion.pronoun)
-            .map(([, form]) => `<span class="hint-btn">${form}</span>`)
-            .join('');
-        feedback.innerHTML =
-          `❌ Incorrect. <em>Pista 2:</em> ` + botones;
-      }        
-      ansES.value = '';
-      setTimeout(() => ansES.focus(), 0);
-    
-  }
+		if (currentOptions.mode === 'receptive') {
+		let hintMessage = `💡 The English infinitive is <strong>${currentQuestion.verb.infinitive_en}</strong>.`;
+		if (possibleCorrectAnswers && possibleCorrectAnswers.length > 0) {
+			const exampleAnswers = possibleCorrectAnswers.slice(0, Math.min(possibleCorrectAnswers.length, 3)).map(a => `'${a}'`);
+		} else {
+			hintMessage += `<br>Could not determine specific example answers. Check verb data.`;
+		}
+
+		feedback.innerHTML = hintMessage;
+		ansEN.value = '';
+		setTimeout(() => ansEN.focus(), 0);
+		return;
+	} else if (currentOptions.mode === 'productive' || currentOptions.mode === 'productive_easy') {
+		// Existing hint logic for productive modes (should be in English already based on your original code)
+		if (currentQuestion.hintLevel === 0) {
+			feedback.innerHTML =
+			  `❌ Incorrect. <em>Clue 1:</em> infinitive is ` +
+			  `<strong>${currentQuestion.verb.infinitive_es}</strong>.`; // This refers to Spanish infinitive, which is contextually correct for this mode
+			currentQuestion.hintLevel = 1;
+		} else if (currentQuestion.hintLevel === 1) {
+			// Ensure tenseKey is used if currentOptions.tenses can be an array
+			const conjTenseKey = currentQuestion.tenseKey;
+			const conj = currentQuestion.verb.conjugations[conjTenseKey];
+			const botones = Object.entries(conj || {}) // Add guard for conj
+				.filter(([pr]) => pr !== currentQuestion.pronoun)
+				.map(([, form]) => `<span class="hint-btn">${form}</span>`)
+				.join('');
+			feedback.innerHTML =
+				`❌ Incorrect. <em>Clue 2:</em> ` + botones;
+			// currentQuestion.hintLevel = 2; // No level 2 in original
+		}
+		ansES.value = '';
+		setTimeout(() => ansES.focus(), 0);
+	}
 }
 function startTimerMode() {
+  document.getElementById('timer-container').style.display = 'flex';
+  timerTimeLeft      = countdownTime;     
+  totalPlayedSeconds = 0;
+  document.getElementById('timer-clock').textContent   = `⏳ ${formatTime(timerTimeLeft)}`;
+  document.getElementById('total-time').textContent    = `🏁 ${formatTime(totalPlayedSeconds)}`;
+  document.getElementById('time-change').textContent   = '';  // vacío al inicio
+  
   feedback.innerHTML = '';
   feedback.classList.remove('vibrate');
   score = 0; streak = 0; multiplier = 1.0;
@@ -705,13 +936,12 @@ function startTimerMode() {
   setupScreen.style.display = 'none';
   gameScreen.style.display = 'block';
   updateGameTitle();
-
   soundStart.play();
 
   setTimeout(() => {
     music.volume = 0;                // reinicia a 0
     music.play();
-    fadeIn(music, targetVolume);     // sube en 2 s
+
     musicToggle.style.display = 'block';
     volumeSlider.style.display = 'block';
     volumeSlider.value = targetVolume;
@@ -720,36 +950,26 @@ function startTimerMode() {
 
   prepareNextQuestion();
 
-  // ⏳ Reloj contrarreloj
-  let timeLeft = countdownTime;
-  const clock = document.createElement('div');
-  clock.id = 'timer-clock';
-  clock.textContent = `⏳ ${Math.floor(timeLeft / 60)}:${(timeLeft % 60).toString().padStart(2, '0')}`;
-  clock.id = 'timer-clock';
-  clock.style.fontSize = '40px';
-  clock.style.color = 'white';
-  clock.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-  clock.style.padding = '10px 20px';
-  clock.style.borderRadius = '12px';
-  clock.style.zIndex = '999';
-  clock.style.fontFamily = 'inherit';
-  clock.style.transition = 'color 0.3s ease, transform 0.3s ease';
-  const questionArea = document.getElementById('question-area');
-  questionArea.parentNode.insertBefore(clock, questionArea);
+	countdownTimer = setInterval(() => {
+	  timerTimeLeft--;
+	  totalPlayedSeconds++;
+	document.getElementById('timer-clock').textContent  = `⏳ ${formatTime(timerTimeLeft)}`;
+	document.getElementById('total-time').textContent   = `🏁 ${formatTime(totalPlayedSeconds)}`;
 
-  countdownTimer = setInterval(() => {
-    timeLeft--;
-    clock.textContent = `⏳ ${Math.floor(timeLeft / 60)}:${(timeLeft % 60).toString().padStart(2, '0')}`;
 
-    if (timeLeft <= 10) {
-      clock.style.color = '#ff4c4c';
-      clock.style.transform = 'scale(1.2)';
-    }
+	  const clk = document.getElementById('timer-clock');
+	  if (timerTimeLeft <= 10) {
+		clk.style.color = '#ff4c4c';
+		clk.style.transform = 'scale(1.1)';
+	  } else {
+		clk.style.color = 'white';
+		clk.style.transform = 'scale(1)';
+	  }
 
-    if (timeLeft <= 0) {
+   if (timerTimeLeft <= 0) {
+	  soundGameOver.play();
       clearInterval(countdownTimer);
-      clock.remove();
-	  soundGameOver.play();  // Reproducir el sonido de game over
+  
       const name = prompt('⏱️ Time is up! Your name?');
       if (name) {
         db.collection("records").add({
@@ -759,7 +979,7 @@ function startTimerMode() {
           timestamp: firebase.firestore.FieldValue.serverTimestamp(),
           tense: currentOptions.tenses,
           verb: currentQuestion.verb.infinitive_es,
-          streak: streak
+          streak: bestStreak
         })
         .then(() => {
           console.log("Record saved online!");
@@ -768,31 +988,149 @@ function startTimerMode() {
         .catch(error => console.error("Error saving record:", error));
       }
 
-      // ¡OJO! quitToSettings SOLO aquí
       quitToSettings();
     }
   }, 1000);
 }
+
+function updateTotalCorrectForLifeDisplay() {
+  const displayElement = document.getElementById('total-correct-for-life-display');
+  if (displayElement && selectedGameMode === 'lives') {
+    const needed = correctAnswersToNextLife - totalCorrectAnswersForLife;
+    displayElement.textContent = `🎯 ${needed} to get 1❤️`;
+  } else if (displayElement) {
+    displayElement.textContent = ''; // Limpiar si no es modo vidas
+  }
+}
+
 function skipQuestion() {
-  // 1) Rompemos la racha
-  streak = 0;
-  multiplier = 1.0;
-  updateScore();
+	console.log('⏭ skipQuestion called');
+	if (soundSkip) {
+	  soundSkip
+		.play()
+		.then(() => console.log('🔈 skip sound played'))
+		.catch(err => console.error('❌ skip sound error:', err));
+	} else {
+	  console.error('❌ soundSkip is undefined');
+	}
+    streak = 0;
+    multiplier = 1.0;
+    updateScore();
+	timerTimeLeft = Math.max(0, timerTimeLeft - 3);
+	showTimeChange(-3);
+	
+    let feedbackMessage;
 
-  // 2) Mostramos la solución completa
-  const solucion = currentQuestion.answer;
-  feedback.innerHTML = 
-    `⏭ Skipped. The right conjugation was <strong>"${solucion}"</strong>.`;
+    if (currentOptions.mode === 'receptive') {
+		const tense = currentQuestion.tenseKey;
+		const spanishForm = currentQuestion.answer;
+		const verbData = currentQuestion.verb;
 
-  // 3) Pasamos a la siguiente pregunta
-  soundSkip.play(); // Reproduce el sonido del skip
-  setTimeout(prepareNextQuestion, 1000);
+		const allFormsForTenseES = verbData.conjugations[tense];
+		if (!allFormsForTenseES) {
+			feedbackMessage = `⏭ Skipped. Error: Spanish verb data incomplete for tense '${tense}'. English Infinitive: <strong>${verbData.infinitive_en}</strong>`;
+		} else {
+			const spPronounsMatchingForm = Object.keys(allFormsForTenseES)
+				.filter(p => allFormsForTenseES[p] === spanishForm);
+
+			const pronounGroupMap = { /* ... your existing pronounGroupMap ... */
+				yo: ['I'], tú: ['you'], él: ['he', 'she', 'you'], ella: ['he', 'she', 'you'],
+				usted: ['you'], nosotros: ['we'], nosotras: ['we'], vosotros: ['you'],
+				vosotras: ['you'], ellos: ['they', 'you'], ellas: ['they', 'you'], ustedes: ['you']
+			};
+
+			const engProns = Array.from(new Set(
+				spPronounsMatchingForm.flatMap(sp => pronounGroupMap[sp] || [])
+			));
+
+			if (engProns.length > 0) {
+				const formsForCurrentTenseEN_Skip = verbData.conjugations_en[tense];
+
+				if (!formsForCurrentTenseEN_Skip) {
+					feedbackMessage = `⏭ Skipped. Error: Missing ENGLISH conjugations for '${verbData.infinitive_en}' in tense '${tense}'. English Infinitive: <strong>${verbData.infinitive_en}</strong>`;
+				} else {
+					const expectedAnswersArray = engProns.flatMap(englishPronoun => {
+						let formKey = englishPronoun.toLowerCase();
+						if (englishPronoun === 'I') {
+							formKey = 'I';
+						}
+						const conjugatedVerbEN = formsForCurrentTenseEN_Skip[formKey];
+						if (conjugatedVerbEN) {
+							return [`<strong>${englishPronoun.toLowerCase()} ${conjugatedVerbEN.toLowerCase()}</strong>`];
+						}
+						return [];
+					});
+
+					if (expectedAnswersArray.length > 0) {
+						feedbackMessage = `⏭ Skipped. The correct answer was: ${expectedAnswersArray.join(' or ')}.`;
+					} else {
+						feedbackMessage = `⏭ Skipped. The English infinitive is <strong>${verbData.infinitive_en}</strong>. (Could not determine specific English conjugation for '${spanishForm}' in tense '${tense}')`;
+					}
+				}
+			} else {
+				feedbackMessage = `⏭ Skipped. The English infinitive is <strong>${verbData.infinitive_en}</strong>. (Could not determine English pronouns for '${spanishForm}')`;
+			}
+		}
+	} else {
+    // Original logic for productive modes (should be in English)
+		const correctAnswer = currentQuestion.answer;
+		feedbackMessage = `⏭ Skipped. The right conjugation was <strong>"${correctAnswer}"</strong>.`;
+	}
+	if (selectedGameMode === 'lives') {
+		// 1) Reset de racha
+		currentStreakForLife = 0;
+		updateStreakForLifeDisplay();
+
+		// 2) Quitar 1 vida
+		remainingLives--;
+		updateGameTitle();
+		updateTotalCorrectForLifeDisplay();
+
+		// 3) Comprobar GAME OVER
+		if (remainingLives <= 0) {
+		  soundGameOver.play();
+		  gameTitle.textContent   = '💀¡Estás MUERTO!💀';
+		  checkButton.disabled    = true;
+		  skipButton.disabled     = true;
+		  ansEN.disabled          = true;
+		  ansES.disabled          = true;
+
+		  if (name) {
+			db.collection("records").add({
+			  name: name,
+			  score: score,
+			  mode: selectedGameMode,
+			  timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+			  tense: currentOptions.tenses,
+			  verb: currentQuestion.verb.infinitive_es,
+			  streak: bestStreak
+			})
+			.then(() => { renderSetupRecords(); quitToSettings(); })
+			.catch(console.error);
+		  }
+		  return;  // NO llamamos a prepareNextQuestion
+		}
+	  }
+
+	  // Si no es game-over, preparamos la siguiente pregunta
+	  setTimeout(prepareNextQuestion, 1500);
+	}
+
+function updateStreakForLifeDisplay() {
+  const el = document.getElementById('streak-for-life-display');
+  if (!el || selectedGameMode !== 'lives') {
+    if (el) el.textContent = '';
+    return;
+  }
+
+  // Cuenta atrás: faltan “remaining” aciertos para la próxima vida
+  const remaining = Math.max(streakGoalForLife - currentStreakForLife, 0);
+  el.innerHTML = `🔥 <span class="math-inline">${remaining}</span> to get 1❤️`;
 }
 
 function quitToSettings() {
+  document.getElementById('timer-container').style.display = 'none';
   clearInterval(countdownTimer);
-  const existingClock = document.getElementById('timer-clock');
-  if (existingClock) existingClock.remove();
   music.pause();
   music.currentTime = 0;
   musicToggle.textContent = '🔇';
@@ -800,36 +1138,45 @@ function quitToSettings() {
   volumeSlider.disabled = true;
   musicPlaying = false;
 
-
   gameScreen.style.display = 'none';
   setupScreen.style.display = 'block';
   document.getElementById('setup-records').classList.remove('hidden');
 
-  // Resetea el formulario y las variables
-  setupForm.reset();
-  selectedGameMode = 'infinite';
-  renderTenseButtons();
-  renderVerbTypeButtons();
-  filterVerbTypes();
+    // Restablecer selecciones de botones a sus valores predeterminados
+    selectedGameMode = 'infinite'; // Modo de juego por defecto
+    document.querySelectorAll('#game-modes .mode-button').forEach(btn => {
+        btn.classList.toggle('selected-mode', btn.dataset.mode === 'infinite');
+    });
+    document.querySelectorAll('.config-button').forEach(btn => {
+        // Asegúrate de que 'productive' es el modo de configuración por defecto deseado
+        btn.classList.toggle('selected-mode', btn.dataset.mode === 'productive');
+    });
+     // Actualizar currentOptions.mode al modo por defecto
+    const defaultConfigButton = document.querySelector('.config-button[data-mode="productive"]');
+    if (defaultConfigButton) {
+        currentOptions.mode = defaultConfigButton.dataset.mode;
+    }
+	
+    renderTenseButtons(); // Restaura los botones de tiempo (Presente seleccionado por defecto)
+    renderVerbTypeButtons(); // Restaura los botones de tipo de verbo (todos seleccionados por defecto)
+    filterVerbTypes(); // Aplica filtros basados en los tiempos por defecto
 
-  // Elimina el resaltado de TODOS los botones de modo
-  document.querySelectorAll('#game-modes .mode-button').forEach(btn => {
-    btn.classList.toggle('selected-mode', btn.dataset.mode === 'infinite');
-  })
-  document.querySelectorAll('.config-button').forEach(btn => {
-    btn.classList.toggle('selected-mode', btn.dataset.mode === 'productive');
-  });
-  // Rehabilita los botones que pudimos desactivar
-  checkButton.disabled = false;
-  skipButton.disabled  = false;
-  endButton.disabled   = false;
+    // Asegurar que el botón de reflexivos esté en su estado HTML por defecto (seleccionado)
+    const reflexBtn = document.getElementById('toggle-reflexive');
+    if (reflexBtn && !reflexBtn.classList.contains('selected')) { // Si no está seleccionado, selecciónalo
+        reflexBtn.classList.add('selected');
+    } else if (reflexBtn && reflexBtn.classList.contains('selected')) {
+        // Si ya está seleccionado (estado por defecto), no hagas nada o asegúralo.
+    }
 
-  // Asegura que vuelvan a verse los botones de modo
-  document.getElementById('game-modes').style.display = 'flex';
+  loadVerbs();
 
-  updateRanking();
-  remainingLives = 5;
+    checkButton.disabled = false; skipButton.disabled = false; endButton.disabled = false;
+    document.getElementById('game-modes').style.display = 'flex';
+    updateRanking();
+    remainingLives = 5;
 }
+
   setupForm.addEventListener('submit', async e => {
   e.preventDefault();
   const selTenses = Array.from(
@@ -850,10 +1197,18 @@ function quitToSettings() {
   gameScreen.style.display = 'block';
   updateGameTitle();
   updateRanking();
+const livesMechanicsDisplay = document.getElementById('lives-mechanics-display');
 if (selectedGameMode === 'lives') {
-  remainingLives = 5;
+  livesMechanicsDisplay.style.display = 'block';
+  remainingLives = 5; // Reset
+  // ... resetear variables de Mecánica 1 y 2 ...
+  updateTotalCorrectForLifeDisplay();
+  updateStreakForLifeDisplay();
+} else {
+  livesMechanicsDisplay.style.display = 'none';
 }
-updateGameTitle();
+updateGameTitle(); // Para que muestre las vidas
+
   if (selectedGameMode === 'timer') {
     const countdownDiv = document.createElement('div');
     countdownDiv.id = 'countdown-overlay';
@@ -889,7 +1244,7 @@ updateGameTitle();
   setTimeout(() => {
     music.volume = 0;                // reinicia a 0
     music.play();
-    fadeIn(music, targetVolume);     // sube en 2 s
+ 
     musicToggle.style.display = 'block';
     volumeSlider.style.display = 'block';
     volumeSlider.value = targetVolume;
@@ -956,11 +1311,37 @@ function renderVerbTypeButtons() {
 }
 
 function updateGameTitle() {
-  const tm = currentOptions.tenses.map(t => t.replace('_',' ')).join(', ');
-  let title = `Mode: ${currentOptions.mode} | Tenses: ${tm}`;
-  if (selectedGameMode === 'lives') title += ` | 💖 ${remainingLives}`;
-  gameTitle.textContent = title;
-}                       // cierra updateGameTitle()
+  // 1) Define etiquetas amigables para cada modo
+  const modeLabels = {
+    'infinite':   'Infinite',
+    'timer':      'Timer 4m',
+    'lives':      'Lives',
+    'receptive':  'Recall',
+    'productive_easy': 'Conjugate',
+    'productive': 'Produce'
+  };
+
+  // 2) Construye la lista de tiempos separados por comas
+  const tm = currentOptions.tenses
+    .map(t => t.replace('_', ' '))
+    .join(', ');
+
+  // 3) Elige la etiqueta correcta o, si no existe, el valor crudo
+  const displayMode = modeLabels[currentOptions.mode] || currentOptions.mode;
+
+  // 4) Monta el HTML del título con saltos de línea
+  let html = `Mode: ${displayMode}<br>`;
+  html += `Tenses: ${tm}`;
+
+  // 5) Si es modo vidas, añade otra línea con el contador
+  if (selectedGameMode === 'lives') {
+    html += `<br><span id="lives-count" style="font-size: 1.5em; vertical-align: middle;">${remainingLives}</span><img src="images/heart.png" alt="life" style="width:40px; height:40px; vertical-align: middle; margin-left: 6px;">`;
+  }
+
+  // 6) Renderiza como HTML en lugar de textContent
+  gameTitle.innerHTML = html;
+}
+
 function typewriterEffect(textElement, text, interval) {
   let index = 0;
   const typeInterval = setInterval(() => {
@@ -975,58 +1356,58 @@ function typewriterEffect(textElement, text, interval) {
 
   if (helpButton && tooltip) {
       helpButton.addEventListener('mouseover', (event) => {
-          // 1. Definir la estructura HTML del contenido del tooltip
           const tooltipContentHTML = `
               <div class="tooltip-row">
                   <div class="tooltip-box">
-                      <h5>♾️ Infinite Mode</h5>
+                      <h5>♾️ Infinite </h5>
                       <p>Play without time or life limits. Aim for the highest score and longest streak!</p>
                   </div>
                   <div class="tooltip-box">
-                      <h5>⏱️ Timer Mode</h5>
+                      <h5>⏱️ Timer</h5>
                       <p>Score as many points as possible within the 4-minute time limit.</p>
                   </div>
                   <div class="tooltip-box">
-                      <h5>💖 Lives Mode</h5>
+                      <h5>💖 Lives</h5>
                       <p>You have 5 lives. Each incorrect answer costs one life. Survive as long as you can!</p>
                   </div>
               </div>
               <div class="tooltip-row">
                   <div class="tooltip-box">
-                      <h5>⌨️ Produce Setting</h5>
-                      <p>Given the English verb and a Spanish pronoun, type the correct Spanish conjugation.</p>
-                      <div class="example-prompt">Example: "to practice" - yo</div>
-                      <div class="typing-animation" id="produce-anim"></div>
-                  </div>
-                  <div class="tooltip-box">
-                      <h5>💭 Recall Setting</h5>
-                      <p>Given a Spanish tense and conjugation, type the corresponding English pronoun and <strong>present tense</strong> verb.</p>
-                      <div class="example-prompt">Example: "SIMPLE PAST: Comí"</div>
+                      <h5>💭 Recall</h5>
+                      <p>EASY - Given a Spanish tense and conjugation, type the English pronoun and <strong>base verb in present tense</strong>.<p><strong>Base points:</strong> +5
+                      <div class="example-prompt">"SIMPLE PAST: recordé"</div>
                       <div class="typing-animation" id="recall-anim"></div>
                   </div>
+                  <div class="tooltip-box">
+                      <h5>⚙️ Conjugate</h5>
+                      <p>NORMAL - Given a Spanish verb and pronoun, type the correct conjugated form in Spanish.<p><strong>Base points:</strong> +10
+                      <div class="example-prompt">"conjugar – nosotros"</div>
+                      <div class="typing-animation" id="easy-anim"></div>
+                  </div>
+				  <div class="tooltip-box">
+				      <h5>⌨️ Produce</h5>
+				      <p>HARD - Given the English verb and a Spanish pronoun, type the correct conjugation in Spanish. <p><strong>Base points:</strong> +15
+	                  <div class="example-prompt">"Present: to love – yo"</div>
+                      <div class="typing-animation" id="produce-anim"></div>
+				  </div>
               </div>
           `;
-          tooltip.innerHTML = tooltipContentHTML; // Insertar el HTML en el div tooltip
-
-          // 2. Posicionar el tooltip cerca del botón
-          const btnRect = helpButton.getBoundingClientRect(); // Posición del botón
+          tooltip.innerHTML = tooltipContentHTML; 
+          /*const btnRect = helpButton.getBoundingClientRect(); // Posición del botón
           const bodyRect = document.body.getBoundingClientRect(); // Posición del body
           const scrollOffsetY = window.scrollY; // Cuánto se ha hecho scroll vertical
           const scrollOffsetX = window.scrollX; // Cuánto se ha hecho scroll horizontal
 		  
 
-          // Intento inicial: colocar debajo del botón
           let topPos = btnRect.bottom + scrollOffsetY + 10; // Más margen hacia abajo
           let leftPos = btnRect.left + scrollOffsetX - 50;  // Desplaza a la izquierda
           
 
-          // Aplicar posición inicial y mostrar ANTES de calcular ajustes
           tooltip.style.top = `${topPos}px`;
-          tooltip.style.left = `${leftPos}px`;
+          tooltip.style.left = `${leftPos}px`;*/
           tooltip.style.display = 'block';
 
-          // 3. Ajustar posición si se sale de la pantalla (después de mostrar para obtener tamaño real)
-          const tooltipRect = tooltip.getBoundingClientRect(); // Tamaño y posición REAL del tooltip mostrado
+          /*const tooltipRect = tooltip.getBoundingClientRect(); // Tamaño y posición REAL del tooltip mostrado
 
           // Ajustar izquierda si se sale por la derecha
           if (tooltipRect.right > window.innerWidth - 10) {
@@ -1036,24 +1417,26 @@ function typewriterEffect(textElement, text, interval) {
           if (tooltipRect.bottom > window.innerHeight - 10) {
              topPos = btnRect.top - bodyRect.top + scrollOffsetY - tooltipRect.height - 5; // Arriba - 5px margen
           }
-          // Asegurar que no se salga por la izquierda
-          leftPos = Math.max(10 + scrollOffsetX, leftPos);
+¡          leftPos = Math.max(10 + scrollOffsetX, leftPos);
 
           // Reaplica la posición ajustada
           tooltip.style.top = `${topPos}px`;
-          tooltip.style.left = `${leftPos}px`;
+          tooltip.style.left = `${leftPos}px`;*/
 
-          // 4. Iniciar las animaciones DESPUÉS de que el tooltip sea visible
           const produceAnimElement = document.getElementById('produce-anim');
           const recallAnimElement = document.getElementById('recall-anim');
 
           if (produceAnimElement) {
               // Usar setTimeout pequeño para asegurar que el DOM se actualice antes de animar
-              setTimeout(() => typeWriter(produceAnimElement, 'practico', 300), 50);
+              setTimeout(() => typeWriter(produceAnimElement, 'amo', 300), 50);
           }
           if (recallAnimElement) {
-               setTimeout(() => typeWriter(recallAnimElement, 'I  eat', 300), 50);
+               setTimeout(() => typeWriter(recallAnimElement, 'I remember', 300), 50);
           }
+		  const easyAnimElement = document.getElementById('easy-anim');
+          if (easyAnimElement) {
+               setTimeout(() => typeWriter(easyAnimElement, 'conjugamos', 300), 50);
+}
 
       }); // Fin del listener 'mouseover'
 
@@ -1073,6 +1456,111 @@ const leftBubbles = document.getElementById('left-bubbles');
 const rightBubbles = document.getElementById('right-bubbles');
 let bubblesActive = false;
 let leftBubbleInterval, rightBubbleInterval;
+
+function showLifeGainedAnimation() {
+	
+  // 1) SONIDO: ver si la variable existe y está lista
+  if (soundLifeGained) {
+    try {
+      soundLifeGained.currentTime = 0;
+      const playPromise = soundLifeGained.play();
+      if (playPromise && typeof playPromise.then === 'function') {
+        playPromise
+          .then(() => console.log('🔊 soundLifeGained.play() OK'))
+          .catch(err => console.warn('⚠️ Error al reproducir sonido:', err));
+      }
+    } catch (e) {
+      console.error('⚠️ Excepción al reproducir sonido:', e);
+    }
+  } else {
+    console.warn('⚠️ soundLifeGained es null o undefined');
+  }
+  
+  // 2) POP en contador de vidas
+  const livesEl = document.getElementById('lives-count');
+  console.log('❤️ Preparando pop en:', livesEl);
+  if (livesEl) {
+    livesEl.classList.add('just-gained');
+    livesEl.addEventListener('animationend', () => {
+      livesEl.classList.remove('just-gained');
+    }, { once: true });
+  }
+
+  // 3) CONFETI: asegurarnos de que el canvas está visible
+  const canvas = document.getElementById('life-confetti-canvas');
+  console.log('🎨 Canvas encontrado:', canvas);
+  if (!canvas) return;
+  // mostrarlo explícitamente
+  canvas.style.display = 'block';
+  console.log('🎨 Canvas style after display:', getComputedStyle(canvas).display);
+
+  
+  const ctx  = canvas.getContext('2d');
+  const rect = canvas.getBoundingClientRect();
+  canvas.width  = rect.width;
+  canvas.height = rect.height;
+  console.log('🎨 Canvas tamaño de backing:', canvas.width, canvas.height);
+
+  // generar partículas…
+  const particles = [];
+  const total     = 80;
+  const colors    = ['#ff5e5e', '#ffb3b3', '#ffe2e2', 'lightgreen', '#90ee90']; // Añadido verdes
+    
+	function drawHeart(x, y, size, color) {
+    ctx.save();
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    const topY = y - size / 3;
+    ctx.moveTo(x, topY);
+    ctx.bezierCurveTo(x, y - size, x - size, y - size/3, x, y + size);
+    ctx.bezierCurveTo(x + size, y - size/3, x, y - size, x, topY);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  for (let i = 0; i < total; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: canvas.height + Math.random() * 50, // Iniciar desde abajo o justo fuera de la vista
+      vx: Math.random() * 8 + 2,              // entre +2 y +10 px/frame
+      vy: -Math.random() * 15 - 8,    
+      size: Math.random() * 10 + 5,           // Tamaños un poco más grandes
+      color: colors[Math.floor(Math.random() * colors.length)],
+      shape: Math.random() < 0.5 ? 'heart' : 'square', // Más corazones
+      rotation: Math.random() * 360,
+      rotationSpeed: (Math.random() - 0.5) * 5
+    });
+  }
+
+  let start = null;
+  function animate(ts){
+    if(!start) start = ts;
+    const elapsed = ts - start;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    particles.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.12; // Gravedad un poco más fuerte
+      p.rotation += p.rotationSpeed;
+      if(p.shape==='heart'){
+        drawHeart(p.x,p.y,p.size,p.color);
+      } else {
+        ctx.fillStyle = p.color;
+        ctx.fillRect(p.x,p.y,p.size,p.size);
+      }
+    });
+    if(elapsed < 2500){
+      requestAnimationFrame(animate);
+    } else {
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      canvas.style.display = 'none';
+      console.log('🎨 Animación terminada y canvas oculto');
+    }
+  }
+  requestAnimationFrame(animate);
+}
+
+
 
 function startBubbles() {
   if (bubblesActive) return;   // ya arrancadas
@@ -1112,8 +1600,8 @@ function createBubble(side) {
   container.appendChild(bubble);
   bubble.addEventListener('click', () => {
   // 1) Reproducir solo el sonido
-  soundBubblePop.currentTime = 0;
-  soundBubblePop.play();
+  soundbubblepop.currentTime = 0;
+  soundbubblepop.play();
 
   // 2) Quitar la burbuja
   bubble.remove();

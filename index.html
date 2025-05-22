@@ -18,9 +18,9 @@
 <link  rel="stylesheet" href="style.css">
 <audio id="sound-correct" src="sounds/correct.mp3"></audio>
 <audio id="sound-wrong" src="sounds/wrong.mp3"></audio>
-<audio id="sound-click" src="sounds/click.mp3"></audio>
+<audio id="sound-click" preload="auto" src="sounds/click.mp3"></audio>
 <audio id="sound-start" src="sounds/start-verb.mp3"></audio>
-<audio id="sound-bubble-pop" src="soundBubblePop.mp3"></audio>
+<audio id="sound-bubble-pop" src="sounds/soundbubblepop.mp3"></audio>
 <script src="https://www.google.com/recaptcha/enterprise.js?render=6LeocycrAAAAAADtYPa2_d2PCH5mpEi-zx1yw_j4"></script>
 </head>
   
@@ -39,7 +39,7 @@
     min="0" max="1" step="0.05" value="0.6"
     style="position:fixed; bottom:20px; right:130px; width:120px;
           cursor:pointer; display:none;">
-		  
+		 
 <!-- 🔘 BOTONES DE MODO -->
 <div id="setup-screen" class="screen">
   <div id="game-modes" class="mode-selector">
@@ -51,14 +51,25 @@
 
    <form id="setup-form">
     <p><strong>Settings:</strong></p>
-    <div class="mode-selector"> <button type="button" class="mode-button config-button selected-mode" data-mode="productive">⌨️Produce⌨️</button>
-        <button type="button" class="mode-button config-button" data-mode="receptive">💭Recall💭</button>
+    <div class="mode-selector"> 
+	    <button type="button" class="mode-button config-button" data-mode="receptive">💭ReCall💭</button>
+		<button type="button" class="mode-button config-button selected-mode" data-mode="productive_easy">⚙️conjugATE⚙️</button>
+	    <button type="button" class="mode-button config-button" data-mode="productive">⌨️Pr0duc€⌨️</button>
     </div>
 	
     <p><strong>Tenses:</strong></p>
     <div id="tense-buttons" class="verb-type-selector"></div>
 
     <p><strong>Verb Types:</strong></p>
+	    <div id="reflexive-toggle-container" style="margin: 10px 0; text-align:center;">
+      <button
+        type="button"
+        id="toggle-reflexive"
+        class="toggle-button"
+      >
+        Include Reflexive Verbs
+      </button>
+    </div>
     <div id="verb-type-buttons" class="verb-type-selector">
     </div>
 
@@ -67,7 +78,7 @@
       Ignore accents (remember that accents give extra points)
     </label>
     <div style="text-align:center; margin-top:20px;">
-      <button type="submit">Start Game</button>
+      <button type="submit" id="start-button">Start Game</button>
     </div>
   </form>
   
@@ -89,30 +100,52 @@
    </div> <!-- /#setup-records -->
   </div>
   <div id="game-screen" class="screen">
+    <canvas id="life-confetti-canvas"></canvas> 
     <h2 id="game-title"></h2>
+
+	  <div id="lives-mechanics-display" style="display: none; text-align: center; margin-bottom: 15px;">
+		<span id="total-correct-for-life-display" style="margin-right: 20px;"></span>
+		<span id="streak-for-life-display"></span>
+	  </div>
+	  
+	<!-- ① Contenedor de relojes y feedback -->
+    <div id="timer-container" class="timer-container" style="display:none;">
+      <div id="timer-clock" class="timer-item">⏳ 4:00</div>
+      <div id="time-change" class="timer-item"></div>
+      <div id="total-time" class="timer-item">🏁 0:00</div>
+    </div>
     <div id="question-area">
 	<div id="tense-label" class="tense-label"></div>
     <div id="question-prompt">Loading…</div>
-      <p>Question:</p>
+      <p>Your goal:</p>
       </div>
     <div id="answer-area">
       <div id="input-es-container">
-        <label for="answer-input-es">Answer in Spanish:</label>
+        <label for="answer-input-es">Conjugate in Spanish:</label>
         <input type="text" id="answer-input-es">
       </div>
       <div id="input-en-container" style="display:none;">
-        <label for="answer-input-en">Translate (pronoun + verb) Only present tense!:</label>
+        <label for="answer-input-en">Conjugate in English:</label>
         <input 
            type="text"
            id="answer-input-en"
-           placeholder="they eat"
+           placeholder="e.g. You all ate"
            autocomplete="off"
            autocapitalize="none"
            autocorrect="off"
            spellcheck="false"
-          >
+			<div id="pronoun-hints" style="margin-top:8px;">
+				<span class="pronoun-button">I</span>
+				<span class="pronoun-button">you</span>
+				<span class="pronoun-button">he</span>
+				<span class="pronoun-button">she</span>
+				<span class="pronoun-button">we</span>
+				<span class="pronoun-button">you all</span>
+				<span class="pronoun-button">they</span>
+			  </div>		   
       </div>
-      <button id="check-button">Check Answer</button>
+	  
+      <button id="check-button">Get Clue / Check Answer</button>
       <button id="skip-button">Skip</button>
       <div id="feedback-area"></div>
 
