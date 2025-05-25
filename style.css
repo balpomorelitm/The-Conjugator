@@ -1301,10 +1301,7 @@ button:active {
     from, to { background-color: transparent } /* Invisible state */
     50% { background-color: var(--feedback-correct); } /* Visible state */
 }
-.tooltip-popup {
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-}
+
 
 
 
@@ -1316,30 +1313,117 @@ button:active {
        /* align-self: initial; /* Or stretch, depending on how you want it in column */
     }
  }
- @media (max-width: 600px) { /* Stricter stacking on small screens */
-    .tooltip-popup {
-        max-width: 95%;
-        left: 2.5% !important;
-        padding: 5px; /* Reduce padding */
-    }
-    .tooltip-row {
-        flex-direction: column; /* Stack boxes vertically */
-        margin-bottom: 5px;
-        gap: 8px;
-    }
-    .tooltip-box {
-        min-width: unset; /* Remove min-width */
-        width: calc(100% - 10px); /* Take full width minus padding */
-        margin: 0 auto; /* Center stacked boxes */
-        padding: 10px;
-    }
-     .tooltip-box h5 {
-        font-size: 1.1em;
-     }
-      .tooltip-box p {
-        font-size: 0.85em;
-     }
- }
+
+
+ 
+
+
+@media (max-width: 600px) {
+  /* Usamos el ID para ganar en especificidad */
+  #tooltip.tooltip-popup {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+
+    /* Mucho más estrecho y alto: panel alargado */
+    width: 60vw !important;      /* Ajusta este valor al que te guste */
+    max-width: none !important;
+    height: 85vh !important;
+    max-height: none !important;
+
+    overflow-y: auto !important;
+    box-sizing: border-box !important;
+
+    /* Espaciado interior */
+    padding: 8px !important;
+  }
+
+  #tooltip .tooltip-row {
+    flex-direction: column !important;
+    gap: 8px !important;
+    margin-bottom: 10px !important;
+  }
+  #tooltip .tooltip-box {
+    width: 100% !important;
+    margin: 0 0 12px 0 !important;
+    padding: 10px !important;
+  }
+}
+@media (max-width: 600px) {
+  /* Contenedor principal del Tooltip */
+  #tooltip.tooltip-popup {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 85vw !important; /* Más ancho para mejor legibilidad en móvil */
+    max-width: none !important;
+    height: auto !important; /* Altura automática basada en contenido */
+    max-height: 80vh !important; /* Límite de altura para evitar que ocupe toda la pantalla */
+    overflow-y: auto !important;
+    box-sizing: border-box !important;
+    padding: 15px !important; /* Un poco más de padding */
+    font-size: 0.9em !important; /* Reducir tamaño de fuente base del tooltip */
+    background-color: rgba(26, 42, 26, 0.95) !important; /* Fondo un poco más opaco */
+  }
+
+  /* Filas dentro del Tooltip */
+  #tooltip .tooltip-row {
+    flex-direction: column !important;
+    gap: 12px !important; /* Espacio entre cajas en la columna */
+    margin-bottom: 0 !important; /* Quitar margen inferior si solo hay una columna */
+  }
+
+  /* Cajas individuales dentro del Tooltip */
+  #tooltip .tooltip-box {
+    width: 100% !important; /* Cada caja ocupa el ancho completo del tooltip */
+    margin: 0 0 12px 0 !important;
+    padding: 12px !important; /* Ajustar padding interno de las cajas */
+    box-sizing: border-box !important;
+  }
+  #tooltip .tooltip-box:last-child {
+    margin-bottom: 0 !important; /* No margen inferior para la última caja */
+  }
+
+  /* Títulos dentro de cada caja del Tooltip */
+  #tooltip .tooltip-box h5 {
+    font-size: 1.1em !important; /* Ajustar tamaño del título */
+    margin-bottom: 8px !important;
+    padding-bottom: 6px !important;
+  }
+
+  /* Párrafos dentro de cada caja del Tooltip */
+  #tooltip .tooltip-box p {
+    font-size: 0.9em !important; /* Ajustar tamaño del texto */
+    line-height: 1.5 !important;
+    margin-bottom: 8px !important;
+  }
+  #tooltip .tooltip-box p:last-of-type {
+    margin-bottom: 10px !important;
+  }
+
+  /* Contenido de ejemplo (prompt y animación) */
+  #tooltip .example-prompt {
+    font-size: 0.85em !important;
+    margin-bottom: 6px !important;
+  }
+
+  #tooltip .typing-animation {
+    font-size: 0.95em !important; /* Ajustar tamaño de la animación de texto */
+    padding: 4px 6px !important;
+    white-space: pre-wrap !important; /* MUY IMPORTANTE: permite que el texto largo se ajuste */
+                                     /* en lugar de desbordar la caja. */
+    word-break: break-all; /* Forzar quiebre de palabras si es necesario */
+  }
+
+  /* Cursor de la animación de tipeo */
+  #tooltip .typing-cursor {
+    height: 1em !important; /* Ajustar altura del cursor */
+    width: 7px !important;
+  }
+}
+
  @keyframes electric-spark {
   0%   { box-shadow: 0 0 2px #ffea00, 0 0 5px #ffea00; }
   50%  { box-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700; }
