@@ -5,6 +5,12 @@
   font-weight: normal;
   font-style: normal;
 }
+@font-face {
+  font-family: 'Schwarzenegger';
+  src: url('fonts/Schwarzenegger.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
 
 /* Variables de color inspiradas en Balatro (ajusta a tu gusto) */
 :root {
@@ -84,14 +90,18 @@ body::after {
 }
 
 .main-header .glitch-title {
-	
-  font-size: 3.8em;        /* Prueba subir/bajar este valor hasta que ocupe casi todo el ancho */
-  letter-spacing: 0.15em;  /* Incrementa el espacio entre letras */
+  font-size: clamp(1em, 8vw, 2.2em);
+  letter-spacing: 0.1em;  /* Incrementa el espacio entre letras */
   white-space: nowrap;     /* Evita que se rompa en varias líneas */
   max-width: 100%;         /* Que no sobrepase el contenedor */
   overflow: visible;       /* Asegura que no se recorte */
   text-shadow: 2px 2px #111; /* Sombra sutil para darle profundidad */
+  font-family: 'Schwarzenegger', var(--font-pixel);
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: grayscale;
+  image-rendering: pixelated;
 }
+
 .glitch-title {
   display: inline-block;
   color: white;
@@ -120,11 +130,7 @@ body::after {
   margin: 0; /* Quitar margen por defecto del h1 si está dentro de flex */
   text-shadow: 2px 2px #111; /* Sombra sutil para darle profundidad */
 }
-.main-header {
-  text-align: center;
-  margin-top: 20px;
-  margin-bottom: 20px;
-}
+
 
 /* Botón de reflexivos */
 .toggle-button {
@@ -356,7 +362,7 @@ button:active {
   user-select: none;
   cursor: default;
 }
-#pronoun-buttons-container p {
+#pronoun-buttons-container {
   margin-bottom: 5px;
 }
 .spark-effect {
@@ -486,29 +492,28 @@ button:active {
 
 .verb-type-selector {
   display: grid; /* Usar grid para organizar en columnas */
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Columnas auto-ajustables */
-  gap: 10px; /* Espacio entre botones */
-  margin-bottom: 15px;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
+  gap: 6px;
+  margin-bottom: 5px;
 }
 
-/* Estilo base del botón de tipo de verbo */
 .verb-type-button {
   font-family: var(--font-pixel);
-  font-size: 0.9em; /* Un poco más pequeño que botones normales */
-  background-color: #444; /* Fondo gris oscuro */
+  font-size: 0.8em; 
+  background-color: #444; 
   color: var(--text-color);
   border: 1px solid var(--border-color);
-  padding: 8px;
-  text-align: left; /* Alinear texto a la izquierda */
+  padding: 6px;
+  text-align: left; 
   cursor: pointer;
   border-radius: 0;
   box-shadow: 1px 1px 0px rgba(0,0,0,0.2);
   transition: background-color 0.2s, border-color 0.2s, opacity 0.3s;
-  line-height: 1.3; /* Espaciado para las dos líneas */
-  min-height: 55px; /* Altura mínima para acomodar pista */
-  display: flex; /* Usar flex para alinear contenido interno */
-  flex-direction: column; /* Poner nombre arriba y pista abajo */
-  justify-content: center; /* Centrar verticalmente si solo hay nombre */
+  line-height: 1.2; 
+  min-height: 40px; 
+  display: flex; 
+  flex-direction: column; 
+  justify-content: center; 
   }
 
 .verb-type-button:hover {
@@ -519,19 +524,19 @@ button:active {
    box-shadow: 1px 1px 0px rgba(0,0,0,0.4);
    }
 
-/* Estilo del nombre de la irregularidad */
+
 .verb-type-name {
-  font-size: 1.1em; /* Nombre un poco más grande */
-  font-weight: bold; /* En negrita */
+  font-size: 1em; 
+  font-weight: bold; 
   color: var(--title-color);
-  display: block; /* Ocupar línea */
-  margin-bottom: 3px; /* Pequeño espacio bajo el nombre */
-  text-shadow: 2px 2px #111; /* Sombra sutil para darle profundidad */
+  display: block; 
+  margin-bottom: 2px; 
+  text-shadow: 2px 2px #111; 
   }
 
 /* Estilo de la pista/hint */
 .verb-type-hint {
-  font-size: 0.85em; /* Pista más pequeña */
+  font-size: 0.8em; /* Pista más pequeña */
   color: #ccc; /* Color más apagado */
   font-style: italic;
   display: block; /* Ocupar línea */
@@ -542,8 +547,8 @@ button:active {
   background-color: #fe9600;
   border-color: var(--title-color);
   color: white;
-  padding: 12px 20px;
-  letter-spacing: 1px;  
+  padding: 8px 10px;
+  letter-spacing: 0.5px;  
 }
 .verb-type-button.selected .verb-type-name {
      color: white;
@@ -555,18 +560,18 @@ button:active {
 
 /* Estilo cuando el botón está desactivado */
 .verb-type-button.disabled {
-  background-color: #333; /* Más oscuro */
+  background-color: #333; 
   border-color: #444;
-  color: #777; /* Texto muy apagado */
-  opacity: 0.6; /* Hacerlo semitransparente */
-  cursor: not-allowed; /* Cambiar cursor */
-  pointer-events: none; /* Evitar clics */
-  padding: 12px 20px;
+  color: #777; 
+  opacity: 0.6; 
+  cursor: not-allowed; 
+  pointer-events: none; 
+  padding: 10px 15px;
   letter-spacing: 1px;
 }
  .verb-type-button.disabled .verb-type-name,
  .verb-type-button.disabled .verb-type-hint {
-     color: #777 !important; /* Forzar color apagado */
+     color: #777 !important; 
  }
 /* --- Vibración para feedback --- */
 @keyframes vibrate {
@@ -888,7 +893,7 @@ button:active {
   }
 
 	.main-header .glitch-title {
-        font-size: 1.7em;    
+        font-size: clamp(0.8em,  7vw, 1.1em);    
         white-space: normal;
         word-break: break-word;
         text-align: center;
@@ -989,7 +994,7 @@ button:active {
     display: none;
   }
 }
-/* Alternar rojo/amarillo y glow */
+
 .glitch-title .letter:nth-child(odd) {
   color: #AA151B;           /* rojo */
   text-shadow:
@@ -1315,98 +1320,136 @@ button:active {
  }
 
 
- 
+ body.tooltip-open-no-scroll {
+  overflow: hidden !important; /* Previene el scroll en el body */
+}
 
 
 @media (max-width: 600px) {
-  /* Usamos el ID para ganar en especificidad */
-  #tooltip.tooltip-popup {
-    position: fixed !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
+	#tooltip.tooltip-popup {
+	  position: fixed !important;
+	  top: 50% !important;
+	  left: 50% !important;
+	  transform: translate(-50%, -50%) !important;
+	  
+	  width: 90vw !important; /* Ancho del 90% del viewport */
+	  max-width: 450px !important; /* Un máximo para que no sea demasiado ancho en tablets pequeñas en esta vista */
+	  padding: 10px !important; 
+	  height: auto !important; /* La altura se ajustará al contenido */
+	  max-height: 90vh !important; /* Altura máxima del 90% del viewport */
+	  
+	  overflow-y: auto !important; /* Mantenemos esto por si acaso, pero idealmente no se necesitará si todo cabe */
+	  -webkit-overflow-scrolling: touch; 
+	  
+	  background-color: rgba(26, 42, 26, 0.98) !important; 
+	  color: var(--text-color);
+	  border: 2px solid var(--border-color);
+	  box-shadow: 4px 4px 0px rgba(0,0,0,0.5);
+	  z-index: 1001 !important; 
+	  
+	  padding: 0px !important; /* Padding interno reducido */
+	  box-sizing: border-box !important;
+	  
+	  font-size: 0.82em !important; /* Reducir tamaño de fuente base DENTRO del tooltip */
+	  line-height: 1.3 !important; /* Ajustar altura de línea para la nueva fuente */
+	}
+	
+.tooltip-content-wrapper {
+  display: flex !important;         /* <<<< Convertir en contenedor flex */
+  flex-direction: row !important;  /* <<<< Para poner las "filas" (ahora columnas) una al lado de la otra */
+  gap: 8px !important;             /* Espacio entre las dos columnas */
+}
 
-    /* Mucho más estrecho y alto: panel alargado */
-    width: 60vw !important;      /* Ajusta este valor al que te guste */
-    max-width: none !important;
-    height: 85vh !important;
-    max-height: none !important;
+.tooltip-row { /* Cada .tooltip-row ahora actúa como una columna en móvil */
+  flex-direction: column !important; /* Los .tooltip-box dentro de esta "columna" se apilan verticalmente */
+  flex: 1 !important;                /* Cada "columna" toma la mitad del espacio */
+  margin-bottom: 0 !important;       /* Quitar margen inferior ya que ahora son columnas */
+  gap: 8px !important;               /* Espacio entre los tooltip-box dentro de esta "columna" */
+}
 
-    overflow-y: auto !important;
-    box-sizing: border-box !important;
+/* Títulos de Columna (opcional, si los añades en el HTML como te sugerí para la versión de 2 columnas) */
+/* Si no los usas, puedes ignorar este .tooltip-column-title */
+.tooltip-column-title {
+  font-family: var(--font-pixel);
+  color: var(--accent-color-blue);
+  font-size: 1.1em !important; /* Relativo al font-size del tooltip */
+  text-align: center;
+  margin-bottom: 6px !important;
+  padding-bottom: 3px !important;
+  border-bottom: 1px solid var(--border-color);
+  /* Añadir order para asegurar que el título va primero en cada columna si reestructuras más el HTML */
+  /* order: -1; */ 
+}
 
-    /* Espaciado interior */
-    padding: 8px !important;
-  }
 
-  #tooltip .tooltip-row {
-    flex-direction: column !important;
-    gap: 8px !important;
-    margin-bottom: 10px !important;
-  }
+#tooltip .tooltip-box {
+  padding: 8px !important; 
+  min-width: 0; /* Permitir que las cajas se encojan */
+  /* No necesitan flex: 1 aquí si .tooltip-row (ahora columna) es column flex */
+}
+
+/* Ajustes de fuente y padding para el contenido DENTRO de las cajas en MÓVIL */
+#tooltip .tooltip-box h5 {
+  font-size: 1.05em !important; 
+  margin-bottom: 5px !important;
+}
+
+#tooltip .tooltip-box p {
+  font-size: 0.95em !important; 
+  line-height: 1.25 !important;
+  margin-bottom: 5px !important;
+}
+#tooltip .tooltip-box p:last-of-type {
+    margin-bottom: 8px !important;
+}
+
+#tooltip .example-prompt {
+    font-size: 0.85em !important; 
+    margin-bottom: 4px !important;
+}
+
+#tooltip .typing-animation {
+    font-size: 0.9em !important; 
+    padding: 3px 5px !important;
+    min-height: 1.1em !important;
+}
+#tooltip .typing-cursor {
+    height: 0.9em !important;
+    width: 5px !important;
+}
+#tooltip #close-tooltip-btn {
+    font-size: 0.9em !important;
+    padding: 6px 10px !important;
+    margin-top: 10px !important;
+}
   #tooltip .tooltip-box {
     width: 100% !important;
     margin: 0 0 12px 0 !important;
-    padding: 10px !important;
+    padding: 2px !important;
+	box-sizing: border-box !important;
+	margin-bottom: 0 !important;
   }
 }
-@media (max-width: 600px) {
-  /* Contenedor principal del Tooltip */
-  #tooltip.tooltip-popup {
-    position: fixed !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    width: 85vw !important; /* Más ancho para mejor legibilidad en móvil */
-    max-width: none !important;
-    height: auto !important; /* Altura automática basada en contenido */
-    max-height: 80vh !important; /* Límite de altura para evitar que ocupe toda la pantalla */
-    overflow-y: auto !important;
-    box-sizing: border-box !important;
-    padding: 15px !important; /* Un poco más de padding */
-    font-size: 0.9em !important; /* Reducir tamaño de fuente base del tooltip */
-    background-color: rgba(26, 42, 26, 0.95) !important; /* Fondo un poco más opaco */
-  }
-
-  /* Filas dentro del Tooltip */
-  #tooltip .tooltip-row {
-    flex-direction: column !important;
-    gap: 12px !important; /* Espacio entre cajas en la columna */
-    margin-bottom: 0 !important; /* Quitar margen inferior si solo hay una columna */
-  }
-
-  /* Cajas individuales dentro del Tooltip */
-  #tooltip .tooltip-box {
-    width: 100% !important; /* Cada caja ocupa el ancho completo del tooltip */
-    margin: 0 0 12px 0 !important;
-    padding: 12px !important; /* Ajustar padding interno de las cajas */
-    box-sizing: border-box !important;
-  }
-  #tooltip .tooltip-box:last-child {
-    margin-bottom: 0 !important; /* No margen inferior para la última caja */
-  }
-
-  /* Títulos dentro de cada caja del Tooltip */
   #tooltip .tooltip-box h5 {
     font-size: 1.1em !important; /* Ajustar tamaño del título */
     margin-bottom: 8px !important;
-    padding-bottom: 6px !important;
+    padding-bottom: 2px !important;
   }
 
   /* Párrafos dentro de cada caja del Tooltip */
   #tooltip .tooltip-box p {
     font-size: 0.9em !important; /* Ajustar tamaño del texto */
-    line-height: 1.5 !important;
-    margin-bottom: 8px !important;
+    line-height: 1.35 !important;
+    margin-bottom: 2px !important;
   }
   #tooltip .tooltip-box p:last-of-type {
-    margin-bottom: 10px !important;
+    margin-bottom: 2px !important;
   }
 
   /* Contenido de ejemplo (prompt y animación) */
   #tooltip .example-prompt {
     font-size: 0.85em !important;
-    margin-bottom: 6px !important;
+    margin-bottom: 2px !important;
   }
 
   #tooltip .typing-animation {
@@ -1420,8 +1463,13 @@ button:active {
   /* Cursor de la animación de tipeo */
   #tooltip .typing-cursor {
     height: 1em !important; /* Ajustar altura del cursor */
-    width: 7px !important;
+    width: 6px !important;
   }
+  #tooltip #close-tooltip-btn {
+    font-size: 1em !important; /* Relativo al font-size del tooltip */
+    padding: 8px 12px !important;
+    margin-top: 10px !important;
+ }
 }
 
  @keyframes electric-spark {
@@ -1581,4 +1629,452 @@ body.game-active, html.game-active {
 @keyframes prize-pulse {
   from { opacity: 1; }
   to   { opacity: 0.6; }
+}
+/* Helpers */
+.hidden { display: none !important; }
+
+/* Contenedor del dropdown */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Botón que abre el dropdown */
+.dropdown-toggle {
+  background-color: var(--accent-color-red);
+  color: var(--title-color);
+  border: 1px solid var(--border-color);
+  padding: 8px 12px;
+  cursor: pointer;
+  font-family: var(--font-pixel);
+  font-size: 1em;
+  border-radius: 0;
+  box-shadow: 1px 1px 0 rgba(0,0,0,0.2);
+  user-select: none;
+}
+
+/* Panel desplegable */
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 6px;
+  background-color: var(--container-bg);
+  border: 1px solid var(--border-color);
+  box-shadow: 3px 3px 0 rgba(0,0,0,0.3);
+  padding: 12px;
+  width: 280px;
+  max-height: 400px;
+  overflow-y: auto;
+  z-index: 100;
+}
+
+/* Encabezado del panel */
+.dropdown-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.dropdown-title {
+  font-family: var(--font-pixel);
+  color: var(--title-color);
+  font-size: 1.1em;
+}
+
+
+body.dropdown-open .dropdown-menu {
+  display: block;
+}
+.filter-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center; 
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.pronoun-group-button {
+  background-color: #444;          
+  color: white;
+  border: 1px solid var(--border-color);
+  padding: 8px 12px;
+  margin-bottom: 6px;
+  width: 100%;
+  text-align: left;
+  opacity: 0.5;
+  cursor: pointer;
+  transition: background-color 0.2s, opacity 0.2s;
+}
+
+
+.pronoun-group-button.selected {
+  background-color: #1976d2;        
+  opacity: 1;
+  
+}
+#verb-dropdown-menu #verb-buttons .verb-button {
+  background: #444;               /* gris oscuro */
+  color: white;
+  border: 1px solid var(--border-color);
+  padding: 8px 12px;
+  margin-bottom: 6px;
+  width: 100%;
+  text-align: left;
+  opacity: 0.5;                   /* semi-transparente si NO está .selected */
+  cursor: pointer;
+  transition: background 0.2s, opacity 0.2s;
+}
+
+#verb-dropdown-menu #verb-buttons .verb-button.selected {
+  background: #1976d2;            
+  opacity: 1;
+}
+
+#verb-dropdown-menu {
+  width: 250px;
+  max-height: 400px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+#verb-dropdown-menu .dropdown-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+.select-all-button,
+.select-groups-button {
+  font-size: 0.9rem;
+  padding: 4px 8px;
+}
+.groups-panel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px 0 8px;
+}
+.group-button {
+  flex: 1 1 45%;
+  font-size: 0.85rem;
+  padding: 4px 6px;
+  background: var(--bg-dark);
+  color: var(--fg);
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+}
+.group-button:hover {
+  background: var(--accent);
+  color: white;
+}
+.search-container {
+  padding: 4px 0;
+}
+/* Para el botón "Seleccionar/Deseleccionar Todos los Tiempos" */
+#select-all-tenses {
+    display: block; /* Hace que el botón ocupe toda la línea */
+    width: 100%;    /* Asegura que se extienda a todo el ancho disponible */
+    box-sizing: border-box; /* Para que el padding y borde no añadan al ancho total */
+    margin-bottom: 10px; /* Espacio entre este botón y los botones de tiempo individuales debajo */
+    /* Puedes ajustar el padding o text-align si es necesario,
+       por ejemplo, si quieres el texto centrado:
+       text-align: center;
+    */
+}
+
+/* Para el botón "Seleccionar/Deseleccionar Todos los Pronombres" */
+#select-all-pronouns {
+    display: block; /* Hace que el botón ocupe toda la línea */
+    width: 100%;    /* Asegura que se extienda a todo el ancho disponible */
+    box-sizing: border-box; /* Para que el padding y borde no añadan al ancho total */
+    margin-bottom: 10px; /* Espacio entre este botón y los botones de pronombres individuales debajo */
+    /* Puedes ajustar el padding o text-align si es necesario:
+       text-align: center;
+    */
+}
+#verb-search {
+    background-color: #ffffff; /* Fondo blanco */
+    color: #333333;           /* Texto oscuro (gris oscuro) */
+    border: 1px solid #cccccc; /* Borde estándar gris claro */
+    padding: 8px 10px;         /* Un poco de padding interno */
+    border-radius: 5px;      /* Bordes ligeramente redondeados */
+    box-sizing: border-box;  /* Asegura que el padding y borde no aumenten el tamaño total */
+    width: 100%;             /* Ocupa el ancho disponible en su contenedor */
+    margin-bottom: 10px;     /* Espacio debajo, si es necesario */
+}
+#verb-search::placeholder {
+    color: #999999; /* Color del placeholder un poco más claro */
+    opacity: 1; /* Para asegurar visibilidad en todos los navegadores */
+}
+.verb-buttons-list {
+  overflow-y: auto;
+  flex: 1 1 auto;
+  padding: 0;
+  margin: 0;
+}
+.verb-buttons-list .verb-button {
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  padding: 4px 6px;
+  margin-bottom: 2px;
+  font-size: 0.8rem;
+  margin: 0;
+  border-radius: 4;
+  height: 30px; 
+}
+.verb-buttons-list .verb-button .tick {
+  display: inline-block;
+  width: 16px; height: 16px;
+  margin-right: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-dark);
+}
+.verb-buttons-list .verb-button.selected .tick {
+  background: var(--accent);
+  mask: url('icons/check.svg') center/contain no-repeat;
+}
+.verb-buttons-list .verb-button:hover {
+  background: var(--bg-dark-light);
+}
+
+.glitch-title .letter.big-letter {
+  font-size: 1.4em;     
+  line-height: 1;       
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: grayscale;
+  image-rendering: pixelated;
+}
+
+.header-city {
+  position: absolute;
+  bottom: -5px;              
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: auto;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.header-char {
+  position: absolute;
+  bottom: -10px;        
+  right: -200px;        
+  transform: scale(0.15);
+  transform-origin: bottom right;
+  width: auto;
+  height: auto;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* ——————————————
+   TÍTULO: siempre encima
+—————————————— */
+.main-header {
+  position: relative;
+  text-align: center;
+  margin: 5px 0;
+  overflow: hidden;
+  padding-bottom: 120px;
+}
+
+/* ——————————————
+   KEYFRAMES
+—————————————— */
+@keyframes slideUpCity {
+  from { bottom: -120px; }
+  to   { bottom: -5px; }
+}
+@keyframes slideInChar {
+  from { right: -200px; }
+  to   { right: 30px; }
+}
+
+.main-header.animate .header-city {
+  animation: slideUpCity 1.5s ease-out forwards;
+}
+.main-header.animate .header-char {
+  animation: slideInChar 1s ease-out 0.7s forwards;
+}
+/* 1) Estado “no seleccionado” (por defecto) */
+.group-button {
+  background: #2a2f25;      /* verde oscuro apagado */
+  color: #bbb;              /* texto gris claro */
+  border: 1px solid #3a4a38;
+  cursor: pointer;
+  transition: 
+    background 0.2s, 
+    color 0.2s, 
+    box-shadow 0.2s;
+}
+
+/* 2) Estado hover (cuando pasas el ratón) */
+.group-button:hover:not(.active) {
+  background: #3e4e3c;      /* un poco más claro */
+}
+
+/* 3) Estado activo GENERAL (fallback genérico) */
+.group-button.active {
+  color: #fff;
+  box-shadow: none;
+}
+
+/* 4) “Todos” — fondo blanco con texto negro */
+.group-button[data-group="all"].active {
+  background: #fff;
+  color: #000;
+}
+
+/* 5) “Reflexivos” — gradiente + glow como antes */
+.group-button[data-group="reflexive"].active {
+  background: linear-gradient(135deg, #ff6ec4, #7873f5);
+  box-shadow: 0 0 8px rgba(255,110,196,0.6);
+}
+
+/* 6) “-ar” — verde brillante */
+.group-button[data-group="ar"].active {
+  background: #4caf50;
+  box-shadow: 0 0 6px rgba(76,175,80,0.6);
+}
+
+/* 7) “-er” — azul */
+.group-button[data-group="er"].active {
+  background: #2196f3;
+  box-shadow: 0 0 6px rgba(33,150,243,0.6);
+}
+
+/* 8) “-ir” — púrpura */
+.group-button[data-group="ir"].active {
+  background: #9c27b0;
+  box-shadow: 0 0 6px rgba(156,39,176,0.6);
+}
+#verb-dropdown-menu,
+#verb-buttons {
+  overflow-x: hidden;      /* no permitimos desplazamiento horizontal */
+}
+
+/* Ajusta anchura si sigue cambiando: */
+#verb-dropdown-menu {
+  width: 210px;            /* ajústalo a tu gusto para que no desborde */
+}
+
+/* ── 2) Redondear esquinas de los verb-buttons ── */
+.verb-button {
+  display: flex;           
+  align-items: center;     
+  border-radius: 6px;    
+  padding: 4px 8px;       
+  font-size: 0.9rem; 
+}
+
+/* Si quieres redondear también el dropdown en su conjunto: */
+#verb-dropdown-menu {
+  border-radius: 6px;
+}
+
+/* ── 3) Opcional: recortar un pelín el padding interno ── */
+.verb-button {
+  display: flex;
+  padding: 4px 8px;        /* menos padding horizontal para que no desborde */
+  font-size: 0.85rem;      /* también más compacto si lo deseas */
+}
+/* 1) La cajita en reposo */
+.verb-button .tick {
+  flex: 0 0 auto;          /* evita que el tick cambie de tamaño */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.2em;
+  height: 1.2em;
+  border: 2px solid #555;
+  border-radius: 3px;
+  margin-right: 0.6em;
+  box-sizing: border-box;
+  background-color: transparent;
+  color: transparent;
+  font-size: 1em;
+  line-height: 1;
+}
+
+/* 2) Cuando está seleccionado: fondo + símbolo */
+.verb-button.selected .tick {
+  background-color: #4caf50;
+  border-color: #388E3C;
+}
+.verb-button.selected .tick::before {
+  content: '\\2714'; 
+  display: flex;         
+  align-items: center;   
+  justify-content: center;       
+  color: white;
+  font-size: 1em;    
+  line-height: 1; 
+  font-weight: bold;
+  font-family: sans-serif;  
+}
+
+/* 3) Ajuste de la etiqueta para que no se descuelgue */
+.verb-button .label {
+  flex: 1 1 auto;
+  overflow: hidden;
+  
+}
+
+.search-no-results {
+  padding: 10px;
+  text-align: center;
+  color: #aaa; /* Un color un poco apagado */
+  font-style: italic;
+  font-size: 0.9em;
+}
+
+#pronoun-buttons .pronoun-group-button {
+  font-family: var(--font-pixel);
+  font-size: 0.95rem;     
+  padding: 5px 8px;      
+  margin: 3px;            
+  width: auto;            
+  display: inline-block;  
+  text-align: center;
+  min-height: auto;  
+  flex-direction: row;
+  box-shadow: 1px 1px 0px rgba(0,0,0,0.2);
+}
+
+#pronoun-buttons.verb-type-selector {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); 
+  gap: 5px; 
+}
+#verb-groups-panel .group-button[data-group="reflexive"] {
+    flex-basis: 100%; 
+}
+.select-all-button {
+    background-color: #FFC107;  /* Amarillo ámbar (Material Design) - ¡REEMPLAZA SI ENCUENTRAS EL TUYO! */
+    color: #212529;              /* Texto oscuro para buen contraste */
+    border: 1px solid #FFA000;   /* Borde ámbar más oscuro - ¡REEMPLAZA SI ENCUENTRAS EL TUYO! */
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-weight: 500;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, transform 0.1s ease;
+
+    /* Estilos para que ocupe toda la línea */
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 10px; 
+}
+
+.select-all-button:hover {
+    background-color: #FFCA28;  /* Un poco más claro para hover - ¡AJUSTA SEGÚN TU COLOR BASE! */
+    border-color: #FFB300;       /* ¡AJUSTA SEGÚN TU COLOR BASE! */
+}
+
+.select-all-button:active {
+    background-color: #FFA000;  /* Un poco más oscuro para active - ¡AJUSTA SEGÚN TU COLOR BASE! */
+    transform: translateY(1px);
 }

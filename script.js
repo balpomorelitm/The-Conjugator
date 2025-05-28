@@ -13,10 +13,8 @@ function typeWriter(element, text, speed = 120) {
   const cursorSpan = document.createElement('span');
   cursorSpan.className = 'typing-cursor';
 
-  // nodo de texto inicial
   element.appendChild(document.createTextNode(''));
 
-  // guardamos el intervalo en element._twInterval
   element._twInterval = setInterval(() => {
     if (element.contains(cursorSpan)) {
       element.removeChild(cursorSpan);
@@ -33,18 +31,19 @@ function typeWriter(element, text, speed = 120) {
   }, speed);
 }
 
-// Función para manejar el clic en el botón de verbos reflexivos
 function handleReflexiveToggle() {
     const toggleReflexiveBtn = document.getElementById('toggle-reflexive');
 	
     if (!toggleReflexiveBtn) return;
 
     toggleReflexiveBtn.classList.toggle('selected');
-    // El efecto del filtro se aplicará cuando loadVerbs() sea llamado (al iniciar juego o salir de ajustes)
     if (typeof soundClick !== 'undefined') soundClick.play();
 }
+
 const soundClick = document.getElementById('sound-click');
-document.addEventListener('DOMContentLoaded', () => {
+let openFilterDropdownMenu = null; // Para rastrear el menú de filtro abierto
+
+document.addEventListener('DOMContentLoaded', async () => {
   let selectedGameMode = 'infinite'; 
   let allVerbData = [];
   let currentQuestion = {};
@@ -55,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let countdownTime = 240; // 4 minutes = 240 seconds
   let remainingLives = 5;
   let targetVolume=0.2;
-  let timerTimeLeft = 0;            // segundos restantes
+  let timerTimeLeft = 0;            
 	function formatTime(sec) {
 	  const m = Math.floor(sec / 60);
 	  const s = sec % 60;
@@ -81,12 +80,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	  // Vibración
 	  el.classList.remove('vibrate');
-	  void el.offsetWidth;         // forzar reflow
+	  void el.offsetWidth;         
 	  el.classList.add('vibrate');
 	}
   let totalPlayedSeconds = 0;       
   let totalQuestions = 0;           
-  let totalCorrect = 0;             
+  let totalCorrect = 0;  
+  let initialRawVerbData = [];  
   const setupScreen  = document.getElementById('setup-screen');
   const gameScreen   = document.getElementById('game-screen');
   const setupForm    = document.getElementById('setup-form');
@@ -105,9 +105,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const enContainer  = document.getElementById('input-en-container');
   const feedback     = document.getElementById('feedback-area');
   const helpButton = document.getElementById('help-button'); 
-  const tooltip = document.getElementById('tooltip');       
+  const tooltip = document.getElementById('tooltip');   
+  const toggleReflexiveBtn = document.getElementById('toggle-reflexive');
   const titleElement = document.querySelector('.glitch-title');
-  
+  const verbTypeLabels = Array.from(document.querySelectorAll('label[data-times]'));
+  const soundCorrect = new Audio('sounds/correct.mp3');
+  const soundWrong = new Audio('sounds/wrong.mp3');
+  const soundClick = new Audio('sounds/click.mp3');
+  const soundStart = new Audio('sounds/start-verb.mp3');
+  const soundSkip = new Audio('sounds/skip.mp3');
+  const music = new Audio('sounds/music.mp3');
+  const soundGameOver = new Audio('sounds/gameover.mp3');
+  const soundbubblepop = new Audio('sounds/soundbubblepop.mp3');
+  const soundLifeGained = new Audio('sounds/soundLifeGained.mp3');
+  music.loop = true;
   setInterval(() => {
     titleElement.classList.add('glitch-active');
     setTimeout(() => {
@@ -115,19 +126,46 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 600); // Glitch dura 0.5s
   }, 3000); // Cada 4s se activa el glitch
 
-  const titleEl = document.querySelector('.glitch-title, #main-title');
-  if (titleEl) {
-    const letters = Array.from(titleEl.textContent);
-    titleEl.innerHTML = letters
-      .map(ch => {
-        if (ch === ' ') {
-          return '<span class="letter space">&nbsp;</span>';
-        }
-        return `<span class="letter">${ch}</span>`;
-      })
-      .join('');
-  }
-  
+	const titleEl = document.querySelector('.glitch-title, #main-title');
+	if (titleEl) {
+	  const letters = Array.from(titleEl.textContent);
+
+	  // Variables para “consumir” sólo la primera T y la primera C
+	  let seenT = false;
+	  let seenC = false;
+
+	  titleEl.innerHTML = letters
+		.map(ch => {
+		  if (ch === ' ') {
+			return '<span class="letter space">&nbsp;</span>';
+		  }
+		  // Creamos dinamicamente la clase extra si corresponde
+		  let extraClass = '';
+		  if (ch === 'T' && !seenT) {
+			extraClass = ' big-letter';
+			seenT = true;
+		  }
+		  if (ch === 'C' && !seenC) {
+			extraClass += ' big-letter';
+			seenC = true;
+		  }
+		  return `<span class="letter${extraClass}">${ch}</span>`;
+		})
+		.join('');
+	}
+    let loaded = false;
+    try {
+      const resp = await fetch(`verbos.json?cb=${Date.now()}`);
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      initialRawVerbData = await resp.json();
+      console.log(`Loaded ${initialRawVerbData.length} verbs from JSON`);
+      loaded = true;
+    } catch (err) {
+      console.error('Could not fetch verbos.json:', err);
+      alert('Error cargando datos de los verbos.');
+    }
+ 
+
   const pronouns = ['yo','tú','él','nosotros','vosotros','ellos'];
   const pronounMap = {
     yo: ['I'],
@@ -142,8 +180,25 @@ document.addEventListener('DOMContentLoaded', () => {
     ellas: ['they'], 
     ustedes: ['you'] 
 };
+
+const pronounGroups = [
+  { label: 'yo',                   values: ['yo'] },
+  { label: 'tú',                   values: ['tú'] },
+  { label: 'él / ella / usted',    values: ['él'] },
+  { label: 'nosotros / nosotras',  values: ['nosotros'] },
+  { label: 'vosotros / vosotras',  values: ['vosotros'] },
+  { label: 'ellos / ellas / ustedes', values: ['ellos'] }
+];
+
+function updatePronounDropdownCount() {
+  const btns     = document.querySelectorAll('.pronoun-group-button');
+  const selected = document.querySelectorAll('.pronoun-group-button.selected').length;
+  document.getElementById('pronoun-dropdown-count')
+          .textContent = `(${selected}/${btns.length})`;
+}
+
   const irregularityTypes = [
-    { value: 'regular', name: 'Regular', times: ['present', 'past_simple', 'present_perfect'], hint: '' }, // Sin pista específica
+    { value: 'regular', name: 'Regular', times: ['present', 'past_simple', 'present_perfect', 'future_simple', 'condicional_simple', 'imperfect_indicative'], hint: '' }, 
     { value: 'first_person_irregular', name: '1st Person', times: ['present'], hint: '⚙️ salir -> salgo' },
     { value: 'stem_changing', name: 'Stem Change', times: ['present'], hint: '⚙️ dormir -> duermo' },
     { value: 'multiple_irregularities', name: 'Multiple', times: ['present'], hint: '⚙️ tener -> tengo, tienes' },
@@ -151,15 +206,20 @@ document.addEventListener('DOMContentLoaded', () => {
     { value: 'irregular_root', name: 'Irreg. Root', times: ['past_simple'], hint: '⚙️ estar -> estuve' },
     { value: 'stem_change_3rd_person', name: 'Stem 3rd P.', times: ['past_simple'], hint: '⚙️ morir -> murió' },
     { value: 'totally_irregular', name: 'Totally Irreg.', times: ['past_simple'], hint: '⚙️ ser/ir -> fui' }, // Añadí esta que vi en tu JSON
-    { value: 'irregular_participle', name: 'Irreg. Participle', times: ['present_perfect'], hint: '⚙️ ver -> visto' }
+    { value: 'irregular_participle', name: 'Irreg. Participle', times: ['present_perfect'], hint: '⚙️ ver -> visto' },
+	{ value: 'irregular_future_conditional', name: 'Irregular Future / Conditional', times: ['future_simple', 'condicional_simple'], hint: '⚙️ tener -> tendré'},
+	{ value: 'irregular_imperfect', name: 'Irregular imperfect', times: ['imperfect_indicative'], hint: '⚙️ ir -> iba'}
 ];
   const tenses = [
     { value: 'present',        name: 'Present'       },
     { value: 'past_simple',    name: 'Simple Past'   },
-    { value: 'present_perfect',name: 'Present Perfect'}
+    { value: 'present_perfect',name: 'Present Perfect'},
+	{ value: 'imperfect_indicative', name: 'Imperfect' },
+	{ value: 'future_simple',        name: 'Future' },
+	{ value: 'condicional_simple',   name: 'Condicional' }
 ];
 
-  let totalCorrectAnswersForLife = 0; // Para Mecánica 1
+  let totalCorrectAnswersForLife = 0; 
   let correctAnswersToNextLife = 10;  // Objetivo inicial para Mecánica 1
   let nextLifeIncrement = 10;         // El 'n' inicial para la progresión de Mecánica 1
 
@@ -167,30 +227,79 @@ document.addEventListener('DOMContentLoaded', () => {
   let streakGoalForLife = 5;          // Objetivo inicial para Mecánica 2
   let lastStreakGoalAchieved = 0;     // Para recordar la última meta de racha alcanzada
 
-  let isPrizeVerbActive = false;      // Para Mecánica 3
+  let isPrizeVerbActive = false;      
 
+function playHeaderIntro() {
+  console.log("playHeaderIntro fired")
+  const header = document.querySelector('.main-header');
+  header.classList.remove('animate');
+  void header.offsetWidth;
+  header.classList.add('animate');
+}
+playHeaderIntro();
 
-  const verbTypeLabels = Array.from(document.querySelectorAll('label[data-times]'));
-  const soundCorrect = new Audio('sounds/correct.mp3');
-  const soundWrong = new Audio('sounds/wrong.mp3');
-  const soundClick = new Audio('sounds/click.mp3');
-  const soundStart = new Audio('sounds/start-verb.mp3');
-  const soundSkip = new Audio('sounds/skip.mp3');
-  const music = new Audio('sounds/music.mp3');
-  const soundGameOver = new Audio('sounds/gameover.mp3');
-  const soundbubblepop = new Audio('sounds/soundbubblepop.mp3');
-  const soundLifeGained = new Audio('sounds/soundLifeGained.mp3');
-  music.loop = true;
-           
-  renderTenseButtons();
-  renderVerbTypeButtons();
-  filterVerbTypes(); 
-  renderSetupRecords();
+function updateSelectAllPronounsButtonText() {
+  const pronounButtons = document.querySelectorAll('#pronoun-buttons .pronoun-group-button');
+  const selectAllPronounsBtn = document.getElementById('select-all-pronouns');
 
-  const toggleReflexiveBtn = document.getElementById('toggle-reflexive');
-  if (toggleReflexiveBtn) {
-      toggleReflexiveBtn.addEventListener('click', handleReflexiveToggle);
+  if (!selectAllPronounsBtn || pronounButtons.length === 0) {
+    if (selectAllPronounsBtn) selectAllPronounsBtn.textContent = 'Seleccionar Todo';
+    return;
   }
+
+  const allSelected = Array.from(pronounButtons).every(btn => btn.classList.contains('selected'));
+  selectAllPronounsBtn.textContent = allSelected ? 'No pronouns' : 'All pronouns';
+}
+
+function closeOtherFilterDropdowns(currentMenuToIgnore) {
+    const allFilterMenus = document.querySelectorAll('.filter-bar .dropdown-menu');
+    allFilterMenus.forEach(menu => {
+        if (menu !== currentMenuToIgnore) {
+            menu.classList.add('hidden');
+        }
+    });
+    // Si el menú que no se debe ignorar está de hecho abierto (visible),
+    // entonces ese es el nuevo openFilterDropdownMenu.
+    // Si no, o si currentMenuToIgnore es null, ningún menú de filtro está "oficialmente" abierto.
+    if (currentMenuToIgnore && !currentMenuToIgnore.classList.contains('hidden')) {
+        openFilterDropdownMenu = currentMenuToIgnore;
+    } else {
+        openFilterDropdownMenu = null;
+    }
+}
+
+function updateVerbDropdownCount() {
+  const buttons = document.querySelectorAll('#verb-buttons .verb-button');
+  const selected = Array.from(buttons)
+                        .filter(b => b.classList.contains('selected'))
+                        .length;
+  const total = buttons.length;
+  document.getElementById('verb-dropdown-count')
+          .textContent = `(${selected}/${total})`;
+}
+if (loaded) {
+  // Pintamos los verbos y preparamos su dropdown
+  renderVerbButtons();
+  initVerbDropdown();
+
+  
+
+  renderTenseButtons();
+  initTenseDropdown();
+
+  renderPronounButtons();
+  initPronounDropdown();
+
+  renderVerbTypeButtons();
+  filterVerbTypes();
+  renderSetupRecords();
+}
+  const dropdownBtn     = document.getElementById('verb-dropdown-button');
+  const dropdownMenu    = document.getElementById('verb-dropdown-menu');
+  const selectAllBtn    = document.getElementById('select-all-verbs');
+  const allButtons      = () => Array.from(document.querySelectorAll('.verb-button'));
+  
+
   
   document.querySelectorAll('input[type="checkbox"], input[type="radio"], select')
     .forEach(el => {
@@ -198,7 +307,18 @@ document.addEventListener('DOMContentLoaded', () => {
         soundClick.play();
       });
     });
-
+	
+   function updateTenseDropdownCount() {
+		const tenseButtonsNodeList = document.querySelectorAll('#tense-buttons .tense-button'); 
+		const total = tenseButtonsNodeList.length;
+		const selected = Array.from(tenseButtonsNodeList).filter(btn => btn.classList.contains('selected')).length;
+		
+		const countElement = document.getElementById('tense-dropdown-count');
+		if (countElement) {
+			countElement.textContent = `(${selected}/${total})`;
+		}
+   }
+	
   function renderTenseButtons() {
     const container = document.getElementById('tense-buttons');
     container.innerHTML = '';
@@ -214,9 +334,63 @@ document.addEventListener('DOMContentLoaded', () => {
         soundClick.play();
         btn.classList.toggle('selected');
         filterVerbTypes();  // re-filtra tipos tras cambiar los tiempos
+		updateTenseDropdownCount(); // Ya la tienes
+        updateSelectAllTensesButtonText(); // << --- AÑADIR ESTA LLAMADA
       });
       container.appendChild(btn);
     });
+    updateTenseDropdownCount(); // Llamada existente
+    updateSelectAllTensesButtonText(); // << --- AÑADIR ESTA LLAMADA (actualización inicial)
+    }
+
+function initTenseDropdown() {
+  const dropdownBtn     = document.getElementById('tense-dropdown-button');
+  const dropdownMenu    = document.getElementById('tense-dropdown-menu');
+  const selectAllTenses = document.getElementById('select-all-tenses');
+  
+  // Función auxiliar para obtener los botones de tiempo actuales.
+  // Usar un selector más específico es una buena práctica.
+  const getAllTenseButtons = () => Array.from(document.querySelectorAll('#tense-buttons .tense-button'));
+
+  // Toggle de mostrar/ocultar el menú
+  dropdownBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    const isOpening = dropdownMenu.classList.contains('hidden');
+
+    closeOtherFilterDropdowns(null); // Cierra otros menús o este mismo si se hace clic de nuevo
+
+    if (isOpening) { // Si estaba oculto (y por tanto ahora se va a abrir)
+      dropdownMenu.classList.remove('hidden');
+      openFilterDropdownMenu = dropdownMenu; // Registrar como abierto
+    }
+  });
+
+  selectAllTenses.addEventListener('click', () => {
+    if (typeof soundClick !== 'undefined' && soundClick.play) {
+        soundClick.play();
+    }
+    
+    const currentTenseButtons = getAllTenseButtons();
+    const allCurrentlySelected = currentTenseButtons.length > 0 && currentTenseButtons.every(btn => btn.classList.contains('selected'));
+    currentTenseButtons.forEach(btn => {
+        btn.classList.toggle('selected', !allCurrentlySelected);
+    });
+    
+    filterVerbTypes();                // Re-aplicar filtros de tipo de verbo
+    updateTenseDropdownCount();       // Actualizar el contador numérico (ej. "3/6")
+    updateSelectAllTensesButtonText(); 
+  });
+
+  updateTenseDropdownCount();
+  updateSelectAllTensesButtonText(); // Llamada inicial para establecer el texto correcto del botón
+}
+	
+function updateCurrentPronouns() {
+  const selectedBtns = Array.from(document.querySelectorAll('.pronoun-group-button'))
+                            .filter(b => b.classList.contains('selected'));
+  const flat = selectedBtns.flatMap(b => JSON.parse(b.dataset.values));
+  // Sobrescribe el array global pronouns:
+  window.pronouns = flat;
 }
   
 function filterVerbTypes() {
@@ -228,7 +402,7 @@ function filterVerbTypes() {
       button.disabled = !ok;
       button.classList.toggle('disabled', !ok);
       if (!ok) button.classList.remove('selected');
-      else button.classList.add('selected'); // Mantener seleccionado si está habilitado (o según lógica previa)
+      else button.classList.add('selected'); 
     });
   }
 
@@ -280,6 +454,321 @@ musicToggle.addEventListener('click', () => {
   }
 });
 
+	function renderVerbButtons() {
+	  const container = document.getElementById('verb-buttons');
+	  container.innerHTML = '';
+
+	  // ① Clonamos y ordenamos alfabéticamente por infinitive_es
+	  const verbsSorted = [...initialRawVerbData].sort((a, b) =>
+		a.infinitive_es.localeCompare(b.infinitive_es, 'es', { sensitivity: 'base' })
+	  );
+
+	  // ② Creamos cada botón
+	  verbsSorted.forEach(v => {
+		const btn = document.createElement('button');
+		btn.type          = 'button';
+		btn.classList.add('verb-button', 'selected');
+		btn.dataset.value = v.infinitive_es;
+		btn.innerHTML = `
+		  <span class="tick"></span>
+		  <span class="label">${v.infinitive_es} — ${v.infinitive_en}</span>
+		`;
+		container.appendChild(btn);
+	  });
+	}
+	
+	// Recorre cada group-button y marca .active si TODOS sus verbos están seleccionados
+	function updateGroupButtons() {
+	  const container = document.getElementById('verb-buttons');
+	  const allBtns   = Array.from(container.querySelectorAll('.verb-button'));
+
+	  document.querySelectorAll('#verb-groups-panel .group-button')
+		.forEach(gb => {
+		  const grp = gb.dataset.group;
+		  // Filtramos los botones de verbo que pertenecen a este grupo
+		  const matched = allBtns.filter(b => {
+			const inf = b.dataset.value;
+			if (grp === 'all')        return true;
+			if (grp === 'reflexive')  return inf.endsWith('se');
+			return inf.endsWith(grp);
+		  });
+		  // Está activo si hay al menos uno y TODOS están .selected
+		  const allOn = matched.length > 0 && matched.every(b => b.classList.contains('selected'));
+		  gb.classList.toggle('active', allOn);
+		});
+	}
+	function updateSelectAllTensesButtonText() {
+	  const tenseButtons = document.querySelectorAll('#tense-buttons .tense-button');
+	  const selectAllTensesBtn = document.getElementById('select-all-tenses');
+
+	  if (!selectAllTensesBtn || tenseButtons.length === 0) {
+		if (selectAllTensesBtn) selectAllTensesBtn.textContent = 'Seleccionar Todo';
+		return;
+	  }
+
+	  const allSelected = Array.from(tenseButtons).every(btn => btn.classList.contains('selected'));
+	  selectAllTensesBtn.textContent = allSelected ? 'No tenses...' : 'All tenses!';
+	}
+	function initVerbDropdown() {
+	  const ddBtn          = document.getElementById('verb-dropdown-button');
+	  const menu           = document.getElementById('verb-dropdown-menu');
+	  const deselectAllBtn = document.getElementById('deselect-all-verbs');
+	  const groupsBtn      = document.getElementById('verb-groups-button');
+	  const groupsPanel    = document.getElementById('verb-groups-panel');
+	  const searchInput    = document.getElementById('verb-search');
+	  const container      = document.getElementById('verb-buttons');
+	  
+
+	  const allBtns = () => Array.from(container.querySelectorAll('.verb-button'));
+
+	  // Función para alternar el texto del botón
+		function updateDeselectAllButton() {
+		  const verbButtons = allBtns(); // allBtns es () => Array.from(container.querySelectorAll('.verb-button'))
+		  const deselectAllBtn = document.getElementById('deselect-all-verbs'); // Asegúrate de tener la referencia
+
+		  if (verbButtons.length === 0) {
+			deselectAllBtn.textContent = 'Seleccionar Todo';
+			return;
+		  }
+		  // Comprueba si TODOS los botones de verbo están seleccionados
+		  const allSelected = verbButtons.every(b => b.classList.contains('selected'));
+		  deselectAllBtn.textContent = allSelected
+			? 'No verbs'
+			: 'All verbs';
+		}
+
+	  // 0) Abrir/Cerrar el menú
+		ddBtn.addEventListener('click', e => {
+			e.stopPropagation();
+			const isOpening = menu.classList.contains('hidden');
+
+			closeOtherFilterDropdowns(null); // Cierra otros o este mismo si estaba abierto
+
+			if (isOpening) {
+				menu.classList.remove('hidden');
+				openFilterDropdownMenu = menu; 
+				searchInput.focus();
+			}
+			// El panel de grupos debería permanecer oculto al abrir el menú principal de verbos
+			groupsPanel.classList.add('hidden'); 
+		});
+
+	  // 1) Toggle Selección total / Deselección total
+		deselectAllBtn.addEventListener('click', () => {
+		  const verbButtons = allBtns();
+		  // Determina si todos están seleccionados ANTES de cambiar algo
+		  const allCurrentlySelected = verbButtons.length > 0 && verbButtons.every(b => b.classList.contains('selected'));
+
+		  // Si todos están seleccionados, deselecciona todos. Si no, selecciona todos.
+		  verbButtons.forEach(b => b.classList.toggle('selected', !allCurrentlySelected));
+		  
+		  updateVerbDropdownCount();
+		  updateDeselectAllButton(); // Actualiza el texto del botón
+		  updateGroupButtons();
+		});
+
+	  // 2) Abrir/Ocultar panel de Grupos
+	  groupsBtn.addEventListener('click', e => {
+		e.stopPropagation();
+		groupsPanel.classList.toggle('hidden');
+	  });
+
+		// 3) Filtrar por grupos con TOGGLE y marcar el propio botón
+		groupsPanel.querySelectorAll('.group-button').forEach(gb => {
+		  gb.addEventListener('click', e => {
+			e.preventDefault();
+			if (soundClick) soundClick.play(); 
+			const grp = gb.dataset.group; // "all" | "reflexive" | "ar" | "er" | "ir"
+
+			// ① Recoger solo los botones de verbo que pertenecen a este grupo
+			const matched = allBtns().filter(b => {
+			  const inf = b.dataset.value;
+			  const normalizedInf = removeAccents(inf);
+			  
+			  if (grp === 'all') return true;
+			  if (grp === 'reflexive') return inf.endsWith('se');
+			  if (grp === 'ar') return normalizedInf.endsWith('ar');
+			  if (grp === 'er') return normalizedInf.endsWith('er');
+			  if (grp === 'ir') return normalizedInf.endsWith('ir');
+			  
+			  return inf.endsWith(grp);
+			});
+
+			// ② Decidir si los apagamos (si todos ya estaban seleccionados) o los encendemos
+			const allCurrentlyOn = matched.every(b => b.classList.contains('selected'));
+			matched.forEach(b => 
+			  b.classList.toggle('selected', !allCurrentlyOn)
+			);
+
+			// ③ Marcar el propio botón de grupo como activo/inactivo
+			gb.classList.toggle('active', !allCurrentlyOn);
+
+			// ④ Actualizar contador y texto “todo”
+			updateVerbDropdownCount();
+			updateDeselectAllButton();
+			updateGroupButtons();
+		});
+	  });
+
+		// Modificación en initVerbDropdown:
+		searchInput.addEventListener('input', () => {
+			const q = searchInput.value.trim().toLowerCase();
+			let visibleCount = 0;
+			const noResultsMessage = document.getElementById('verb-search-no-results');
+
+			allBtns().forEach(b => {
+				const isVisible = b.textContent.toLowerCase().includes(q);
+				b.style.display = isVisible ? '' : 'none';
+				if (isVisible) {
+					visibleCount++;
+				}
+			});
+
+			// Mostrar u ocultar el mensaje de "no resultados"
+			if (noResultsMessage) {
+				if (visibleCount === 0 && q !== '') { // Mostrar solo si hay búsqueda y 0 resultados
+					noResultsMessage.classList.remove('hidden');
+				} else {
+					noResultsMessage.classList.add('hidden');
+				}
+			}
+		});
+			searchInput.addEventListener('keydown', e => {
+				if (e.key === 'Enter' || e.keyCode === 13) { // 'Enter' o código 13 para Enter
+					e.preventDefault(); // Previene la acción por defecto (enviar el formulario)
+					// Opcional: Podrías añadir aquí alguna acción específica si quisieras que "Intro"
+					// hiciera algo en la búsqueda, como seleccionar el primer verbo visible,
+					// pero por ahora, solo prevenimos el inicio del juego.
+					// console.log('Enter pressed in verb search, action prevented.');
+				}
+			});
+	  // 5) Delegación de clicks para toggle individual
+	  container.addEventListener('click', e => {
+		const btn = e.target.closest('.verb-button');
+		if (!btn) return;
+		soundClick.play();
+		btn.classList.toggle('selected');
+		updateVerbDropdownCount();
+		updateDeselectAllButton();
+		updateGroupButtons();
+	  });
+
+	  // 7) Inicializar contador y texto del botón la primera vez
+	  updateVerbDropdownCount();
+	  updateDeselectAllButton();
+	  updateGroupButtons();
+	}
+	
+	function renderPronounButtons() {
+	  const container = document.getElementById('pronoun-buttons');
+	  container.innerHTML = '';
+
+	  pronounGroups.forEach(group => {
+		const btn = document.createElement('button');
+		btn.type              = 'button';
+		btn.classList.add('pronoun-group-button');
+		btn.dataset.values    = JSON.stringify(group.values);
+		btn.textContent       = group.label;
+		btn.classList.add('selected');  // todos activos por defecto
+		container.appendChild(btn);
+	  });
+	}
+
+function initPronounDropdown() {
+  const ddBtn     = document.getElementById('pronoun-dropdown-button');
+  const ddMenu    = document.getElementById('pronoun-dropdown-menu');
+  const selectAll = document.getElementById('select-all-pronouns'); // Este es el botón "Seleccionar/Deseleccionar Todos los Pronombres"
+  
+  // Función auxiliar para obtener todos los botones de grupo de pronombres
+  const getAllPronounGroupButtons = () => Array.from(document.querySelectorAll('#pronoun-buttons .pronoun-group-button'));
+
+  // 1) Abrir/cerrar menú (tu lógica actual está bien)
+  ddBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    const isOpening = ddMenu.classList.contains('hidden');
+    closeOtherFilterDropdowns(null); 
+    if (isOpening) {
+      ddMenu.classList.remove('hidden');
+      openFilterDropdownMenu = ddMenu;
+    }
+  });
+
+  // 2) Lógica para el botón “Seleccionar Todo / Deseleccionar Todo” de Pronombres
+  selectAll.addEventListener('click', () => {
+    if (typeof soundClick !== 'undefined' && soundClick.play) {
+        soundClick.play();
+    }
+    
+    const currentPronounButtons = getAllPronounGroupButtons();
+    
+    // Determinar si todos los botones de pronombre están actualmente seleccionados
+    const allCurrentlySelected = currentPronounButtons.length > 0 && currentPronounButtons.every(b => b.classList.contains('selected'));
+    
+    // Si todos están seleccionados, la acción es deseleccionar todos.
+    // Si no todos están seleccionados (o ninguno), la acción es seleccionar todos.
+    currentPronounButtons.forEach(b => {
+        b.classList.toggle('selected', !allCurrentlySelected);
+    });
+    
+    updatePronounDropdownCount();        // Actualiza el contador numérico (ej. "3/6")
+    updateSelectAllPronounsButtonText(); // << --- ¡Importante! Actualiza el texto de este botón
+    updateCurrentPronouns();             // Actualiza la lista global de pronombres
+  });
+
+  // 3) Toggle individual de cada botón de grupo de pronombre
+  getAllPronounGroupButtons().forEach(b => { // Itera sobre los botones obtenidos
+    b.addEventListener('click', () => {
+      if (typeof soundClick !== 'undefined' && soundClick.play) {
+          soundClick.play();
+      }
+      b.classList.toggle('selected');
+      updatePronounDropdownCount();
+      updateSelectAllPronounsButtonText(); // << --- ¡Importante! Actualiza el texto del botón principal
+      updateCurrentPronouns();
+    });
+  });
+
+  // 4) Inicia el contador y el texto del botón "Seleccionar/Deseleccionar Todo" con el estado actual
+  updatePronounDropdownCount();
+  updateSelectAllPronounsButtonText(); // << --- ¡Importante! Llamada inicial para el texto del botón
+  updateCurrentPronouns(); // Ya lo tenías, está bien
+}
+	
+document.addEventListener('click', e => {
+    if (openFilterDropdownMenu) { // Si hay un menú de filtro (Tense, Verb, o Pronoun) abierto
+
+        // Comprobamos si el clic fue en alguno de los botones que abren los menús
+        const isClickOnAnyToggleButton = 
+            document.getElementById('tense-dropdown-button').contains(e.target) ||
+            document.getElementById('verb-dropdown-button').contains(e.target) ||
+            document.getElementById('pronoun-dropdown-button').contains(e.target);
+
+        // Comprobamos si el clic fue dentro del menú que está actualmente abierto
+        const isClickInsideOpenMenu = openFilterDropdownMenu.contains(e.target);
+
+        if (!isClickOnAnyToggleButton && !isClickInsideOpenMenu) {
+            // Si el clic NO fue en un botón toggle Y NO fue dentro del menú abierto,
+            // entonces cerramos el menú.
+            openFilterDropdownMenu.classList.add('hidden');
+
+            // Importante: Si el menú de verbos está abierto y su panel de grupos también,
+            // también debemos cerrar el panel de grupos.
+            if (openFilterDropdownMenu.id === 'verb-dropdown-menu') {
+                const groupsPanel = document.getElementById('verb-groups-panel');
+                if (groupsPanel) {
+                    groupsPanel.classList.add('hidden');
+                }
+            }
+
+            openFilterDropdownMenu = null; // Ya no hay ninguno "oficialmente" abierto
+        }
+    }
+});  
+function handleReflexiveToggle() {
+    if (!toggleReflexiveBtn) return; 
+    toggleReflexiveBtn.classList.toggle('selected');
+    if (typeof soundClick !== 'undefined') soundClick.play();
+}
 function renderSetupRecords() {
   const container = document.getElementById('setup-records');
   if (!container) return;
@@ -338,55 +827,54 @@ function renderSetupRecords() {
 
 
 async function loadVerbs() {
-  let rawVerbData = [];
+  // 0) Carga JSON
   try {
-      const resp = await fetch(`verbos.json?cb=${Date.now()}`);
-      if (!resp.ok) throw new Error('Network response was not ok');
-      initialRawVerbData = await resp.json();
+    const resp = await fetch(`verbos.json?cb=${Date.now()}`);
+    if (!resp.ok) throw new Error('Network response was not ok');
+    initialRawVerbData = await resp.json();
   } catch (error) {
-      console.error("Error fetching raw verb data:", error);
-      alert("Could not load verb data file.");
-      return false; 
+    console.error("Error fetching raw verb data:", error);
+    alert("Could not load verb data file.");
+    return false;
   }
 
-    const toggleReflexiveBtn = document.getElementById('toggle-reflexive');
-    const excludeReflexive = !toggleReflexiveBtn.classList.contains('selected');
-    const selectedVerbTypeButtons = Array.from(
-        document.querySelectorAll('.verb-type-button.selected')
-    );
-    const selectedTypes = selectedVerbTypeButtons.map(button => button.dataset.value);
+  // 1) Filtrado por tipos de irregularidad
+  const selectedTypeBtns = Array.from(
+    document.querySelectorAll('.verb-type-button.selected')
+  );
+  const selectedTypes = selectedTypeBtns.map(b => b.dataset.value);
+  if (selectedTypes.length === 0) {
+    alert('Please select at least one verb type.');
+    return false;
+  }
 
-    if (selectedTypes.length === 0) {
-        alert('Please select at least one verb irregularity type (e.g., Regular, Stem Change).');
-        return false;
-    }
+  // 2) Filtrado por tiempos seleccionados
+  let filtered = initialRawVerbData.filter(v =>
+    currentOptions.tenses.some(t =>
+      (v.types[t] || []).some(type => selectedTypes.includes(type))
+    )
+  );
 
-    const filteredVerbs = initialRawVerbData.filter(v => {
-        const isVerbReflexive = (v.types.present && v.types.present.includes('reflexive')) ||
-                               (v.types.present_perfect && v.types.present_perfect.includes('reflexive')) ||
-                               (v.types.past_simple && v.types.past_simple.includes('reflexive'));
+  // 3) Filtrado final según selección MANUAL en el dropdown de verbos
+  //    (es decir, respetar solo los que tengan .verb-button.selected)
+  const manualSel = Array.from(
+    document.querySelectorAll('#verb-buttons .verb-button.selected')
+  ).map(b => b.dataset.value);
 
-        if (excludeReflexive && isVerbReflexive) {
-            return false; // Si se deben excluir los reflexivos y este verbo lo es, filtrarlo.
-        }
+  if (manualSel.length > 0) {
+    filtered = filtered.filter(v => manualSel.includes(v.infinitive_es));
+  }
 
-        // El verbo debe ser aplicable para al menos uno de los tiempos seleccionados
-        return currentOptions.tenses.some(tenseKey => {
-            const typesForTenseInVerb = v.types[tenseKey] || [];
-            // El verbo debe coincidir con alguno de los tipos de irregularidad seleccionados para ese tiempo.
-            return typesForTenseInVerb.some(verbType => selectedTypes.includes(verbType));
-        });
-    });
+  // 4) Comprobación
+  if (filtered.length === 0) {
+    alert('No verbs available for the selected criteria.');
+    allVerbData = [];
+    return false;
+  }
 
-    if (filteredVerbs.length === 0) {
-        alert('No verbs available for the selected criteria (reflexive setting, tense, and verb types).');
-        allVerbData = [];
-        return false;
-    }
-
-    allVerbData = filteredVerbs;
-    console.log(`Filtered down to ${allVerbData.length} verbs. Reflexive setting: ${toggleReflexiveBtn.classList.contains('selected') ? 'Include' : 'Exclude'}. Selected tenses: ${currentOptions.tenses.join(', ')}. Selected types: ${selectedTypes.join(', ')}`);
-    return true;
+  allVerbData = filtered;
+  console.log(`Using ${allVerbData.length} verbs after all filters.`);
+  return true;
 }
 
   function updateRanking() {
@@ -434,11 +922,17 @@ async function loadVerbs() {
 
 let usedVerbs = [];  
 
-
+	/*const pronounButtons = document.querySelectorAll('#pronoun-buttons .pronoun-group-button');
+	const selectedPronouns = Array.from(pronounButtons)
+	  .filter(btn => btn.classList.contains('selected'))
+	  .map(btn => btn.getAttribute('data-pronoun'));
+	const pronounsToShow = selectedPronouns.length > 0
+	  ? selectedPronouns
+	  : pronouns;*/
+  
 function prepareNextQuestion() {
   const oldNote = document.getElementById('prize-note');
   if (oldNote) oldNote.remove();
-  
   if (!allVerbData || allVerbData.length === 0) {
     console.error("No valid verb data.");
     feedback.textContent = "Error: Could not load verb data.";
@@ -459,18 +953,36 @@ function prepareNextQuestion() {
      if (!usedVerbs.includes(v.infinitive_es)){
           usedVerbs.push(v.infinitive_es);
      }
-     usedVerbs.push(v.infinitive_es);
-
-  const originalPronoun = pronouns[Math.floor(Math.random() * pronouns.length)];
-  const displayPronoun = (function() {
-    const map = {
-      él: ['él','ella','usted'],
-      nosotros: ['nosotros','nosotras'],
-      ellos: ['ellos','ellas','ustedes']
-    };
-    return (map[originalPronoun] || [originalPronoun])
-           [Math.floor(Math.random() * (map[originalPronoun]?.length||1))];
-  })();
+     
+   // ←──— INSERCIÓN A partir de aquí ───—
+   // Paso 1: lee los botones de pronombre activos
+   const selectedBtns = Array
+     .from(document.querySelectorAll('.pronoun-group-button'))
+     .filter(btn => btn.classList.contains('selected'));
+ 
+   // aplana sus valores JSON en un solo array
+   const allowedPronouns = selectedBtns.flatMap(btn =>
+     JSON.parse(btn.dataset.values)
+   );
+ 
+   // Paso 2: construye pronList con fallback a la lista global
+   const pronList = allowedPronouns.length > 0
+     ? allowedPronouns
+     : pronouns;   // ['yo','tú','él','nosotros','vosotros','ellos']
+ 
+   // Paso 3: elige el pronombre interno de pronList
+   const originalPronoun = pronList[
+     Math.floor(Math.random() * pronList.length)
+   ];
+	  const displayPronoun = (function() {
+		const map = {
+		  él:       ['él','ella','usted'],
+		  nosotros: ['nosotros','nosotras'],
+		  ellos:    ['ellos','ellas','ustedes']
+		};
+		const arr = map[originalPronoun] || [originalPronoun];
+		return arr[Math.floor(Math.random() * arr.length)];
+	  })();
   const tKey = currentOptions.tenses[Math.floor(Math.random() * currentOptions.tenses.length)];
   const tenseObj = tenses.find(t => t.value === tKey);
   const tenseLabel = tenseObj ? tenseObj.name : tKey;
@@ -488,13 +1000,18 @@ function prepareNextQuestion() {
     return;
   }
 
+  const rawEN = v.infinitive_en.toLowerCase();                   // p.ej. "to remember / to recall"
+  const expectedEN = rawEN
+    .split(/\s*\/\s*/)                                           // ["to remember", "to recall"]
+    .map(s => s.replace(/^to\s+/, '').trim());                  // ["remember","recall"]
+
   currentQuestion = {
     verb: v,
     pronoun: originalPronoun,
     displayPronoun,
     answer: correctES,
-    expectedEN: v.infinitive_en.toLowerCase().replace(/^to\s+/, ''),
-	tenseKey: tKey,      // <— store it here
+    expectedEN,                                                  // ahora es array
+    tenseKey: tKey,
     hintLevel: 0
   };
   startTime = Date.now();
@@ -571,7 +1088,7 @@ function checkAnswer() {
   }
   
   const isReflexive = currentQuestion.verb.infinitive_es.endsWith('se');
-  if (isReflexive && toggleReflexiveBtn.classList.contains('selected')) {
+  if (isReflexive && toggleReflexiveBtn && toggleReflexiveBtn.classList.contains('selected')) {
   reflexiveBonus = 10;
   }
 
@@ -610,22 +1127,28 @@ function checkAnswer() {
         feedback.innerHTML = "Error: Datos del verbo incompletos para esta pregunta.";
         return;
     }
-    const spPronouns = Object.keys(allForms).filter(p => allForms[p] === spanishForm);
+    // Paso 3A: quedarnos solo con los pronombres que estén activos (window.pronouns)
+    const spPronouns = Object
+      .entries(allForms)
+      .filter(([p, form]) =>
+        pronouns.includes(p) && form === spanishForm
+      )
+      .map(([p]) => p);         
+	const pronounGroupMap = {
+	  yo:       ['I'],
+	  tú:       ['you'],
+	  él:       ['he','she','you'],
+	  ella:     ['he','she','you'],
+	  usted:    ['you'],      
+	  nosotros: ['we'],
+	  nosotras: ['we'],
 
-    const pronounGroupMap = {
-        yo:     ['I'],
-        tú:     ['you'],
-        él:     ['he','she','you'], 
-        ella:   ['he','she','you'],
-        usted:  ['you'], 
-        nosotros:['we'],
-        nosotras:['we'],
-        vosotros:['you all'], 
-        vosotras:['you all'],
-        ellos:  ['they','you'], 
-        ellas:  ['they','you'],
-        ustedes:['you all']         
-    };
+	  vosotros: ['you all'],
+	  vosotras: ['you all'],
+	  ellos:    ['they','you all'],
+	  ellas:    ['they','you all'],
+	  ustedes:  ['you all']
+	};
 
     const engProns = Array.from(new Set(
         spPronouns.flatMap(sp => pronounGroupMap[sp] || [])
@@ -659,18 +1182,42 @@ function checkAnswer() {
 	}
 
 	possibleCorrectAnswers = engProns.flatMap(englishPronoun => {
-		let formKey = englishPronoun.toLowerCase();
-		if (englishPronoun === 'I') { 
-			formKey = 'I';
-		}
+	  // 1) Determinamos la clave para indexar el JSON de EN:
+	  let formKey;
+	  if (englishPronoun === 'I') {
+		formKey = 'I';
+	  } else if (englishPronoun === 'you all') {
+		formKey = 'you';
+	  } else {
+		formKey = englishPronoun.toLowerCase();
+	  }
 
-		const conjugatedVerbEN = formsForCurrentTenseEN[formKey];
+	  // 2) Recuperamos la forma conjugada en inglés
+	  const verbEN = formsForCurrentTenseEN[formKey];
+	  if (!verbEN) return [];
 
-		if (conjugatedVerbEN) {
-			return [`${englishPronoun.toLowerCase()} ${conjugatedVerbEN.toLowerCase()}`];
-		} else {
-			return []; 
+	  const base = verbEN.toLowerCase();
+
+	  // 3) Para cada infinitivo (sinónimos) en expectedEN:
+	  return currentQuestion.expectedEN.flatMap(inf => {
+		// inf es p.ej. "remember" o "recall" o "be at"
+		const parts = inf.split(' ');
+		const suffix = parts.length > 1
+		  ? ' ' + parts.slice(1).join(' ')
+		  : '';
+		// 4) Construir la respuesta según el pronombre
+		if (englishPronoun === 'I') {
+		  return [
+			`I ${base}${suffix}`,
+			`i ${base}${suffix}`
+		  ];
 		}
+		if (englishPronoun === 'you all') {
+		  return [`you all ${base}${suffix}`];
+		}
+		const pronLower = englishPronoun.toLowerCase();
+		return [`${pronLower} ${base}${suffix}`];
+	  });
 	});
 
 	if (possibleCorrectAnswers.length === 0 && engProns.length > 0) {
@@ -1137,9 +1684,11 @@ function quitToSettings() {
   musicToggle.style.display = 'none';
   volumeSlider.disabled = true;
   musicPlaying = false;
-
+  
+  
   gameScreen.style.display = 'none';
   setupScreen.style.display = 'block';
+  
   document.getElementById('setup-records').classList.remove('hidden');
 
     // Restablecer selecciones de botones a sus valores predeterminados
@@ -1156,8 +1705,9 @@ function quitToSettings() {
     if (defaultConfigButton) {
         currentOptions.mode = defaultConfigButton.dataset.mode;
     }
-	
+	playHeaderIntro();
     renderTenseButtons(); // Restaura los botones de tiempo (Presente seleccionado por defecto)
+	initTenseDropdown();
     renderVerbTypeButtons(); // Restaura los botones de tipo de verbo (todos seleccionados por defecto)
     filterVerbTypes(); // Aplica filtros basados en los tiempos por defecto
 
@@ -1354,103 +1904,109 @@ function typewriterEffect(textElement, text, interval) {
 }
 
 
-  if (helpButton && tooltip) {
-      helpButton.addEventListener('mouseover', (event) => {
-          const tooltipContentHTML = `
-              <div class="tooltip-row">
-                  <div class="tooltip-box">
-                      <h5>♾️ Infinite </h5>
-                      <p>Play without time or life limits. Aim for the highest score and longest streak!</p>
-                  </div>
-                  <div class="tooltip-box">
-                      <h5>⏱️ Timer</h5>
-                      <p>Score as many points as possible within the 4-minute time limit.</p>
-                  </div>
-                  <div class="tooltip-box">
-                      <h5>💖 Lives</h5>
-                      <p>You have 5 lives. Each incorrect answer costs one life. Survive as long as you can!</p>
-                  </div>
-              </div>
-              <div class="tooltip-row">
-                  <div class="tooltip-box">
-                      <h5>💭 Recall</h5>
-                      <p>EASY - Given a Spanish tense and conjugation, type the English pronoun and <strong>base verb in present tense</strong>.<p><strong>Base points:</strong> +5
-                      <div class="example-prompt">"SIMPLE PAST: recordé"</div>
-                      <div class="typing-animation" id="recall-anim"></div>
-                  </div>
-                  <div class="tooltip-box">
-                      <h5>⚙️ Conjugate</h5>
-                      <p>NORMAL - Given a Spanish verb and pronoun, type the correct conjugated form in Spanish.<p><strong>Base points:</strong> +10
-                      <div class="example-prompt">"conjugar – nosotros"</div>
-                      <div class="typing-animation" id="easy-anim"></div>
-                  </div>
-				  <div class="tooltip-box">
-				      <h5>⌨️ Produce</h5>
-				      <p>HARD - Given the English verb and a Spanish pronoun, type the correct conjugation in Spanish. <p><strong>Base points:</strong> +15
-	                  <div class="example-prompt">"Present: to love – yo"</div>
-                      <div class="typing-animation" id="produce-anim"></div>
-				  </div>
-              </div>
-          `;
-          tooltip.innerHTML = tooltipContentHTML; 
-          /*const btnRect = helpButton.getBoundingClientRect(); // Posición del botón
-          const bodyRect = document.body.getBoundingClientRect(); // Posición del body
-          const scrollOffsetY = window.scrollY; // Cuánto se ha hecho scroll vertical
-          const scrollOffsetX = window.scrollX; // Cuánto se ha hecho scroll horizontal
-		  
+	if (helpButton && tooltip) {
+		helpButton.addEventListener('click', function(event) { // Cambiado a 'click' para móviles
+			event.stopPropagation(); // Evita que el clic se propague al listener del documento
 
-          let topPos = btnRect.bottom + scrollOffsetY + 10; // Más margen hacia abajo
-          let leftPos = btnRect.left + scrollOffsetX - 50;  // Desplaza a la izquierda
-          
+			if (tooltip.style.display === 'block') {
+				tooltip.style.display = 'none';
+				document.body.classList.remove('tooltip-open-no-scroll');
+				if (typeInterval) clearInterval(typeInterval); // Limpiar intervalo si se cierra
+			} else {
+				const tooltipContentHTML = `
+					<div class="tooltip-content-wrapper"> 
+						<div class="tooltip-row">
+							<div class="tooltip-box">
+								<h5>♾️ Infinite </h5>
+								<p>Play without time or life limits. Aim for the highest score and longest streak!</p>
+							</div>
+							<div class="tooltip-box">
+								<h5>⏱️ Timer</h5>
+								<p>Score as many points as possible within the 4-minute time limit.</p>
+							</div>
+							<div class="tooltip-box">
+								<h5>💖 Lives</h5>
+								<p>You have 5 lives. Each incorrect answer costs one life. Survive as long as you can!</p>
+							</div>
+						</div>
+						<div class="tooltip-row">
+							<div class="tooltip-box">
+								<h5>💭 Recall</h5>
+								<p>EASY - Given a Spanish tense and conjugation, type the English pronoun and <strong>base verb in present tense</strong>.</p><p><strong>Base points:</strong> +5</p>
+								<div class="example-prompt">"SIMPLE PAST: recordé"</div>
+								<div class="typing-animation" id="recall-anim"></div>
+							</div>
+							<div class="tooltip-box">
+								<h5>⚙️ Conjugate</h5>
+								<p>NORMAL - Given a Spanish verb and pronoun, type the correct conjugated form in Spanish.</p><p><strong>Base points:</strong> +10</p>
+								<div class="example-prompt">"conjugar – nosotros"</div>
+								<div class="typing-animation" id="easy-anim"></div>
+							</div>
+							<div class="tooltip-box">
+								<h5>⌨️ Produce</h5>
+								<p>HARD - Given the English verb and a Spanish pronoun, type the correct conjugation in Spanish.</p><p><strong>Base points:</strong> +15</p>
+								<div class="example-prompt">"Present: to love – yo"</div>
+								<div class="typing-animation" id="produce-anim"></div>
+							</div>
+						</div>
+					</div>
+					<button id="close-tooltip-btn" style="margin-top: 15px; background-color: var(--accent-color-blue); color: #333;">Close Help</button>
+				`;
+				tooltip.innerHTML = tooltipContentHTML;
+				tooltip.style.display = 'block';
+				document.body.classList.add('tooltip-open-no-scroll'); // Prevenir scroll del body
 
-          tooltip.style.top = `${topPos}px`;
-          tooltip.style.left = `${leftPos}px`;*/
-          tooltip.style.display = 'block';
+				// Iniciar animaciones de typewriter
+				const produceAnimElement = document.getElementById('produce-anim');
+				const recallAnimElement = document.getElementById('recall-anim');
+				const easyAnimElement = document.getElementById('easy-anim');
 
-          /*const tooltipRect = tooltip.getBoundingClientRect(); // Tamaño y posición REAL del tooltip mostrado
+				if (produceAnimElement) setTimeout(() => typeWriter(produceAnimElement, 'amo', 150), 50);
+				if (recallAnimElement) setTimeout(() => typeWriter(recallAnimElement, 'I remember', 150), 50);
+				if (easyAnimElement) setTimeout(() => typeWriter(easyAnimElement, 'conjugamos', 150), 50);
 
-          // Ajustar izquierda si se sale por la derecha
-          if (tooltipRect.right > window.innerWidth - 10) {
-             leftPos = window.innerWidth - tooltipRect.width - 10 - bodyRect.left + scrollOffsetX;
-          }
-          // Ajustar arriba si se sale por abajo (preferir ponerlo arriba del botón)
-          if (tooltipRect.bottom > window.innerHeight - 10) {
-             topPos = btnRect.top - bodyRect.top + scrollOffsetY - tooltipRect.height - 5; // Arriba - 5px margen
-          }
-¡          leftPos = Math.max(10 + scrollOffsetX, leftPos);
+				// Añadir listener para el botón de cerrar tooltip
+				const closeTooltipBtn = document.getElementById('close-tooltip-btn');
+				if (closeTooltipBtn) {
+					closeTooltipBtn.addEventListener('click', () => {
+						tooltip.style.display = 'none';
+						document.body.classList.remove('tooltip-open-no-scroll');
+						if (typeInterval) clearInterval(typeInterval);
+					});
+				}
+			}
+		});
 
-          // Reaplica la posición ajustada
-          tooltip.style.top = `${topPos}px`;
-          tooltip.style.left = `${leftPos}px`;*/
+		// Listener para cerrar el tooltip si se hace clic fuera de él (cuando está abierto)
+		document.addEventListener('click', function(event) {
+			if (tooltip.style.display === 'block' && !tooltip.contains(event.target) && event.target !== helpButton && !helpButton.contains(event.target)) {
+				tooltip.style.display = 'none';
+				document.body.classList.remove('tooltip-open-no-scroll');
+				if (typeInterval) clearInterval(typeInterval);
+			}
+		});
 
-          const produceAnimElement = document.getElementById('produce-anim');
-          const recallAnimElement = document.getElementById('recall-anim');
+		// Evitar que el scroll dentro del tooltip propague al body (para algunos dispositivos táctiles)
+		tooltip.addEventListener('wheel', function(event) {
+			// Si el tooltip tiene scroll y no está en el límite superior o inferior, previene el scroll del body.
+			if (this.scrollHeight > this.clientHeight) { // Solo si el tooltip es scrolleable
+				 if ((this.scrollTop === 0 && event.deltaY < 0) || (this.scrollTop + this.clientHeight === this.scrollHeight && event.deltaY > 0)) {
+					// No prevenir si está en el borde y el scroll es en la dirección que "escaparía"
+				 } else {
+					event.stopPropagation();
+				 }
+			}
+		});
+		tooltip.addEventListener('touchmove', function(event) {
+			// Similar lógica para touchmove
+			if (this.scrollHeight > this.clientHeight) {
+				event.stopPropagation();
+			}
+		});
 
-          if (produceAnimElement) {
-              // Usar setTimeout pequeño para asegurar que el DOM se actualice antes de animar
-              setTimeout(() => typeWriter(produceAnimElement, 'amo', 300), 50);
-          }
-          if (recallAnimElement) {
-               setTimeout(() => typeWriter(recallAnimElement, 'I remember', 300), 50);
-          }
-		  const easyAnimElement = document.getElementById('easy-anim');
-          if (easyAnimElement) {
-               setTimeout(() => typeWriter(easyAnimElement, 'conjugamos', 300), 50);
-}
-
-      }); // Fin del listener 'mouseover'
-
-      helpButton.addEventListener('mouseout', () => {
-          tooltip.style.display = 'none'; // Ocultar el tooltip
-          clearInterval(typeInterval); // DETENER la animación de escritura si está en curso
-          tooltip.innerHTML = ''; // Limpiar el contenido para evitar problemas
-      }); // Fin del listener 'mouseout'
-
-
-  } else {
-      // Este console.error ahora sí debería poder encontrar los elementos
-      console.error("Help button (?) or tooltip container (#tooltip) not found OR script order issue.");
-  }
+	} else {
+		console.error("Help button (?) or tooltip container (#tooltip) not found.");
+	}
 
 const leftBubbles = document.getElementById('left-bubbles');
 const rightBubbles = document.getElementById('right-bubbles');
@@ -1587,7 +2143,8 @@ function createBubble(side) {
   const verb = allVerbData[Math.floor(Math.random() * allVerbData.length)];
   if (!verb) return;
 
-  const tense = Math.random() < 0.5 ? 'present' : 'past_simple';
+  const availableTenseValues = tenses.map(t => t.value);
+  const tense = availableTenseValues[Math.floor(Math.random() * availableTenseValues.length)];
   const pronoun = Object.keys(verb.conjugations[tense] || {})[Math.floor(Math.random() * 6)];
   const conjugation = verb.conjugations[tense]?.[pronoun];
 
@@ -1617,3 +2174,6 @@ window.addEventListener('resize', () => {
 });
 if (window.innerWidth > 1200) startBubbles();
 });                      // cierra DOMContentLoaded', …)
+
+// © 2025 Pablo Torrado, University of Hong Kong.
+// Licensed under CC BY-NC-ND 4.0: https://creativecommons.org/licenses/by-nc-nd/4.0/
