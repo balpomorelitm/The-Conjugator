@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <link rel="icon" href="favicon.png" type="image/png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+   <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+    .screen { border: 1px solid #ccc; padding: 20px; border-radius: 5px; margin-bottom: 20px; }
+    #game-screen { display: none; }
+    .pronoun-button { margin: 5px; padding: 5px 10px; cursor: pointer; }
+    .pronoun-button.selected { background-color: #007bff; color: white; }
+    #question-prompt { font-size: 1.2em; margin-bottom: 20px; }
+    button { margin: 5px; padding: 5px 10px; }
+    input[type="text"] { padding: 5px; width: 200px; }
+  </style>
+
+<link  rel="stylesheet" href="style.css">
+<audio id="sound-correct" src="sounds/correct.mp3"></audio>
+<audio id="sound-wrong" src="sounds/wrong.mp3"></audio>
+<audio id="sound-click" preload="auto" src="sounds/click.mp3"></audio>
+<audio id="sound-start" src="sounds/start-verb.mp3"></audio>
+<audio id="sound-bubble-pop" src="sounds/soundbubblepop.mp3"></audio>
+<script src="https://www.google.com/recaptcha/enterprise.js?render=6LeocycrAAAAAADtYPa2_d2PCH5mpEi-zx1yw_j4"></script>
+</head>
+  
+
+<body>
+  <div id="tooltip" class="tooltip-popup"></div>
+
+	<header class="main-header">
+	  <img src="images/conjucityhk.png" class="header-city" alt="city"/>
+	  <img src="images/conjuchuache.png" class="header-char" alt="char"/>
+	  
+	  <h1 class="glitch-title">
+		<span class="big-letter">T</span>HE 
+		<span class="big-letter">C</span>ONJUGATOR
+	  </h1>
+	</header>
+<div class="music-controls">
+    <button id="music-toggle" class="music-button" title="Toggle music">🔊</button>
+	
+  </div>
+<input  type="range" id="volume-slider"
+    min="0" max="1" step="0.05" value="0.6"
+    style="position:fixed; bottom:20px; right:130px; width:120px;
+          cursor:pointer; display:none;">
+		 
+<!-- 🔘 BOTONES DE MODO -->
+<div id="setup-screen" class="screen">
+  <div id="game-modes" class="mode-selector">
+    <button class="mode-button selected-mode" data-mode="infinite">♾️Infinite♾️</button>
+    <button class="mode-button" data-mode="timer">⏱️Timer 4m⏱️</button>
+    <button class="mode-button" data-mode="lives">5x💖</button>
+	<button id="help-button" type="button">?</button>
+  </div>
+
+   <form id="setup-form">
+    <p><strong>Settings:</strong></p>
+    <div class="mode-selector"> 
+	    <button type="button" class="mode-button config-button" data-mode="receptive">💭ReCall💭</button>
+		<button type="button" class="mode-button config-button selected-mode" data-mode="productive_easy">⚙️conjugATE⚙️</button>
+	    <button type="button" class="mode-button config-button" data-mode="productive">⌨️Pr0duc€⌨️</button>
+    </div>
+	<p><strong>Verb Options:</strong></p>
+
+  <div class="filter-bar">	
+	<div id="tense-dropdown" class="dropdown">
+	<button type="button" id="tense-dropdown-button" class="dropdown-toggle">
+	  Tenses <span id="tense-dropdown-count">(1/3)</span> ▾
+	</button>
+	  <div id="tense-dropdown-menu" class="dropdown-menu hidden">
+		<div class="dropdown-header">
+		  <button type="button" id="select-all-tenses" class="select-all-button">
+			All of them!
+		  </button>
+		</div>
+		<div id="tense-buttons" class="verb-type-selector"></div>
+	  </div>
+	</div>
+<!-- 2) Verbs -->
+
+	<div id="verb-dropdown" class="dropdown">
+	  <button type="button" id="verb-dropdown-button" class="dropdown-toggle">
+		Verbs <span id="verb-dropdown-count">(64/64)</span> ▾
+	  </button>
+
+	  <div id="verb-dropdown-menu" class="dropdown-menu hidden">
+		<div class="dropdown-header">
+		  <button type="button" id="deselect-all-verbs" class="select-all-button">
+			Deseleccionar Todo
+		  </button>
+		  <button type="button" id="verb-groups-button" class="select-groups-button">
+			Grupos de Verbos ▾
+		  </button>
+		</div>
+
+		<div id="verb-groups-panel" class="groups-panel hidden">
+		   <button type="button" data-group="all"      class="group-button">Todos</button>
+		   <button type="button" data-group="reflexive" class="group-button">Reflexivos</button>
+		   <button type="button" data-group="ar"       class="group-button">-ar</button>
+		   <button type="button" data-group="er"       class="group-button">-er</button>
+		   <button type="button" data-group="ir"       class="group-button">-ir</button>
+		</div>
+
+		<div class="search-container">
+		  <input type="text" id="verb-search" placeholder="Buscar..." />
+		</div>
+
+		<div id="verb-buttons" class="verb-buttons-list"></div>
+	  </div>
+	</div>
+
+	  <!-- 3) Pronouns -->
+	  <div id="pronoun-dropdown" class="dropdown">
+		<button type="button" id="pronoun-dropdown-button" class="dropdown-toggle">
+		  Pronouns <span id="pronoun-dropdown-count">(0/7)</span> ▾
+		</button>
+		<div id="pronoun-dropdown-menu" class="dropdown-menu hidden">
+		  <div class="dropdown-header">
+			<span class="dropdown-title">Pronombres</span>
+			<button type="button" id="select-all-pronouns" class="select-all-button">
+			  Seleccionar Todo
+			</button>
+		  </div>
+		  <div id="pronoun-buttons" class="verb-type-selector"></div>
+		</div>
+	  </div>
+
+	</div>
+    <p><strong>Verb Types:</strong></p>
+	    <div id="reflexive-toggle-container" style="margin: 10px 0; text-align:center;">
+
+
+    </div>
+    <div id="verb-type-buttons" class="verb-type-selector">
+    </div>
+
+    <label>
+      <input type="checkbox" id="ignore-accents" checked>
+      Ignore accents (remember that accents give extra points)
+    </label>
+    <div style="text-align:center; margin-top:20px;">
+      <button type="submit" id="start-button">Start Game</button>
+    </div>
+  </form>
+  
+  <div id="setup-records" style="margin-top:20px;">
+    <h3>🏆 Los mejores de los mejores / Best of the Best 🏆</h3>
+    <div class="mode-records" data-mode="infinite">
+      <h4>♾️InFiNiTeRs♾️</h4>
+      <ul class="record-list"></ul>
+    </div>
+    <div class="mode-records" data-mode="timer">
+      <h4>⏱DesPaCiToS⏱️</h4>
+      <ul class="record-list"></ul>
+    </div>
+    <div class="mode-records" data-mode="lives">
+      <h4>💖SuRvIvOrS💖</h4>
+      <ul class="record-list"></ul>
+    </div>
+  </div> <!-- /#setup-screen -->
+   </div> <!-- /#setup-records -->
+  </div>
+  <div id="game-screen" class="screen">
+    <canvas id="life-confetti-canvas"></canvas> 
+    <h2 id="game-title"></h2>
+
+	  <div id="lives-mechanics-display" style="display: none; text-align: center; margin-bottom: 15px;">
+		<span id="total-correct-for-life-display" style="margin-right: 20px;"></span>
+		<span id="streak-for-life-display"></span>
+	  </div>
+	  
+	<!-- ① Contenedor de relojes y feedback -->
+    <div id="timer-container" class="timer-container" style="display:none;">
+      <div id="timer-clock" class="timer-item">⏳ 4:00</div>
+      <div id="time-change" class="timer-item"></div>
+      <div id="total-time" class="timer-item">🏁 0:00</div>
+    </div>
+    <div id="question-area">
+	<div id="tense-label" class="tense-label"></div>
+    <div id="question-prompt">Loading…</div>
+      <p>Your goal:</p>
+      </div>
+    <div id="answer-area">
+      <div id="input-es-container">
+        <label for="answer-input-es">Conjugate in Spanish:</label>
+        <input type="text" id="answer-input-es">
+      </div>
+      <div id="input-en-container" style="display:none;">
+        <label for="answer-input-en">Conjugate in English:</label>
+        <input 
+           type="text"
+           id="answer-input-en"
+           placeholder="e.g. You all ate"
+           autocomplete="off"
+           autocapitalize="none"
+           autocorrect="off"
+           spellcheck="false"
+			<div id="pronoun-hints" style="margin-top:8px;">
+				<span class="pronoun-button">I</span>
+				<span class="pronoun-button">you</span>
+				<span class="pronoun-button">he</span>
+				<span class="pronoun-button">she</span>
+				<span class="pronoun-button">we</span>
+				<span class="pronoun-button">you all</span>
+				<span class="pronoun-button">they</span>
+			  </div>		   
+      </div>
+	  
+      <button id="check-button">Get Clue / Check Answer</button>
+      <button id="skip-button">Skip</button>
+      <div id="feedback-area"></div>
+
+      <div id="score-container">
+         <div id="score-display"></div>
+		 <div id="streak-display"></div>
+		 <div id="flames"></div>
+      </div>
+
+      <div id="ranking-box"></div>
+      <button id="end-button">Finish</button>
+    </div>
+  </div>
+
+<!-- Cargar los SDKs de Firebase (NO usar "import", usar "src") -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-analytics-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-check-compat.js"></script>
+
+<script>
+  //self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+</script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-check-compat.js"></script>
+<script>
+  // 1. Config de Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyAhM7lmdO1TN__8X6728EPJfqxBXjFE5ds",
+    authDomain: "el-conjugador.firebaseapp.com",
+    projectId: "el-conjugador",
+    storageBucket: "el-conjugador.appspot.com",
+    messagingSenderId: "1042408130577",
+    appId: "1:1042408130577:web:ecfdf6121cf191282689b0",
+    measurementId: "G-GCCQW0PMH9"
+  };
+  firebase.initializeApp(firebaseConfig);
+
+  // 2. Inicializa App Check con el provider correcto
+  const appCheck = firebase.appCheck();
+   appCheck.activate(
+      new firebase.appCheck.ReCaptchaEnterpriseProvider(
+        '6LeocycrAAAAAADtYPa2_d2PCH5mpEi-z1yw_j4'
+      ),
+      true  // auto-refresh
+    );
+
+  // 3. Ahora sí crea tu instancia de Firestore
+  const db = firebase.firestore();
+</script>
+<div id="left-bubbles"></div>
+<div id="right-bubbles"></div>
+  <footer class="game-footer">
+    <p>© 2025 Pablo Torrado, University of Hong Kong. All rights reserved.</p>
+  </footer>
+  
+<script src="script.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,1488 @@
+[
+  {
+    "infinitive_es": "comer",
+    "infinitive_en": "to eat",
+    "types": {
+      "present": ["regular"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": { "yo": "como", "tú": "comes", "él": "come", "nosotros": "comemos", "vosotros": "coméis", "ellos": "comen" },
+      "past_simple": { "yo": "comí", "tú": "comiste", "él": "comió", "nosotros": "comimos", "vosotros": "comisteis", "ellos": "comieron" },
+      "present_perfect": { "yo": "he comido", "tú": "has comido", "él": "ha comido", "nosotros": "hemos comido", "vosotros": "habéis comido", "ellos": "han comido" }
+    },
+    "conjugations_en": {
+      "present": { "I": "eat", "you": "eat", "he": "eats", "she": "eats", "it": "eats", "we": "eat", "they": "eat" },
+      "past_simple": { "I": "ate", "you": "ate", "he": "ate", "she": "ate", "it": "ate", "we": "ate", "they": "ate" },
+      "present_perfect": { "I": "have eaten", "you": "have eaten", "he": "has eaten", "she": "has eaten", "it": "has eaten", "we": "have eaten", "they": "have eaten" }
+    }
+  },
+  {
+    "infinitive_es": "hablar",
+    "infinitive_en": "to talk",
+    "types": {
+      "present": ["regular"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": { "yo": "hablo", "tú": "hablas", "él": "habla", "nosotros": "hablamos", "vosotros": "habláis", "ellos": "hablan" },
+      "past_simple": { "yo": "hablé", "tú": "hablaste", "él": "habló", "nosotros": "hablamos", "vosotros": "hablasteis", "ellos": "hablaron" },
+      "present_perfect": { "yo": "he hablado", "tú": "has hablado", "él": "ha hablado", "nosotros": "hemos hablado", "vosotros": "habéis hablado", "ellos": "han hablado" }
+    },
+    "conjugations_en": {
+      "present": { "I": "talk", "you": "talk", "he": "talks", "she": "talks", "it": "talks", "we": "talk", "they": "talk" },
+      "past_simple": { "I": "talked", "you": "talked", "he": "talked", "she": "talked", "it": "talked", "we": "talked", "they": "talked" },
+      "present_perfect": { "I": "have talked", "you": "have talked", "he": "has talked", "she": "has talked", "it": "has talked", "we": "have talked", "they": "have talked" }
+    }
+  },
+  {
+    "infinitive_es": "vivir",
+    "infinitive_en": "to live",
+    "types": {
+      "present": ["regular"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": { "yo": "vivo", "tú": "vives", "él": "vive", "nosotros": "vivimos", "vosotros": "vivís", "ellos": "viven" },
+      "past_simple": { "yo": "viví", "tú": "viviste", "él": "vivió", "nosotros": "vivimos", "vosotros": "vivisteis", "ellos": "vivieron" },
+      "present_perfect": { "yo": "he vivido", "tú": "has vivido", "él": "ha vivido", "nosotros": "hemos vivido", "vosotros": "habéis vivido", "ellos": "han vivido" }
+    },
+    "conjugations_en": {
+      "present": { "I": "live", "you": "live", "he": "lives", "she": "lives", "it": "lives", "we": "live", "they": "live" },
+      "past_simple": { "I": "lived", "you": "lived", "he": "lived", "she": "lived", "it": "lived", "we": "lived", "they": "lived" },
+      "present_perfect": { "I": "have lived", "you": "have lived", "he": "has lived", "she": "has lived", "it": "has lived", "we": "have lived", "they": "have lived" }
+    }
+  },
+  {
+    "infinitive_es": "estudiar",
+    "infinitive_en": "to study",
+    "types": {
+      "present": ["regular"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": { "yo": "estudio", "tú": "estudias", "él": "estudia", "nosotros": "estudiamos", "vosotros": "estudiáis", "ellos": "estudian" },
+      "past_simple": { "yo": "estudié", "tú": "estudiaste", "él": "estudió", "nosotros": "estudiamos", "vosotros": "estudiasteis", "ellos": "estudiaron" },
+      "present_perfect": { "yo": "he estudiado", "tú": "has estudiado", "él": "ha estudiado", "nosotros": "hemos estudiado", "vosotros": "habéis estudiado", "ellos": "han estudiado" }
+    },
+    "conjugations_en": {
+      "present": { "I": "study", "you": "study", "he": "studies", "she": "studies", "it": "studies", "we": "study", "they": "study" },
+      "past_simple": { "I": "studied", "you": "studied", "he": "studied", "she": "studied", "it": "studied", "we": "studied", "they": "studied" },
+      "present_perfect": { "I": "have studied", "you": "have studied", "he": "has studied", "she": "has studied", "it": "has studied", "we": "have studied", "they": "have studied" }
+    }
+  },
+  {
+    "infinitive_es": "trabajar",
+    "infinitive_en": "to work",
+    "types": {
+      "present": ["regular"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": { "yo": "trabajo", "tú": "trabajas", "él": "trabaja", "nosotros": "trabajamos", "vosotros": "trabajáis", "ellos": "trabajan" },
+      "past_simple": { "yo": "trabajé", "tú": "trabajaste", "él": "trabajó", "nosotros": "trabajamos", "vosotros": "trabajasteis", "ellos": "trabajaron" },
+      "present_perfect": { "yo": "he trabajado", "tú": "has trabajado", "él": "ha trabajado", "nosotros": "hemos trabajado", "vosotros": "habéis trabajado", "ellos": "han trabajado" }
+    },
+    "conjugations_en": {
+      "present": { "I": "work", "you": "work", "he": "works", "she": "works", "it": "works", "we": "work", "they": "work" },
+      "past_simple": { "I": "worked", "you": "worked", "he": "worked", "she": "worked", "it": "worked", "we": "worked", "they": "worked" },
+      "present_perfect": { "I": "have worked", "you": "have worked", "he": "has worked", "she": "has worked", "it": "has worked", "we": "have worked", "they": "have worked" }
+    }
+  },
+  {
+    "infinitive_es": "aprender",
+    "infinitive_en": "to learn",
+    "types": {
+      "present": ["regular"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": { "yo": "aprendo", "tú": "aprendes", "él": "aprende", "nosotros": "aprendemos", "vosotros": "aprendéis", "ellos": "aprenden" },
+      "past_simple": { "yo": "aprendí", "tú": "aprendiste", "él": "aprendió", "nosotros": "aprendimos", "vosotros": "aprendisteis", "ellos": "aprendieron" },
+      "present_perfect": { "yo": "he aprendido", "tú": "has aprendido", "él": "ha aprendido", "nosotros": "hemos aprendido", "vosotros": "habéis aprendido", "ellos": "han aprendido" }
+    },
+    "conjugations_en": {
+      "present": { "I": "learn", "you": "learn", "he": "learns", "she": "learns", "it": "learns", "we": "learn", "they": "learn" },
+      "past_simple": { "I": "learned", "you": "learned", "he": "learned", "she": "learned", "it": "learned", "we": "learned", "they": "learned" },
+      "present_perfect": { "I": "have learned", "you": "have learned", "he": "has learned", "she": "has learned", "it": "has learned", "we": "have learned", "they": "have learned" }
+    }
+  },
+  {
+    "infinitive_es": "escribir",
+    "infinitive_en": "to write",
+    "types": {
+      "present": ["regular"],
+      "present_perfect": ["irregular_participle"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": { "yo": "escribo", "tú": "escribes", "él": "escribe", "nosotros": "escribimos", "vosotros": "escribís", "ellos": "escriben" },
+      "past_simple": { "yo": "escribí", "tú": "escribiste", "él": "escribió", "nosotros": "escribimos", "vosotros": "escribisteis", "ellos": "escribieron" },
+      "present_perfect": { "yo": "he escrito", "tú": "has escrito", "él": "ha escrito", "nosotros": "hemos escrito", "vosotros": "habéis escrito", "ellos": "han escrito" }
+    },
+    "conjugations_en": {
+      "present": { "I": "write", "you": "write", "he": "writes", "she": "writes", "it": "writes", "we": "write", "they": "write" },
+      "past_simple": { "I": "wrote", "you": "wrote", "he": "wrote", "she": "wrote", "it": "wrote", "we": "wrote", "they": "wrote" },
+      "present_perfect": { "I": "have written", "you": "have written", "he": "has written", "she": "has written", "it": "has written", "we": "have written", "they": "have written" }
+    }
+  },
+  {
+    "infinitive_es": "ser",
+    "infinitive_en": "to be",
+    "types": {
+      "present": ["multiple_irregularities"],
+      "present_perfect": ["regular"],
+      "past_simple": ["totally_irregular"]
+    },
+    "conjugations": {
+      "present": { "yo": "soy", "tú": "eres", "él": "es", "nosotros": "somos", "vosotros": "sois", "ellos": "son" },
+      "past_simple": { "yo": "fui", "tú": "fuiste", "él": "fue", "nosotros": "fuimos", "vosotros": "fuisteis", "ellos": "fueron" },
+      "present_perfect": { "yo": "he sido", "tú": "has sido", "él": "ha sido", "nosotros": "hemos sido", "vosotros": "habéis sido", "ellos": "han sido" }
+    },
+    "conjugations_en": {
+      "present": { "I": "am", "you": "are", "he": "is", "she": "is", "it": "is", "we": "are", "they": "are" },
+      "past_simple": { "I": "was", "you": "were", "he": "was", "she": "was", "it": "was", "we": "were", "they": "were" },
+      "present_perfect": { "I": "have been", "you": "have been", "he": "has been", "she": "has been", "it": "has been", "we": "have been", "they": "have been" }
+    }
+  },
+  {
+    "infinitive_es": "estar",
+    "infinitive_en": "to be at",
+    "types": {
+      "present": ["multiple_irregularities"],
+      "present_perfect": ["regular"],
+      "past_simple": ["irregular_root"]
+    },
+    "conjugations": {
+      "present": { "yo": "estoy", "tú": "estás", "él": "está", "nosotros": "estamos", "vosotros": "estáis", "ellos": "están" },
+      "past_simple": { "yo": "estuve", "tú": "estuviste", "él": "estuvo", "nosotros": "estuvimos", "vosotros": "estuvisteis", "ellos": "estuvieron" },
+      "present_perfect": { "yo": "he estado", "tú": "has estado", "él": "ha estado", "nosotros": "hemos estado", "vosotros": "habéis estado", "ellos": "han estado" }
+    },
+    "conjugations_en": {
+      "present": { "I": "am", "you": "are", "he": "is", "she": "is", "it": "is", "we": "are", "they": "are" },
+      "past_simple": { "I": "was", "you": "were", "he": "was", "she": "was", "it": "was", "we": "were", "they": "were" },
+      "present_perfect": { "I": "have been", "you": "have been", "he": "has been", "she": "has been", "it": "has been", "we": "have been", "they": "have been" }
+    }
+  },
+  {
+    "infinitive_es": "tener",
+    "infinitive_en": "to have",
+    "types": {
+      "present": ["multiple_irregularities"],
+      "present_perfect": ["regular"],
+      "past_simple": ["irregular_root"]
+    },
+    "conjugations": {
+      "present": { "yo": "tengo", "tú": "tienes", "él": "tiene", "nosotros": "tenemos", "vosotros": "tenéis", "ellos": "tienen" },
+      "past_simple": { "yo": "tuve", "tú": "tuviste", "él": "tuvo", "nosotros": "tuvimos", "vosotros": "tuvisteis", "ellos": "tuvieron" },
+      "present_perfect": { "yo": "he tenido", "tú": "has tenido", "él": "ha tenido", "nosotros": "hemos tenido", "vosotros": "habéis tenido", "ellos": "han tenido" }
+    },
+    "conjugations_en": {
+      "present": { "I": "have", "you": "have", "he": "has", "she": "has", "it": "has", "we": "have", "they": "have" },
+      "past_simple": { "I": "had", "you": "had", "he": "had", "she": "had", "it": "had", "we": "had", "they": "had" },
+      "present_perfect": { "I": "have had", "you": "have had", "he": "has had", "she": "has had", "it": "has had", "we": "have had", "they": "have had" }
+    }
+  },
+  {
+    "infinitive_es": "ir",
+    "infinitive_en": "to go",
+    "types": {
+      "present": ["multiple_irregularities"],
+      "present_perfect": ["regular"],
+      "past_simple": ["totally_irregular"]
+    },
+    "conjugations": {
+      "present": { "yo": "voy", "tú": "vas", "él": "va", "nosotros": "vamos", "vosotros": "vais", "ellos": "van" },
+      "past_simple": { "yo": "fui", "tú": "fuiste", "él": "fue", "nosotros": "fuimos", "vosotros": "fuisteis", "ellos": "fueron" },
+      "present_perfect": { "yo": "he ido", "tú": "has ido", "él": "ha ido", "nosotros": "hemos ido", "vosotros": "habéis ido", "ellos": "han ido" }
+    },
+    "conjugations_en": {
+      "present": { "I": "go", "you": "go", "he": "goes", "she": "goes", "it": "goes", "we": "go", "they": "go" },
+      "past_simple": { "I": "went", "you": "went", "he": "went", "she": "went", "it": "went", "we": "went", "they": "went" },
+      "present_perfect": { "I": "have gone", "you": "have gone", "he": "has gone", "she": "has gone", "it": "has gone", "we": "have gone", "they": "have gone" }
+    }
+  },
+  {
+    "infinitive_es": "sentir",
+    "infinitive_en": "to feel",
+    "types": {
+      "present": ["stem_changing"],
+      "present_perfect": ["regular"],
+      "past_simple": ["stem_change_3rd_person"]
+    },
+    "conjugations": {
+      "present": { "yo": "siento", "tú": "sientes", "él": "siente", "nosotros": "sentimos", "vosotros": "sentís", "ellos": "sienten" },
+      "past_simple": { "yo": "sentí", "tú": "sentiste", "él": "sintió", "nosotros": "sentimos", "vosotros": "sentisteis", "ellos": "sintieron" },
+      "present_perfect": { "yo": "he sentido", "tú": "has sentido", "él": "ha sentido", "nosotros": "hemos sentido", "vosotros": "habéis sentido", "ellos": "han sentido" }
+    },
+    "conjugations_en": {
+      "present": { "I": "feel", "you": "feel", "he": "feels", "she": "feels", "it": "feels", "we": "feel", "they": "feel" },
+      "past_simple": { "I": "felt", "you": "felt", "he": "felt", "she": "felt", "it": "felt", "we": "felt", "they": "felt" },
+      "present_perfect": { "I": "have felt", "you": "have felt", "he": "has felt", "she": "has felt", "it": "has felt", "we": "have felt", "they": "have felt" }
+    }
+  },
+  {
+    "infinitive_es": "dormir",
+    "infinitive_en": "to sleep",
+    "types": {
+      "present": ["stem_changing"],
+      "present_perfect": ["regular"],
+      "past_simple": ["stem_change_3rd_person"]
+    },
+    "conjugations": {
+      "present": { "yo": "duermo", "tú": "duermes", "él": "duerme", "nosotros": "dormimos", "vosotros": "dormís", "ellos": "duermen" },
+      "past_simple": { "yo": "dormí", "tú": "dormiste", "él": "durmió", "nosotros": "dormimos", "vosotros": "dormisteis", "ellos": "durmieron" },
+      "present_perfect": { "yo": "he dormido", "tú": "has dormido", "él": "ha dormido", "nosotros": "hemos dormido", "vosotros": "habéis dormido", "ellos": "han dormido" }
+    },
+    "conjugations_en": {
+      "present": { "I": "sleep", "you": "sleep", "he": "sleeps", "she": "sleeps", "it": "sleeps", "we": "sleep", "they": "sleep" },
+      "past_simple": { "I": "slept", "you": "slept", "he": "slept", "she": "slept", "it": "slept", "we": "slept", "they": "slept" },
+      "present_perfect": { "I": "have slept", "you": "have slept", "he": "has slept", "she": "has slept", "it": "has slept", "we": "have slept", "they": "have slept" }
+    }
+  },
+  {
+    "infinitive_es": "jugar",
+    "infinitive_en": "to play",
+    "types": {
+      "present": ["stem_changing"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": { "yo": "juego", "tú": "juegas", "él": "juega", "nosotros": "jugamos", "vosotros": "jugáis", "ellos": "juegan" },
+      "past_simple": { "yo": "jugué", "tú": "jugaste", "él": "jugó", "nosotros": "jugamos", "vosotros": "jugasteis", "ellos": "jugaron" },
+      "present_perfect": { "yo": "he jugado", "tú": "has jugado", "él": "ha jugado", "nosotros": "hemos jugado", "vosotros": "habéis jugado", "ellos": "han jugado" }
+    },
+    "conjugations_en": {
+      "present": { "I": "play", "you": "play", "he": "plays", "she": "plays", "it": "plays", "we": "play", "they": "play" },
+      "past_simple": { "I": "played", "you": "played", "he": "played", "she": "played", "it": "played", "we": "played", "they": "played" },
+      "present_perfect": { "I": "have played", "you": "have played", "he": "has played", "she": "has played", "it": "has played", "we": "have played", "they": "have played" }
+    }
+  },
+  {
+    "infinitive_es": "seguir",
+    "infinitive_en": "to follow",
+    "types": {
+      "present": ["stem_changing"],
+      "present_perfect": ["regular"],
+      "past_simple": ["stem_change_3rd_person"]
+    },
+    "conjugations": {
+      "present": { "yo": "sigo", "tú": "sigues", "él": "sigue", "nosotros": "seguimos", "vosotros": "seguís", "ellos": "siguen" },
+      "past_simple": { "yo": "seguí", "tú": "seguiste", "él": "siguió", "nosotros": "seguimos", "vosotros": "seguisteis", "ellos": "siguieron" },
+      "present_perfect": { "yo": "he seguido", "tú": "has seguido", "él": "ha seguido", "nosotros": "hemos seguido", "vosotros": "habéis seguido", "ellos": "han seguido" }
+    },
+    "conjugations_en": {
+      "present": { "I": "follow", "you": "follow", "he": "follows", "she": "follows", "it": "follows", "we": "follow", "they": "follow" },
+      "past_simple": { "I": "followed", "you": "followed", "he": "followed", "she": "followed", "it": "followed", "we": "followed", "they": "followed" },
+      "present_perfect": { "I": "have followed", "you": "have followed", "he": "has followed", "she": "has followed", "it": "has followed", "we": "have followed", "they": "have followed" }
+    }
+  },
+  {
+    "infinitive_es": "volver",
+    "infinitive_en": "to come back",
+    "types": {
+      "present": ["stem_changing"],
+      "present_perfect": ["irregular_participle"],
+      "past_simple": ["regular"] 
+    },
+    "conjugations": {
+      "present": { "yo": "vuelvo", "tú": "vuelves", "él": "vuelve", "nosotros": "volvemos", "vosotros": "volvéis", "ellos": "vuelven" },
+      "past_simple": { "yo": "volví", "tú": "volviste", "él": "volvió", "nosotros": "volvimos", "vosotros": "volvisteis", "ellos": "volvieron" },
+      "present_perfect": { "yo": "he vuelto", "tú": "has vuelto", "él": "ha vuelto", "nosotros": "hemos vuelto", "vosotros": "habéis vuelto", "ellos": "han vuelto" }
+    },
+    "conjugations_en": {
+      "present": { "I": "come back", "you": "come back", "he": "comes back", "she": "comes back", "it": "comes back", "we": "come back", "they": "come back" },
+      "past_simple": { "I": "came back", "you": "came back", "he": "came back", "she": "came back", "it": "came back", "we": "came back", "they": "came back" },
+      "present_perfect": { "I": "have come back", "you": "have come back", "he": "has come back", "she": "has come back", "it": "has come back", "we": "have come back", "they": "have come back" }
+    }
+  },
+  {
+    "infinitive_es": "construir",
+    "infinitive_en": "to build",
+    "types": {
+      "present": ["y_change"],
+      "present_perfect": ["regular"], 
+      "past_simple": ["y_change"] 
+    },
+    "conjugations": {
+      "present": { "yo": "construyo", "tú": "construyes", "él": "construye", "nosotros": "construimos", "vosotros": "construís", "ellos": "construyen" },
+      "past_simple": { "yo": "construí", "tú": "construiste", "él": "construyó", "nosotros": "construimos", "vosotros": "construisteis", "ellos": "construyeron" },
+      "present_perfect": { "yo": "he construido", "tú": "has construido", "él": "ha construido", "nosotros": "hemos construido", "vosotros": "habéis construido", "ellos": "han construido" }
+    },
+    "conjugations_en": {
+      "present": { "I": "build", "you": "build", "he": "builds", "she": "builds", "it": "builds", "we": "build", "they": "build" },
+      "past_simple": { "I": "built", "you": "built", "he": "built", "she": "built", "it": "built", "we": "built", "they": "built" },
+      "present_perfect": { "I": "have built", "you": "have built", "he": "has built", "she": "has built", "it": "has built", "we": "have built", "they": "have built" }
+    }
+  },
+  {
+    "infinitive_es": "salir",
+    "infinitive_en": "to exit", 
+    "types": {
+      "present": ["first_person_irregular"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": { "yo": "salgo", "tú": "sales", "él": "sale", "nosotros": "salimos", "vosotros": "salís", "ellos": "salen" },
+      "past_simple": { "yo": "salí", "tú": "saliste", "él": "salió", "nosotros": "salimos", "vosotros": "salisteis", "ellos": "salieron" },
+      "present_perfect": { "yo": "he salido", "tú": "has salido", "él": "ha salido", "nosotros": "hemos salido", "vosotros": "habéis salido", "ellos": "han salido" }
+    },
+    "conjugations_en": {
+      "present": { "I": "exit", "you": "exit", "he": "exits", "she": "exits", "it": "exits", "we": "exit", "they": "exit" },
+      "past_simple": { "I": "exited", "you": "exited", "he": "exited", "she": "exited", "it": "exited", "we": "exited", "they": "exited" },
+      "present_perfect": { "I": "have exited", "you": "have exited", "he": "has exited", "she": "has exited", "it": "has exited", "we": "have exited", "they": "have exited" }
+    }
+  },
+  {
+    "infinitive_es": "saber",
+    "infinitive_en": "to know",
+    "types": {
+      "present": ["first_person_irregular"],
+      "present_perfect": ["regular"],
+      "past_simple": ["irregular_root"]
+    },
+    "conjugations": {
+      "present": { "yo": "sé", "tú": "sabes", "él": "sabe", "nosotros": "sabemos", "vosotros": "sabéis", "ellos": "saben" },
+      "past_simple": { "yo": "supe", "tú": "supiste", "él": "supo", "nosotros": "supimos", "vosotros": "supisteis", "ellos": "supieron" },
+      "present_perfect": { "yo": "he sabido", "tú": "has sabido", "él": "ha sabido", "nosotros": "hemos sabido", "vosotros": "habéis sabido", "ellos": "han sabido" }
+    },
+    "conjugations_en": {
+      "present": { "I": "know", "you": "know", "he": "knows", "she": "knows", "it": "knows", "we": "know", "they": "know" },
+      "past_simple": { "I": "knew", "you": "knew", "he": "knew", "she": "knew", "it": "knew", "we": "knew", "they": "knew" },
+      "present_perfect": { "I": "have known", "you": "have known", "he": "has known", "she": "has known", "it": "has known", "we": "have known", "they": "have known" }
+    }
+  },
+  {
+    "infinitive_es": "poder",
+    "infinitive_en": "to can / be able", 
+    "types": {
+      "present": ["stem_changing"],
+      "present_perfect": ["regular"],
+      "past_simple": ["irregular_root"]
+    },
+    "conjugations": {
+      "present": { "yo": "puedo", "tú": "puedes", "él": "puede", "nosotros": "podemos", "vosotros": "podéis", "ellos": "pueden" },
+      "past_simple": { "yo": "pude", "tú": "pudiste", "él": "pudo", "nosotros": "pudimos", "vosotros": "pudisteis", "ellos": "pudieron" },
+      "present_perfect": { "yo": "he podido", "tú": "has podido", "él": "ha podido", "nosotros": "hemos podido", "vosotros": "habéis podido", "ellos": "han podido" }
+    },
+    "conjugations_en": {
+      "present": { "I": "can", "you": "can", "he": "can", "she": "can", "it": "can", "we": "can", "they": "can" }, 
+      "past_simple": { "I": "could", "you": "could", "he": "could", "she": "could", "it": "could", "we": "could", "they": "could" }, 
+      "present_perfect": { "I": "have been able", "you": "have been able", "he": "has been able", "she": "has been able", "it": "has been able", "we": "have been able", "they": "have been able" }
+    }
+  },
+  {
+    "infinitive_es": "decir",
+    "infinitive_en": "to say", 
+    "types": {
+      "present": ["multiple_irregularities"],
+      "present_perfect": ["irregular_participle"],
+      "past_simple": ["irregular_root"]
+    },
+    "conjugations": {
+      "present": { "yo": "digo", "tú": "dices", "él": "dice", "nosotros": "decimos", "vosotros": "decís", "ellos": "dicen" },
+      "past_simple": { "yo": "dije", "tú": "dijiste", "él": "dijo", "nosotros": "dijimos", "vosotros": "dijisteis", "ellos": "dijeron" },
+      "present_perfect": { "yo": "he dicho", "tú": "has dicho", "él": "ha dicho", "nosotros": "hemos dicho", "vosotros": "habéis dicho", "ellos": "han dicho" }
+    },
+    "conjugations_en": {
+      "present": { "I": "say", "you": "say", "he": "says", "she": "says", "it": "says", "we": "say", "they": "say" },
+      "past_simple": { "I": "said", "you": "said", "he": "said", "she": "said", "it": "said", "we": "said", "they": "said" },
+      "present_perfect": { "I": "have said", "you": "have said", "he": "has said", "she": "has said", "it": "has said", "we": "have said", "they": "have said" }
+    }
+  },
+  {
+    "infinitive_es": "venir",
+    "infinitive_en": "to come",
+    "types": {
+      "present": ["multiple_irregularities"],
+      "present_perfect": ["regular"], 
+      "past_simple": ["irregular_root"]
+    },
+    "conjugations": {
+      "present": { "yo": "vengo", "tú": "vienes", "él": "viene", "nosotros": "venimos", "vosotros": "venís", "ellos": "vienen" },
+      "past_simple": { "yo": "vine", "tú": "viniste", "él": "vino", "nosotros": "vinimos", "vosotros": "vinisteis", "ellos": "vinieron" },
+      "present_perfect": { "yo": "he venido", "tú": "has venido", "él": "ha venido", "nosotros": "hemos venido", "vosotros": "habéis venido", "ellos": "han venido" }
+    },
+    "conjugations_en": {
+      "present": { "I": "come", "you": "come", "he": "comes", "she": "comes", "it": "comes", "we": "come", "they": "come" },
+      "past_simple": { "I": "came", "you": "came", "he": "came", "she": "came", "it": "came", "we": "came", "they": "came" },
+      "present_perfect": { "I": "have come", "you": "have come", "he": "has come", "she": "has come", "it": "has come", "we": "have come", "they": "have come" }
+    }
+  },
+  {
+    "infinitive_es": "poner",
+    "infinitive_en": "to put",
+    "types": {
+      "present": ["first_person_irregular"],
+      "present_perfect": ["irregular_participle"],
+      "past_simple": ["irregular_root"]
+    },
+    "conjugations": {
+      "present": { "yo": "pongo", "tú": "pones", "él": "pone", "nosotros": "ponemos", "vosotros": "ponéis", "ellos": "ponen" },
+      "past_simple": { "yo": "puse", "tú": "pusiste", "él": "puso", "nosotros": "pusimos", "vosotros": "pusisteis", "ellos": "pusieron" },
+      "present_perfect": { "yo": "he puesto", "tú": "has puesto", "él": "ha puesto", "nosotros": "hemos puesto", "vosotros": "habéis puesto", "ellos": "han puesto" }
+    },
+    "conjugations_en": {
+      "present": { "I": "put", "you": "put", "he": "puts", "she": "puts", "it": "puts", "we": "put", "they": "put" },
+      "past_simple": { "I": "put", "you": "put", "he": "put", "she": "put", "it": "put", "we": "put", "they": "put" }, 
+      "present_perfect": { "I": "have put", "you": "have put", "he": "has put", "she": "has put", "it": "has put", "we": "have put", "they": "have put" }
+    }
+  },
+  {
+    "infinitive_es": "conocer",
+    "infinitive_en": "to know (person)", 
+    "types": {
+      "present": ["first_person_irregular"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": { "yo": "conozco", "tú": "conoces", "él": "conoce", "nosotros": "conocemos", "vosotros": "conocéis", "ellos": "conocen" },
+      "past_simple": { "yo": "conocí", "tú": "conociste", "él": "conoció", "nosotros": "conocimos", "vosotros": "conocisteis", "ellos": "conocieron" },
+      "present_perfect": { "yo": "he conocido", "tú": "has conocido", "él": "ha conocido", "nosotros": "hemos conocido", "vosotros": "habéis conocido", "ellos": "han conocido" }
+    },
+    "conjugations_en": {
+      "present": { "I": "know", "you": "know", "he": "knows", "she": "knows", "it": "knows", "we": "know", "they": "know" },
+      "past_simple": { "I": "knew", "you": "knew", "he": "knew", "she": "knew", "it": "knew", "we": "knew", "they": "knew" }, 
+      "present_perfect": { "I": "have known", "you": "have known", "he": "has known", "she": "has known", "it": "has known", "we": "have known", "they": "have known" } 
+    }
+  },
+  {
+    "infinitive_es": "leer",
+    "infinitive_en": "to read",
+    "types": {
+      "present": ["regular"], 
+      "present_perfect": ["irregular_participle"], 
+      "past_simple": ["y_change"] 
+    },
+    "conjugations": {
+      "present": { "yo": "leo", "tú": "lees", "él": "lee", "nosotros": "leemos", "vosotros": "leéis", "ellos": "leen" },
+      "past_simple": { "yo": "leí", "tú": "leíste", "él": "leyó", "nosotros": "leímos", "vosotros": "leísteis", "ellos": "leyeron" },
+      "present_perfect": { "yo": "he leído", "tú": "has leído", "él": "ha leído", "nosotros": "hemos leído", "vosotros": "habéis leído", "ellos": "han leído" }
+    },
+    "conjugations_en": {
+      "present": { "I": "read", "you": "read", "he": "reads", "she": "reads", "it": "reads", "we": "read", "they": "read" }, 
+      "past_simple": { "I": "read", "you": "read", "he": "read", "she": "read", "it": "read", "we": "read", "they": "read" }, 
+      "present_perfect": { "I": "have read", "you": "have read", "he": "has read", "she": "has read", "it": "has read", "we": "have read", "they": "have read" } 
+    }
+  },
+  {
+    "infinitive_es": "pedir",
+    "infinitive_en": "to ask for/order/request", 
+    "types": {
+      "present": ["stem_changing"],
+      "present_perfect": ["regular"],
+      "past_simple": ["stem_change_3rd_person"]
+    },
+    "conjugations": {
+      "present": { "yo": "pido", "tú": "pides", "él": "pide", "nosotros": "pedimos", "vosotros": "pedís", "ellos": "piden" },
+      "past_simple": { "yo": "pedí", "tú": "pediste", "él": "pidió", "nosotros": "pedimos", "vosotros": "pedisteis", "ellos": "pidieron" },
+      "present_perfect": { "yo": "he pedido", "tú": "has pedido", "él": "ha pedido", "nosotros": "hemos pedido", "vosotros": "habéis pedido", "ellos": "han pedido" }
+    },
+    "conjugations_en": {
+      "present": { "I": "ask for", "you": "ask for", "he": "asks for", "she": "asks for", "it": "asks for", "we": "ask for", "they": "ask for" }, 
+      "past_simple": { "I": "asked for", "you": "asked for", "he": "asked for", "she": "asked for", "it": "asked for", "we": "asked for", "they": "asked for" },
+      "present_perfect": { "I": "have asked for", "you": "have asked for", "he": "has asked for", "she": "has asked for", "it": "has asked for", "we": "have asked for", "they": "have asked for" }
+    }
+  },
+  {
+    "infinitive_es": "morir",
+    "infinitive_en": "to die",
+    "types": {
+      "present": ["stem_changing"],
+      "present_perfect": ["irregular_participle"], 
+      "past_simple": ["stem_change_3rd_person"]
+    },
+    "conjugations": {
+      "present": { "yo": "muero", "tú": "mueres", "él": "muere", "nosotros": "morimos", "vosotros": "morís", "ellos": "mueren" },
+      "past_simple": { "yo": "morí", "tú": "moriste", "él": "murió", "nosotros": "morimos", "vosotros": "moristeis", "ellos": "murieron" },
+      "present_perfect": { "yo": "he muerto", "tú": "has muerto", "él": "ha muerto", "nosotros": "hemos muerto", "vosotros": "habéis muerto", "ellos": "han muerto" }
+    },
+    "conjugations_en": {
+      "present": { "I": "die", "you": "die", "he": "dies", "she": "dies", "it": "dies", "we": "die", "they": "die" },
+      "past_simple": { "I": "died", "you": "died", "he": "died", "she": "died", "it": "died", "we": "died", "they": "died" },
+      "present_perfect": { "I": "have died", "you": "have died", "he": "has died", "she": "has died", "it": "has died", "we": "have died", "they": "have died" }
+    }
+  },
+  {
+    "infinitive_es": "oír",
+    "infinitive_en": "to hear",
+    "types": {
+      "present": ["y_change"], 
+      "present_perfect": ["irregular_participle"], 
+      "past_simple": ["y_change"] 
+    },
+    "conjugations": {
+      "present": { "yo": "oigo", "tú": "oyes", "él": "oye", "nosotros": "oímos", "vosotros": "oís", "ellos": "oyen" },
+      "past_simple": { "yo": "oí", "tú": "oíste", "él": "oyó", "nosotros": "oímos", "vosotros": "oísteis", "ellos": "oyeron" },
+      "present_perfect": { "yo": "he oído", "tú": "has oído", "él": "ha oído", "nosotros": "hemos oído", "vosotros": "habéis oído", "ellos": "han oído" }
+    },
+    "conjugations_en": {
+      "present": { "I": "hear", "you": "hear", "he": "hears", "she": "hears", "it": "hears", "we": "hear", "they": "hear" },
+      "past_simple": { "I": "heard", "you": "heard", "he": "heard", "she": "heard", "it": "heard", "we": "heard", "they": "heard" },
+      "present_perfect": { "I": "have heard", "you": "have heard", "he": "has heard", "she": "has heard", "it": "has heard", "we": "have heard", "they": "have heard" }
+    }
+  },
+  {
+    "infinitive_es": "hacer",
+    "infinitive_en": "to do/make",
+    "types": {
+      "present": ["multiple_irregularities"],
+      "present_perfect": ["irregular_participle"], 
+      "past_simple": ["irregular_root"] 
+    },
+    "conjugations": {
+      "present": { "yo": "hago", "tú": "haces", "él": "hace", "nosotros": "hacemos", "vosotros": "hacéis", "ellos": "hacen" },
+      "past_simple": { "yo": "hice", "tú": "hiciste", "él": "hizo", "nosotros": "hicimos", "vosotros": "hicisteis", "ellos": "hicieron" },
+      "present_perfect": { "yo": "he hecho", "tú": "has hecho", "él": "ha hecho", "nosotros": "hemos hecho", "vosotros": "habéis hecho", "ellos": "han hecho" }
+    },
+    "conjugations_en": {
+      "present": { "I": "do", "you": "do", "he": "does", "she": "does", "it": "does", "we": "do", "they": "do" }, 
+      "past_simple": { "I": "did", "you": "did", "he": "did", "she": "did", "it": "did", "we": "did", "they": "did" }, 
+      "present_perfect": { "I": "have done", "you": "have done", "he": "has done", "she": "has done", "it": "has done", "we": "have done", "they": "have done" } 
+    }
+  },
+  {
+    "infinitive_es": "caminar",
+    "infinitive_en": "to walk",
+    "types": {
+      "present": ["regular"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": { "yo": "camino", "tú": "caminas", "él": "camina", "nosotros": "caminamos", "vosotros": "camináis", "ellos": "caminan" },
+      "past_simple": { "yo": "caminé", "tú": "caminaste", "él": "caminó", "nosotros": "caminamos", "vosotros": "caminasteis", "ellos": "caminaron" },
+      "present_perfect": { "yo": "he caminado", "tú": "has caminado", "él": "ha caminado", "nosotros": "hemos caminado", "vosotros": "habéis caminado", "ellos": "han caminado" }
+    },
+    "conjugations_en": {
+      "present": { "I": "walk", "you": "walk", "he": "walks", "she": "walks", "it": "walks", "we": "walk", "they": "walk" },
+      "past_simple": { "I": "walked", "you": "walked", "he": "walked", "she": "walked", "it": "walked", "we": "walked", "they": "walked" },
+      "present_perfect": { "I": "have walked", "you": "have walked", "he": "has walked", "she": "has walked", "it": "has walked", "we": "have walked", "they": "have walked" }
+    }
+  },
+  {
+    "infinitive_es": "cantar",
+    "infinitive_en": "to sing",
+    "types": {
+      "present": ["regular"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": { "yo": "canto", "tú": "cantas", "él": "canta", "nosotros": "cantamos", "vosotros": "cantáis", "ellos": "cantan" },
+      "past_simple": { "yo": "canté", "tú": "cantaste", "él": "cantó", "nosotros": "cantamos", "vosotros": "cantasteis", "ellos": "cantaron" },
+      "present_perfect": { "yo": "he cantado", "tú": "has cantado", "él": "ha cantado", "nosotros": "hemos cantado", "vosotros": "habéis cantado", "ellos": "han cantado" }
+    },
+    "conjugations_en": {
+      "present": { "I": "sing", "you": "sing", "he": "sings", "she": "sings", "it": "sings", "we": "sing", "they": "sing" },
+      "past_simple": { "I": "sang", "you": "sang", "he": "sang", "she": "sang", "it": "sang", "we": "sang", "they": "sang" },
+      "present_perfect": { "I": "have sung", "you": "have sung", "he": "has sung", "she": "has sung", "it": "has sung", "we": "have sung", "they": "have sung" }
+    }
+  },
+  {
+    "infinitive_es": "bailar",
+    "infinitive_en": "to dance",
+    "types": {
+      "present": ["regular"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": { "yo": "bailo", "tú": "bailas", "él": "baila", "nosotros": "bailamos", "vosotros": "bailáis", "ellos": "bailan" },
+      "past_simple": { "yo": "bailé", "tú": "bailaste", "él": "bailó", "nosotros": "bailamos", "vosotros": "bailasteis", "ellos": "bailaron" },
+      "present_perfect": { "yo": "he bailado", "tú": "has bailado", "él": "ha bailado", "nosotros": "hemos bailado", "vosotros": "habéis bailado", "ellos": "han bailado" }
+    },
+    "conjugations_en": {
+      "present": { "I": "dance", "you": "dance", "he": "dances", "she": "dances", "it": "dances", "we": "dance", "they": "dance" },
+      "past_simple": { "I": "danced", "you": "danced", "he": "danced", "she": "danced", "it": "danced", "we": "danced", "they": "danced" },
+      "present_perfect": { "I": "have danced", "you": "have danced", "he": "has danced", "she": "has danced", "it": "has danced", "we": "have danced", "they": "have danced" }
+    }
+  },
+  {
+    "infinitive_es": "visitar",
+    "infinitive_en": "to visit",
+    "types": {
+      "present": ["regular"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": { "yo": "visito", "tú": "visitas", "él": "visita", "nosotros": "visitamos", "vosotros": "visitáis", "ellos": "visitan" },
+      "past_simple": { "yo": "visité", "tú": "visitaste", "él": "visitó", "nosotros": "visitamos", "vosotros": "visitasteis", "ellos": "visitaron" },
+      "present_perfect": { "yo": "he visitado", "tú": "has visitado", "él": "ha visitado", "nosotros": "hemos visitado", "vosotros": "habéis visitado", "ellos": "han visitado" }
+    },
+    "conjugations_en": {
+      "present": { "I": "visit", "you": "visit", "he": "visits", "she": "visits", "it": "visits", "we": "visit", "they": "visit" },
+      "past_simple": { "I": "visited", "you": "visited", "he": "visited", "she": "visited", "it": "visited", "we": "visited", "they": "visited" },
+      "present_perfect": { "I": "have visited", "you": "have visited", "he": "has visited", "she": "has visited", "it": "has visited", "we": "have visited", "they": "have visited" }
+    }
+  },
+  {
+    "infinitive_es": "correr",
+    "infinitive_en": "to run",
+    "types": {
+      "present": ["regular"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": { "yo": "corro", "tú": "corres", "él": "corre", "nosotros": "corremos", "vosotros": "corréis", "ellos": "corren" },
+      "past_simple": { "yo": "corrí", "tú": "corriste", "él": "corrió", "nosotros": "corrimos", "vosotros": "corristeis", "ellos": "corrieron" },
+      "present_perfect": { "yo": "he corrido", "tú": "has corrido", "él": "ha corrido", "nosotros": "hemos corrido", "vosotros": "habéis corrido", "ellos": "han corrido" }
+    },
+    "conjugations_en": {
+      "present": { "I": "run", "you": "run", "he": "runs", "she": "runs", "it": "runs", "we": "run", "they": "run" },
+      "past_simple": { "I": "ran", "you": "ran", "he": "ran", "she": "ran", "it": "ran", "we": "ran", "they": "ran" },
+      "present_perfect": { "I": "have run", "you": "have run", "he": "has run", "she": "has run", "it": "has run", "we": "have run", "they": "have run" }
+    }
+  },
+  {
+    "infinitive_es": "comprar",
+    "infinitive_en": "to buy",
+    "types": {
+      "present": ["regular"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": { "yo": "compro", "tú": "compras", "él": "compra", "nosotros": "compramos", "vosotros": "compráis", "ellos": "compran" },
+      "past_simple": { "yo": "compré", "tú": "compraste", "él": "compró", "nosotros": "compramos", "vosotros": "comprasteis", "ellos": "compraron" },
+      "present_perfect": { "yo": "he comprado", "tú": "has comprado", "él": "ha comprado", "nosotros": "hemos comprado", "vosotros": "habéis comprado", "ellos": "han comprado" }
+    },
+    "conjugations_en": {
+      "present": { "I": "buy", "you": "buy", "he": "buys", "she": "buys", "it": "buys", "we": "buy", "they": "buy" },
+      "past_simple": { "I": "bought", "you": "bought", "he": "bought", "she": "bought", "it": "bought", "we": "bought", "they": "bought" },
+      "present_perfect": { "I": "have bought", "you": "have bought", "he": "has bought", "she": "has bought", "it": "has bought", "we": "have bought", "they": "have bought" }
+    }
+  },
+  {
+    "infinitive_es": "nadar",
+    "infinitive_en": "to swim",
+    "types": {
+      "present": ["regular"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": { "yo": "nado", "tú": "nadas", "él": "nada", "nosotros": "nadamos", "vosotros": "nadáis", "ellos": "nadan" },
+      "past_simple": { "yo": "nadé", "tú": "nadaste", "él": "nadó", "nosotros": "nadamos", "vosotros": "nadasteis", "ellos": "nadaron" },
+      "present_perfect": { "yo": "he nadado", "tú": "has nadado", "él": "ha nadado", "nosotros": "hemos nadado", "vosotros": "habéis nadado", "ellos": "han nadado" }
+    },
+    "conjugations_en": {
+      "present": { "I": "swim", "you": "swim", "he": "swims", "she": "swims", "it": "swims", "we": "swim", "they": "swim" },
+      "past_simple": { "I": "swam", "you": "swam", "he": "swam", "she": "swam", "it": "swam", "we": "swam", "they": "swam" },
+      "present_perfect": { "I": "have swum", "you": "have swum", "he": "has swum", "she": "has swum", "it": "has swum", "we": "have swum", "they": "have swum" }
+    }
+  },
+  {
+    "infinitive_es": "ver",
+    "infinitive_en": "to see",
+    "types": {
+      "present": ["first_person_irregular"],
+      "present_perfect": ["irregular_participle"],
+      "past_simple": ["regular"] 
+    },
+    "conjugations": {
+      "present": { "yo": "veo", "tú": "ves", "él": "ve", "nosotros": "vemos", "vosotros": "veis", "ellos": "ven" },
+      "past_simple": { "yo": "vi", "tú": "viste", "él": "vio", "nosotros": "vimos", "vosotros": "visteis", "ellos": "vieron" },
+      "present_perfect": { "yo": "he visto", "tú": "has visto", "él": "ha visto", "nosotros": "hemos visto", "vosotros": "habéis visto", "ellos": "han visto" }
+    },
+    "conjugations_en": {
+      "present": { "I": "see", "you": "see", "he": "sees", "she": "sees", "it": "sees", "we": "see", "they": "see" },
+      "past_simple": { "I": "saw", "you": "saw", "he": "saw", "she": "saw", "it": "saw", "we": "saw", "they": "saw" },
+      "present_perfect": { "I": "have seen", "you": "have seen", "he": "has seen", "she": "has seen", "it": "has seen", "we": "have seen", "they": "have seen" }
+    }
+  },
+  {
+    "infinitive_es": "parecer",
+    "infinitive_en": "to seem",
+    "types": {
+      "present": ["first_person_irregular"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": { "yo": "parezco", "tú": "pareces", "él": "parece", "nosotros": "parecemos", "vosotros": "parecéis", "ellos": "parecen" },
+      "past_simple": { "yo": "parecí", "tú": "pareciste", "él": "pareció", "nosotros": "parecimos", "vosotros": "parecisteis", "ellos": "parecieron" },
+      "present_perfect": { "yo": "he parecido", "tú": "has parecido", "él": "ha parecido", "nosotros": "hemos parecido", "vosotros": "habéis parecido", "ellos": "han parecido" }
+    },
+    "conjugations_en": {
+      "present": { "I": "seem", "you": "seem", "he": "seems", "she": "seems", "it": "seems", "we": "seem", "they": "seem" },
+      "past_simple": { "I": "seemed", "you": "seemed", "he": "seemed", "she": "seemed", "it": "seemed", "we": "seemed", "they": "seemed" },
+      "present_perfect": { "I": "have seemed", "you": "have seemed", "he": "has seemed", "she": "has seemed", "it": "has seemed", "we": "have seemed", "they": "have seemed" }
+    }
+  },
+  {
+    "infinitive_es": "creer",
+    "infinitive_en": "to believe",
+    "types": {
+      "present": ["regular"],
+      "present_perfect": ["regular"], 
+      "past_simple": ["y_change"] 
+    },
+    "conjugations": {
+      "present": { "yo": "creo", "tú": "crees", "él": "cree", "nosotros": "creemos", "vosotros": "creéis", "ellos": "creen" },
+      "past_simple": { "yo": "creí", "tú": "creíste", "él": "creyó", "nosotros": "creímos", "vosotros": "creísteis", "ellos": "creyeron" },
+      "present_perfect": { "yo": "he creído", "tú": "has creído", "él": "ha creído", "nosotros": "hemos creído", "vosotros": "habéis creído", "ellos": "han creído" }
+    },
+    "conjugations_en": {
+      "present": { "I": "believe", "you": "believe", "he": "believes", "she": "believes", "it": "believes", "we": "believe", "they": "believe" },
+      "past_simple": { "I": "believed", "you": "believed", "he": "believed", "she": "believed", "it": "believed", "we": "believed", "they": "believed" },
+      "present_perfect": { "I": "have believed", "you": "have believed", "he": "has believed", "she": "has believed", "it": "has believed", "we": "have believed", "they": "have believed" }
+    }
+  },
+  {
+    "infinitive_es": "llevar",
+    "infinitive_en": "to carry / take / wear", 
+    "types": {
+      "present": ["regular"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": { "yo": "llevo", "tú": "llevas", "él": "lleva", "nosotros": "llevamos", "vosotros": "lleváis", "ellos": "llevan" },
+      "past_simple": { "yo": "llevé", "tú": "llevaste", "él": "llevó", "nosotros": "llevamos", "vosotros": "llevasteis", "ellos": "llevaron" },
+      "present_perfect": { "yo": "he llevado", "tú": "has llevado", "él": "ha llevado", "nosotros": "hemos llevado", "vosotros": "habéis llevado", "ellos": "han llevado" }
+    },
+    "conjugations_en": {
+      "present": { "I": "carry", "you": "carry", "he": "carries", "she": "carries", "it": "carries", "we": "carry", "they": "carry" }, 
+      "past_simple": { "I": "carried", "you": "carried", "he": "carried", "she": "carried", "it": "carried", "we": "carried", "they": "carried" },
+      "present_perfect": { "I": "have carried", "you": "have carried", "he": "has carried", "she": "has carried", "it": "has carried", "we": "have carried", "they": "have carried" }
+    }
+  },
+  {
+    "infinitive_es": "dejar",
+    "infinitive_en": "to leave / to let",
+    "types": {
+      "present": ["regular"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": { "yo": "dejo", "tú": "dejas", "él": "deja", "nosotros": "dejamos", "vosotros": "dejáis", "ellos": "dejan" },
+      "past_simple": { "yo": "dejé", "tú": "dejaste", "él": "dejó", "nosotros": "dejamos", "vosotros": "dejasteis", "ellos": "dejaron" },
+      "present_perfect": { "yo": "he dejado", "tú": "has dejado", "él": "ha dejado", "nosotros": "hemos dejado", "vosotros": "habéis dejado", "ellos": "han dejado" }
+    },
+    "conjugations_en": {
+      "present": { "I": "leave", "you": "leave", "he": "leaves", "she": "leaves", "it": "leaves", "we": "leave", "they": "leave" }, 
+      "past_simple": { "I": "left", "you": "left", "he": "left", "she": "left", "it": "left", "we": "left", "they": "left" },
+      "present_perfect": { "I": "have left", "you": "have left", "he": "has left", "she": "has left", "it": "has left", "we": "have left", "they": "have left" }
+    }
+  },
+  {
+    "infinitive_es": "encontrar",
+    "infinitive_en": "to find",
+    "types": {
+      "present": ["stem_changing"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": { "yo": "encuentro", "tú": "encuentras", "él": "encuentra", "nosotros": "encontramos", "vosotros": "encontráis", "ellos": "encuentran" },
+      "past_simple": { "yo": "encontré", "tú": "encontraste", "él": "encontró", "nosotros": "encontramos", "vosotros": "encontrasteis", "ellos": "encontraron" },
+      "present_perfect": { "yo": "he encontrado", "tú": "has encontrado", "él": "ha encontrado", "nosotros": "hemos encontrado", "vosotros": "habéis encontrado", "ellos": "han encontrado" }
+    },
+    "conjugations_en": {
+      "present": { "I": "find", "you": "find", "he": "finds", "she": "finds", "it": "finds", "we": "find", "they": "find" },
+      "past_simple": { "I": "found", "you": "found", "he": "found", "she": "found", "it": "found", "we": "found", "they": "found" },
+      "present_perfect": { "I": "have found", "you": "have found", "he": "has found", "she": "has found", "it": "has found", "we": "have found", "they": "have found" }
+    }
+  },
+  {
+    "infinitive_es": "empezar",
+    "infinitive_en": "to begin / start", 
+    "types": {
+      "present": ["stem_changing"], 
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"] 
+    },
+    "conjugations": {
+      "present": { "yo": "empiezo", "tú": "empiezas", "él": "empieza", "nosotros": "empezamos", "vosotros": "empezáis", "ellos": "empiezan" },
+      "past_simple": { "yo": "empecé", "tú": "empezaste", "él": "empezó", "nosotros": "empezamos", "vosotros": "empezasteis", "ellos": "empezaron" },
+      "present_perfect": { "yo": "he empezado", "tú": "has empezado", "él": "ha empezado", "nosotros": "hemos empezado", "vosotros": "habéis empezado", "ellos": "han empezado" }
+    },
+    "conjugations_en": {
+      "present": { "I": "begin", "you": "begin", "he": "begins", "she": "begins", "it": "begins", "we": "begin", "they": "begin" },
+      "past_simple": { "I": "began", "you": "began", "he": "began", "she": "began", "it": "began", "we": "began", "they": "began" },
+      "present_perfect": { "I": "have begun", "you": "have begun", "he": "has begun", "she": "has begun", "it": "has begun", "we": "have begun", "they": "have begun" }
+    }
+  },
+  {
+    "infinitive_es": "esperar",
+    "infinitive_en": "to wait / to hope",
+    "types": {
+      "present": ["regular"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": { "yo": "espero", "tú": "esperas", "él": "espera", "nosotros": "esperamos", "vosotros": "esperáis", "ellos": "esperan" },
+      "past_simple": { "yo": "esperé", "tú": "esperaste", "él": "esperó", "nosotros": "esperamos", "vosotros": "esperasteis", "ellos": "esperaron" },
+      "present_perfect": { "yo": "he esperado", "tú": "has esperado", "él": "ha esperado", "nosotros": "hemos esperado", "vosotros": "habéis esperado", "ellos": "han esperado" }
+    },
+    "conjugations_en": {
+      "present": { "I": "wait", "you": "wait", "he": "waits", "she": "waits", "it": "waits", "we": "wait", "they": "wait" }, 
+      "past_simple": { "I": "waited", "you": "waited", "he": "waited", "she": "waited", "it": "waited", "we": "waited", "they": "waited" },
+      "present_perfect": { "I": "have waited", "you": "have waited", "he": "has waited", "she": "has waited", "it": "has waited", "we": "have waited", "they": "have waited" }
+    }
+  },
+  {
+    "infinitive_es": "necesitar",
+    "infinitive_en": "to need",
+    "types": {
+      "present": ["regular"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": { "yo": "necesito", "tú": "necesitas", "él": "necesita", "nosotros": "necesitamos", "vosotros": "necesitáis", "ellos": "necesitan" },
+      "past_simple": { "yo": "necesité", "tú": "necesitaste", "él": "necesitó", "nosotros": "necesitamos", "vosotros": "necesitasteis", "ellos": "necesitaron" },
+      "present_perfect": { "yo": "he necesitado", "tú": "has necesitado", "él": "ha necesitado", "nosotros": "hemos necesitado", "vosotros": "habéis necesitado", "ellos": "han necesitado" }
+    },
+    "conjugations_en": {
+      "present": { "I": "need", "you": "need", "he": "needs", "she": "needs", "it": "needs", "we": "need", "they": "need" },
+      "past_simple": { "I": "needed", "you": "needed", "he": "needed", "she": "needed", "it": "needed", "we": "needed", "they": "needed" },
+      "present_perfect": { "I": "have needed", "you": "have needed", "he": "has needed", "she": "has needed", "it": "has needed", "we": "have needed", "they": "have needed" }
+    }
+  },
+  {
+    "infinitive_es": "usar",
+    "infinitive_en": "to use",
+    "types": {
+      "present": ["regular"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": { "yo": "uso", "tú": "usas", "él": "usa", "nosotros": "usamos", "vosotros": "usáis", "ellos": "usan" },
+      "past_simple": { "yo": "usé", "tú": "usaste", "él": "usó", "nosotros": "usamos", "vosotros": "usasteis", "ellos": "usaron" },
+      "present_perfect": { "yo": "he usado", "tú": "has usado", "él": "ha usado", "nosotros": "hemos usado", "vosotros": "habéis usado", "ellos": "han usado" }
+    },
+    "conjugations_en": {
+      "present": { "I": "use", "you": "use", "he": "uses", "she": "uses", "it": "uses", "we": "use", "they": "use" },
+      "past_simple": { "I": "used", "you": "used", "he": "used", "she": "used", "it": "used", "we": "used", "they": "used" },
+      "present_perfect": { "I": "have used", "you": "have used", "he": "has used", "she": "has used", "it": "has used", "we": "have used", "they": "have used" }
+    }
+  },
+  {
+    "infinitive_es": "recibir",
+    "infinitive_en": "to receive",
+    "types": {
+      "present": ["regular"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": { "yo": "recibo", "tú": "recibes", "él": "recibe", "nosotros": "recibimos", "vosotros": "recibís", "ellos": "reciben" },
+      "past_simple": { "yo": "recibí", "tú": "recibiste", "él": "recibió", "nosotros": "recibimos", "vosotros": "recibisteis", "ellos": "recibieron" },
+      "present_perfect": { "yo": "he recibido", "tú": "has recibido", "él": "ha recibido", "nosotros": "hemos recibido", "vosotros": "habéis recibido", "ellos": "han recibido" }
+    },
+    "conjugations_en": {
+      "present": { "I": "receive", "you": "receive", "he": "receives", "she": "receives", "it": "receives", "we": "receive", "they": "receive" },
+      "past_simple": { "I": "received", "you": "received", "he": "received", "she": "received", "it": "received", "we": "received", "they": "received" },
+      "present_perfect": { "I": "have received", "you": "have received", "he": "has received", "she": "has received", "it": "has received", "we": "have received", "they": "have received" }
+    }
+  },
+  {
+    "infinitive_es": "recordar",
+    "infinitive_en": "to remember / to recall", 
+    "types": {
+      "present": ["stem_changing"], 
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": { "yo": "recuerdo", "tú": "recuerdas", "él": "recuerda", "nosotros": "recordamos", "vosotros": "recordáis", "ellos": "recuerdan" },
+      "past_simple": { "yo": "recordé", "tú": "recordaste", "él": "recordó", "nosotros": "recordamos", "vosotros": "recordasteis", "ellos": "recordaron" },
+      "present_perfect": { "yo": "he recordado", "tú": "has recordado", "él": "ha recordado", "nosotros": "hemos recordado", "vosotros": "habéis recordado", "ellos": "han recordado" }
+    },
+    "conjugations_en": {
+      "present": { "I": "remember", "you": "remember", "he": "remembers", "she": "remembers", "it": "remembers", "we": "remember", "they": "remember" },
+      "past_simple": { "I": "remembered", "you": "remembered", "he": "remembered", "she": "remembered", "it": "remembered", "we": "remembered", "they": "remembered" },
+      "present_perfect": { "I": "have remembered", "you": "have remembered", "he": "has remembered", "she": "has remembered", "it": "has remembered", "we": "have remembered", "they": "have remembered" }
+    }
+  },
+  {
+    "infinitive_es": "permitir",
+    "infinitive_en": "to allow / to permit", 
+    "types": {
+      "present": ["regular"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": { "yo": "permito", "tú": "permites", "él": "permite", "nosotros": "permitimos", "vosotros": "permitís", "ellos": "permiten" },
+      "past_simple": { "yo": "permití", "tú": "permitiste", "él": "permitió", "nosotros": "permitimos", "vosotros": "permitisteis", "ellos": "permitieron" },
+      "present_perfect": { "yo": "he permitido", "tú": "has permitido", "él": "ha permitido", "nosotros": "hemos permitido", "vosotros": "habéis permitido", "ellos": "han permitido" }
+    },
+    "conjugations_en": {
+      "present": { "I": "allow", "you": "allow", "he": "allows", "she": "allows", "it": "allows", "we": "allow", "they": "allow" },
+      "past_simple": { "I": "allowed", "you": "allowed", "he": "allowed", "she": "allowed", "it": "allowed", "we": "allowed", "they": "allowed" },
+      "present_perfect": { "I": "have allowed", "you": "have allowed", "he": "has allowed", "she": "has allowed", "it": "has allowed", "we": "have allowed", "they": "have allowed" }
+    }
+  },
+  {
+    "infinitive_es": "conseguir",
+    "infinitive_en": "to get / to achieve",
+    "types": {
+      "present": ["stem_changing"], 
+      "present_perfect": ["regular"],
+      "past_simple": ["stem_change_3rd_person"] 
+    },
+    "conjugations": {
+      "present": { "yo": "consigo", "tú": "consigues", "él": "consigue", "nosotros": "conseguimos", "vosotros": "conseguís", "ellos": "consiguen" },
+      "past_simple": { "yo": "conseguí", "tú": "conseguiste", "él": "consiguió", "nosotros": "conseguimos", "vosotros": "conseguisteis", "ellos": "consiguieron" },
+      "present_perfect": { "yo": "he conseguido", "tú": "has conseguido", "él": "ha conseguido", "nosotros": "hemos conseguido", "vosotros": "habéis conseguido", "ellos": "han conseguido" }
+    },
+    "conjugations_en": {
+      "present": { "I": "get", "you": "get", "he": "gets", "she": "gets", "it": "gets", "we": "get", "they": "get" }, 
+      "past_simple": { "I": "got", "you": "got", "he": "got", "she": "got", "it": "got", "we": "got", "they": "got" },
+      "present_perfect": { "I": "have gotten", "you": "have gotten", "he": "has gotten", "she": "has gotten", "it": "has gotten", "we": "have gotten", "they": "have gotten" } 
+    }
+  },
+  {
+    "infinitive_es": "viajar",
+    "infinitive_en": "to travel",
+    "types": {
+      "present": ["regular"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": { "yo": "viajo", "tú": "viajas", "él": "viaja", "nosotros": "viajamos", "vosotros": "viajáis", "ellos": "viajan" },
+      "past_simple": { "yo": "viajé", "tú": "viajaste", "él": "viajó", "nosotros": "viajamos", "vosotros": "viajasteis", "ellos": "viajaron" },
+      "present_perfect": { "yo": "he viajado", "tú": "has viajado", "él": "ha viajado", "nosotros": "hemos viajado", "vosotros": "habéis viajado", "ellos": "han viajado" }
+    },
+    "conjugations_en": {
+      "present": { "I": "travel", "you": "travel", "he": "travels", "she": "travels", "it": "travels", "we": "travel", "they": "travel" },
+      "past_simple": { "I": "traveled", "you": "traveled", "he": "traveled", "she": "traveled", "it": "traveled", "we": "traveled", "they": "traveled" }, 
+      "present_perfect": { "I": "have traveled", "you": "have traveled", "he": "has traveled", "she": "has traveled", "it": "has traveled", "we": "have traveled", "they": "have traveled" }
+    }
+  },
+  {
+    "infinitive_es": "ayudar",
+    "infinitive_en": "to help",
+    "types": {
+      "present": ["regular"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": { "yo": "ayudo", "tú": "ayudas", "él": "ayuda", "nosotros": "ayudamos", "vosotros": "ayudáis", "ellos": "ayudan" },
+      "past_simple": { "yo": "ayudé", "tú": "ayudaste", "él": "ayudó", "nosotros": "ayudamos", "vosotros": "ayudasteis", "ellos": "ayudaron" },
+      "present_perfect": { "yo": "he ayudado", "tú": "has ayudado", "él": "ha ayudado", "nosotros": "hemos ayudado", "vosotros": "habéis ayudado", "ellos": "han ayudado" }
+    },
+    "conjugations_en": {
+      "present": { "I": "help", "you": "help", "he": "helps", "she": "helps", "it": "helps", "we": "help", "they": "help" },
+      "past_simple": { "I": "helped", "you": "helped", "he": "helped", "she": "helped", "it": "helped", "we": "helped", "they": "helped" },
+      "present_perfect": { "I": "have helped", "you": "have helped", "he": "has helped", "she": "has helped", "it": "has helped", "we": "have helped", "they": "have helped" }
+    }
+  },
+  {
+    "infinitive_es": "beber",
+    "infinitive_en": "to drink",
+    "types": {
+      "present": ["regular"],
+      "present_perfect": ["regular"],
+      "past_simple": ["regular"]
+    },
+    "conjugations": {
+      "present": { "yo": "bebo", "tú": "bebes", "él": "bebe", "nosotros": "bebemos", "vosotros": "bebéis", "ellos": "beben" },
+      "past_simple": { "yo": "bebí", "tú": "bebiste", "él": "bebió", "nosotros": "bebimos", "vosotros": "bebisteis", "ellos": "bebieron" },
+      "present_perfect": { "yo": "he bebido", "tú": "has bebido", "él": "ha bebido", "nosotros": "hemos bebido", "vosotros": "habéis bebido", "ellos": "han bebido" }
+    },
+    "conjugations_en": {
+      "present": { "I": "drink", "you": "drink", "he": "drinks", "she": "drinks", "it": "drinks", "we": "drink", "they": "drink" },
+      "past_simple": { "I": "drank", "you": "drank", "he": "drank", "she": "drank", "it": "drank", "we": "drank", "they": "drank" },
+      "present_perfect": { "I": "have drunk", "you": "have drunk", "he": "has drunk", "she": "has drunk", "it": "has drunk", "we": "have drunk", "they": "have drunk" }
+    }
+  },
+  {
+    "infinitive_es": "querer",
+    "infinitive_en": "to want", 
+    "types": {
+      "present": ["stem_changing"], 
+      "present_perfect": ["regular"],
+      "past_simple": ["irregular_root"] 
+    },
+    "conjugations": {
+      "present": { "yo": "quiero", "tú": "quieres", "él": "quiere", "nosotros": "queremos", "vosotros": "queréis", "ellos": "quieren" },
+      "past_simple": { "yo": "quise", "tú": "quisiste", "él": "quiso", "nosotros": "quisimos", "vosotros": "quisisteis", "ellos": "quisieron" },
+      "present_perfect": { "yo": "he querido", "tú": "has querido", "él": "ha querido", "nosotros": "hemos querido", "vosotros": "habéis querido", "ellos": "han querido" }
+    },
+    "conjugations_en": {
+      "present": { "I": "want", "you": "want", "he": "wants", "she": "wants", "it": "wants", "we": "want", "they": "want" },
+      "past_simple": { "I": "wanted", "you": "wanted", "he": "wanted", "she": "wanted", "it": "wanted", "we": "wanted", "they": "wanted" },
+      "present_perfect": { "I": "have wanted", "you": "have wanted", "he": "has wanted", "she": "has wanted", "it": "has wanted", "we": "have wanted", "they": "have wanted" }
+    }
+  },
+  {
+    "infinitive_es": "obtener",
+    "infinitive_en": "to obtain", 
+    "types": {
+      "present": ["multiple_irregularities"], 
+      "present_perfect": ["regular"],
+      "past_simple": ["irregular_root"] 
+    },
+    "conjugations": {
+      "present": { "yo": "obtengo", "tú": "obtienes", "él": "obtiene", "nosotros": "obtenemos", "vosotros": "obtenéis", "ellos": "obtienen" },
+      "past_simple": { "yo": "obtuve", "tú": "obtuviste", "él": "obtuvo", "nosotros": "obtuvimos", "vosotros": "obtuvisteis", "ellos": "obtuvieron" },
+      "present_perfect": { "yo": "he obtenido", "tú": "has obtenido", "él": "ha obtenido", "nosotros": "hemos obtenido", "vosotros": "habéis obtenido", "ellos": "han obtenido" }
+    },
+    "conjugations_en": {
+      "present": { "I": "obtain", "you": "obtain", "he": "obtains", "she": "obtains", "it": "obtains", "we": "obtain", "they": "obtain" },
+      "past_simple": { "I": "obtained", "you": "obtained", "he": "obtained", "she": "obtained", "it": "obtained", "we": "obtained", "they": "obtained" },
+      "present_perfect": { "I": "have obtained", "you": "have obtained", "he": "has obtained", "she": "has obtained", "it": "has obtained", "we": "have obtained", "they": "have obtained" }
+    }
+  },
+  {
+    "infinitive_es": "componer",
+    "infinitive_en": "to compose",
+    "types": {
+      "present": ["first_person_irregular"], 
+      "present_perfect": ["irregular_participle"], 
+      "past_simple": ["irregular_root"] 
+    },
+    "conjugations": {
+      "present": { "yo": "compongo", "tú": "compones", "él": "compone", "nosotros": "componemos", "vosotros": "componéis", "ellos": "componen" },
+      "past_simple": { "yo": "compuse", "tú": "compusiste", "él": "compuso", "nosotros": "compusimos", "vosotros": "compusisteis", "ellos": "compusieron" },
+      "present_perfect": { "yo": "he compuesto", "tú": "has compuesto", "él": "ha compuesto", "nosotros": "hemos compuesto", "vosotros": "habéis compuesto", "ellos": "han compuesto" }
+    },
+    "conjugations_en": {
+      "present": { "I": "compose", "you": "compose", "he": "composes", "she": "composes", "it": "composes", "we": "compose", "they": "compose" },
+      "past_simple": { "I": "composed", "you": "composed", "he": "composed", "she": "composed", "it": "composed", "we": "composed", "they": "composed" },
+      "present_perfect": { "I": "have composed", "you": "have composed", "he": "has composed", "she": "has composed", "it": "has composed", "we": "have composed", "they": "have composed" }
+    }
+  },
+  {
+    "infinitive_es": "dar",
+    "infinitive_en": "to give",
+    "types": {
+      "present": ["first_person_irregular"], 
+      "present_perfect": ["regular"], 
+      "past_simple": ["totally_irregular"] 
+    },
+    "conjugations": {
+      "present": { "yo": "doy", "tú": "das", "él": "da", "nosotros": "damos", "vosotros": "dais", "ellos": "dan" },
+      "past_simple": { "yo": "di", "tú": "diste", "él": "dio", "nosotros": "dimos", "vosotros": "disteis", "ellos": "dieron" },
+      "present_perfect": { "yo": "he dado", "tú": "has dado", "él": "ha dado", "nosotros": "hemos dado", "vosotros": "habéis dado", "ellos": "han dado" }
+    },
+    "conjugations_en": {
+      "present": { "I": "give", "you": "give", "he": "gives", "she": "gives", "it": "gives", "we": "give", "they": "give" },
+      "past_simple": { "I": "gave", "you": "gave", "he": "gave", "she": "gave", "it": "gave", "we": "gave", "they": "gave" },
+      "present_perfect": { "I": "have given", "you": "have given", "he": "has given", "she": "has given", "it": "has given", "we": "have given", "they": "have given" }
+    }
+  },
+  {
+    "infinitive_es": "mentir",
+    "infinitive_en": "to lie",
+    "types": {
+      "present": ["stem_changing"], 
+      "present_perfect": ["regular"],
+      "past_simple": ["stem_change_3rd_person"] 
+    },
+    "conjugations": {
+      "present": { "yo": "miento", "tú": "mientes", "él": "miente", "nosotros": "mentimos", "vosotros": "mentís", "ellos": "mienten" },
+      "past_simple": { "yo": "mentí", "tú": "mentiste", "él": "mintió", "nosotros": "mentimos", "vosotros": "mentisteis", "ellos": "mintieron" },
+      "present_perfect": { "yo": "he mentido", "tú": "has mentido", "él": "ha mentido", "nosotros": "hemos mentido", "vosotros": "habéis mentido", "ellos": "han mentido" }
+    },
+    "conjugations_en": {
+      "present": { "I": "lie", "you": "lie", "he": "lies", "she": "lies", "it": "lies", "we": "lie", "they": "lie" },
+      "past_simple": { "I": "lied", "you": "lied", "he": "lied", "she": "lied", "it": "lied", "we": "lied", "they": "lied" },
+      "present_perfect": { "I": "have lied", "you": "have lied", "he": "has lied", "she": "has lied", "it": "has lied", "we": "have lied", "they": "have lied" }
+    }
+  },
+  {
+    "infinitive_es": "comunicarse",
+    "infinitive_en": "to communicate",
+    "types": {
+      "present": ["regular", "reflexive"],
+      "present_perfect": ["regular", "reflexive"],
+      "past_simple": ["regular", "reflexive"]
+    },
+    "conjugations": {
+      "present": {
+        "yo": "me comunico",
+        "tú": "te comunicas",
+        "él": "se comunica",
+        "nosotros": "nos comunicamos",
+        "vosotros": "os comunicáis",
+        "ellos": "se comunican"
+      },
+      "past_simple": {
+        "yo": "me comuniqué",
+        "tú": "te comunicaste",
+        "él": "se comunicó",
+        "nosotros": "nos comunicamos",
+        "vosotros": "os comunicasteis",
+        "ellos": "se comunicaron"
+      },
+      "present_perfect": {
+        "yo": "me he comunicado",
+        "tú": "te has comunicado",
+        "él": "se ha comunicado",
+        "nosotros": "nos hemos comunicado",
+        "vosotros": "os habéis comunicado",
+        "ellos": "se han comunicado"
+      }
+    },
+    "conjugations_en": {
+      "present": {
+        "I": "communicate",
+        "you": "communicate",
+        "he": "communicates",
+        "she": "communicates",
+        "it": "communicates",
+        "we": "communicate",
+        "they": "communicate"
+      },
+      "past_simple": {
+        "I": "communicated",
+        "you": "communicated",
+        "he": "communicated",
+        "she": "communicated",
+        "it": "communicated",
+        "we": "communicated",
+        "they": "communicated"
+      },
+      "present_perfect": {
+        "I": "have communicated",
+        "you": "have communicated",
+        "he": "has communicated",
+        "she": "has communicated",
+        "it": "has communicated",
+        "we": "have communicated",
+        "they": "have communicated"
+      }
+    }
+  },
+  {
+    "infinitive_es": "mudarse",
+    "infinitive_en": "to move (house)",
+    "types": {
+      "present": ["regular", "reflexive"],
+      "present_perfect": ["regular", "reflexive"],
+      "past_simple": ["regular", "reflexive"]
+    },
+    "conjugations": {
+      "present": {
+        "yo": "me mudo",
+        "tú": "te mudas",
+        "él": "se muda",
+        "nosotros": "nos mudamos",
+        "vosotros": "os mudáis",
+        "ellos": "se mudan"
+      },
+      "past_simple": {
+        "yo": "me mudé",
+        "tú": "te mudaste",
+        "él": "se mudó",
+        "nosotros": "nos mudamos",
+        "vosotros": "os mudasteis",
+        "ellos": "se mudaron"
+      },
+      "present_perfect": {
+        "yo": "me he mudado",
+        "tú": "te has mudado",
+        "él": "se ha mudado",
+        "nosotros": "nos hemos mudado",
+        "vosotros": "os habéis mudado",
+        "ellos": "se han mudado"
+      }
+    },
+    "conjugations_en": {
+      "present": {
+        "I": "move",
+        "you": "move",
+        "he": "moves",
+        "she": "moves",
+        "it": "moves",
+        "we": "move",
+        "they": "move"
+      },
+      "past_simple": {
+        "I": "moved",
+        "you": "moved",
+        "he": "moved",
+        "she": "moved",
+        "it": "moved",
+        "we": "moved",
+        "they": "moved"
+      },
+      "present_perfect": {
+        "I": "have moved",
+        "you": "have moved",
+        "he": "has moved",
+        "she": "has moved",
+        "it": "has moved",
+        "we": "have moved",
+        "they": "have moved"
+      }
+    }
+  },
+  {
+    "infinitive_es": "ducharse",
+    "infinitive_en": "to take a shower",
+    "types": {
+      "present": ["regular", "reflexive"],
+      "present_perfect": ["regular", "reflexive"],
+      "past_simple": ["regular", "reflexive"]
+    },
+    "conjugations": {
+      "present": {
+        "yo": "me ducho",
+        "tú": "te duchas",
+        "él": "se ducha",
+        "nosotros": "nos duchamos",
+        "vosotros": "os ducháis",
+        "ellos": "se duchan"
+      },
+      "past_simple": {
+        "yo": "me duché",
+        "tú": "te duchaste",
+        "él": "se duchó",
+        "nosotros": "nos duchamos",
+        "vosotros": "os duchasteis",
+        "ellos": "se ducharon"
+      },
+      "present_perfect": {
+        "yo": "me he duchado",
+        "tú": "te has duchado",
+        "él": "se ha duchado",
+        "nosotros": "nos hemos duchado",
+        "vosotros": "os habéis duchado",
+        "ellos": "se han duchado"
+      }
+    },
+    "conjugations_en": {
+      "present": {
+        "I": "take a shower",
+        "you": "take a shower",
+        "he": "takes a shower",
+        "she": "takes a shower",
+        "it": "takes a shower",
+        "we": "take a shower",
+        "they": "take a shower"
+      },
+      "past_simple": {
+        "I": "took a shower",
+        "you": "took a shower",
+        "he": "took a shower",
+        "she": "took a shower",
+        "it": "took a shower",
+        "we": "took a shower",
+        "they": "took a shower"
+      },
+      "present_perfect": {
+        "I": "have taken a shower",
+        "you": "have taken a shower",
+        "he": "has taken a shower",
+        "she": "has taken a shower",
+        "it": "has taken a shower",
+        "we": "have taken a shower",
+        "they": "have taken a shower"
+      }
+    }
+  },
+  {
+    "infinitive_es": "acostarse",
+    "infinitive_en": "to go to bed",
+    "types": {
+      "present": ["stem_changing", "reflexive"],
+      "present_perfect": ["regular", "reflexive"],
+      "past_simple": ["regular", "reflexive"]
+    },
+    "conjugations": {
+      "present": {
+        "yo": "me acuesto",
+        "tú": "te acuestas",
+        "él": "se acuesta",
+        "nosotros": "nos acostamos",
+        "vosotros": "os acostáis",
+        "ellos": "se acuestan"
+      },
+      "past_simple": {
+        "yo": "me acosté",
+        "tú": "te acostaste",
+        "él": "se acostó",
+        "nosotros": "nos acostamos",
+        "vosotros": "os acostasteis",
+        "ellos": "se acostaron"
+      },
+      "present_perfect": {
+        "yo": "me he acostado",
+        "tú": "te has acostado",
+        "él": "se ha acostado",
+        "nosotros": "nos hemos acostado",
+        "vosotros": "os habéis acostado",
+        "ellos": "se han acostado"
+      }
+    },
+    "conjugations_en": {
+      "present": {
+        "I": "go to bed",
+        "you": "go to bed",
+        "he": "goes to bed",
+        "she": "goes to bed",
+        "it": "goes to bed",
+        "we": "go to bed",
+        "they": "go to bed"
+      },
+      "past_simple": {
+        "I": "went to bed",
+        "you": "went to bed",
+        "he": "went to bed",
+        "she": "went to bed",
+        "it": "went to bed",
+        "we": "went to bed",
+        "they": "went to bed"
+      },
+      "present_perfect": {
+        "I": "have gone to bed",
+        "you": "have gone to bed",
+        "he": "has gone to bed",
+        "she": "has gone to bed",
+        "it": "has gone to bed",
+        "we": "have gone to bed",
+        "they": "have gone to bed"
+      }
+    }
+  },
+  {
+    "infinitive_es": "levantarse",
+    "infinitive_en": "to get up",
+    "types": {
+      "present": ["regular", "reflexive"],
+      "present_perfect": ["regular", "reflexive"],
+      "past_simple": ["regular", "reflexive"]
+    },
+    "conjugations": {
+      "present": {
+        "yo": "me levanto",
+        "tú": "te levantas",
+        "él": "se levanta",
+        "nosotros": "nos levantamos",
+        "vosotros": "os levantáis",
+        "ellos": "se levantan"
+      },
+      "past_simple": {
+        "yo": "me levanté",
+        "tú": "te levantaste",
+        "él": "se levantó",
+        "nosotros": "nos levantamos",
+        "vosotros": "os levantasteis",
+        "ellos": "se levantaron"
+      },
+      "present_perfect": {
+        "yo": "me he levantado",
+        "tú": "te has levantado",
+        "él": "se ha levantado",
+        "nosotros": "nos hemos levantado",
+        "vosotros": "os habéis levantado",
+        "ellos": "se han levantado"
+      }
+    },
+    "conjugations_en": {
+      "present": {
+        "I": "get up",
+        "you": "get up",
+        "he": "gets up",
+        "she": "gets up",
+        "it": "gets up",
+        "we": "get up",
+        "they": "get up"
+      },
+      "past_simple": {
+        "I": "got up",
+        "you": "got up",
+        "he": "got up",
+        "she": "got up",
+        "it": "got up",
+        "we": "got up",
+        "they": "got up"
+      },
+      "present_perfect": {
+        "I": "have gotten up",
+        "you": "have gotten up",
+        "he": "has gotten up",
+        "she": "has gotten up",
+        "it": "has gotten up",
+        "we": "have gotten up",
+        "they": "have gotten up"
+      }
+    }
+  },
+  {
+    "infinitive_es": "suponer",
+    "infinitive_en": "to suppose",
+    "types": {
+      "present": ["first_person_irregular"],
+      "present_perfect": ["regular"],
+      "past_simple": ["irregular_root"]
+    },
+    "conjugations": {
+      "present": {
+        "yo": "supongo",
+        "tú": "supones",
+        "él": "supone",
+        "nosotros": "suponemos",
+        "vosotros": "suponéis",
+        "ellos": "suponen"
+      },
+      "past_simple": {
+        "yo": "supuse",
+        "tú": "supusiste",
+        "él": "supuso",
+        "nosotros": "supusimos",
+        "vosotros": "supusisteis",
+        "ellos": "supusieron"
+      },
+      "present_perfect": {
+        "yo": "he supuesto",
+        "tú": "has supuesto",
+        "él": "ha supuesto",
+        "nosotros": "hemos supuesto",
+        "vosotros": "habéis supuesto",
+        "ellos": "han supuesto"
+      }
+    },
+    "conjugations_en": {
+      "present": {
+        "I": "suppose",
+        "you": "suppose",
+        "he": "supposes",
+        "she": "supposes",
+        "it": "supposes",
+        "we": "suppose",
+        "they": "suppose"
+      },
+      "past_simple": {
+        "I": "supposed",
+        "you": "supposed",
+        "he": "supposed",
+        "she": "supposed",
+        "it": "supposed",
+        "we": "supposed",
+        "they": "supposed"
+      },
+      "present_perfect": {
+        "I": "have supposed",
+        "you": "have supposed",
+        "he": "has supposed",
+        "she": "has supposed",
+        "it": "has supposed",
+        "we": "have supposed",
+        "they": "have supposed"
+      }
+    }
+  }
+]
