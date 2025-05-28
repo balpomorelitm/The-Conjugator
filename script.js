@@ -230,7 +230,6 @@ function updatePronounDropdownCount() {
   let isPrizeVerbActive = false;      
 
 function playHeaderIntro() {
-  console.log("playHeaderIntro fired")
   const header = document.querySelector('.main-header');
   header.classList.remove('animate');
   void header.offsetWidth;
@@ -454,28 +453,52 @@ musicToggle.addEventListener('click', () => {
   }
 });
 
-	function renderVerbButtons() {
-	  const container = document.getElementById('verb-buttons');
-	  container.innerHTML = '';
+function renderVerbButtons() {
+  const container = document.getElementById('verb-buttons');
+  container.innerHTML = '';
 
-	  // ① Clonamos y ordenamos alfabéticamente por infinitive_es
-	  const verbsSorted = [...initialRawVerbData].sort((a, b) =>
-		a.infinitive_es.localeCompare(b.infinitive_es, 'es', { sensitivity: 'base' })
-	  );
+  const verbsSorted = [...initialRawVerbData].sort((a, b) =>
+    a.infinitive_es.localeCompare(b.infinitive_es, 'es', { sensitivity: 'base' })
+  );
 
-	  // ② Creamos cada botón
-	  verbsSorted.forEach(v => {
-		const btn = document.createElement('button');
-		btn.type          = 'button';
-		btn.classList.add('verb-button', 'selected');
-		btn.dataset.value = v.infinitive_es;
-		btn.innerHTML = `
-		  <span class="tick"></span>
-		  <span class="label">${v.infinitive_es} — ${v.infinitive_en}</span>
-		`;
-		container.appendChild(btn);
-	  });
-	}
+  verbsSorted.forEach(v => {
+    const btn = document.createElement('button');
+    btn.type          = 'button';
+    const infinitive = v.infinitive_es;
+	  if (infinitive === "oír") { // Para depurar específicamente "oír"
+		  console.log("Procesando 'oír':");
+		  console.log("  endsWith('se'):", infinitive.endsWith('se'));
+		  console.log("  endsWith('ar'):", infinitive.endsWith('ar'));
+		  console.log("  endsWith('er'):", infinitive.endsWith('er'));
+		  console.log("  endsWith('ir'):", infinitive.endsWith('ir'));
+	  }
+    btn.classList.add('verb-button');
+
+    if (infinitive.endsWith('se')) {
+      btn.classList.add('verb-button-reflexive');
+    } else if (infinitive.endsWith('ar')) {
+      btn.classList.add('verb-button-ar');
+    } else if (infinitive.endsWith('er')) {
+      btn.classList.add('verb-button-er');
+    } else if (infinitive.endsWith('ir')) {
+      btn.classList.add('verb-button-ir');
+      if (infinitive === "oír") console.log("  Clase verb-button-ir AÑADIDA a 'oír'");
+    } else {
+      if (infinitive === "oír") console.log("  NINGUNA clase de tipo añadida a 'oír'");
+    }
+
+    if (!infinitive.endsWith('se')) {
+        btn.classList.add('selected');
+    }
+
+    btn.dataset.value = infinitive;
+    btn.innerHTML = `
+      <span class="tick"></span>
+      <span class="label">${infinitive} — ${v.infinitive_en}</span>
+    `;
+    container.appendChild(btn);
+  });
+}
 	
 	// Recorre cada group-button y marca .active si TODOS sus verbos están seleccionados
 	function updateGroupButtons() {
@@ -1711,16 +1734,13 @@ function quitToSettings() {
     renderVerbTypeButtons(); // Restaura los botones de tipo de verbo (todos seleccionados por defecto)
     filterVerbTypes(); // Aplica filtros basados en los tiempos por defecto
 
-    // Asegurar que el botón de reflexivos esté en su estado HTML por defecto (seleccionado)
-    const reflexBtn = document.getElementById('toggle-reflexive');
-    if (reflexBtn && !reflexBtn.classList.contains('selected')) { // Si no está seleccionado, selecciónalo
-        reflexBtn.classList.add('selected');
-    } else if (reflexBtn && reflexBtn.classList.contains('selected')) {
-        // Si ya está seleccionado (estado por defecto), no hagas nada o asegúralo.
-    }
+
+	  const reflexBtn = document.getElementById('toggle-reflexive');
+	  if (reflexBtn) {
+		  reflexBtn.classList.remove('selected'); // << --- CAMBIO PRINCIPAL AQUÍ: Quita 'selected'
+	  }
 
   loadVerbs();
-
     checkButton.disabled = false; skipButton.disabled = false; endButton.disabled = false;
     document.getElementById('game-modes').style.display = 'flex';
     updateRanking();

@@ -1373,11 +1373,11 @@ button:active {
 	}
     .verb-type-button .verb-type-name {
 	    font-size: 12px;
-		line-height: 1.2;
+		line-height: 0.1;
     }
     .verb-type-button .verb-type-hint {
         font-size: 10px;     
-        line-height: 1.1;    /* Reduce la altura de línea para la pista. */
+        line-height: 1;    /* Reduce la altura de línea para la pista. */
         display: block;      /* Asegura que ocupe su propia línea (aunque <br> ya lo hace) */
         margin-top: 1px;     
     }	
@@ -1786,20 +1786,22 @@ body.dropdown-open .dropdown-menu {
   
 }
 #verb-dropdown-menu #verb-buttons .verb-button {
-  background: #444;               /* gris oscuro */
   color: white;
   border: 1px solid var(--border-color);
   padding: 8px 12px;
   margin-bottom: 6px;
   width: 100%;
   text-align: left;
-  opacity: 0.5;                   /* semi-transparente si NO está .selected */
+  opacity: 0.6;                 
   cursor: pointer;
-  transition: background 0.2s, opacity 0.2s;
+  transition: background-color 0.2s, background-image 0.2s, border-color 0.2s, opacity 0.2s, transform 0.1s ease;
+  border-radius: 6px; /* Añadido de tus estilos posteriores para consistencia */
+  display: flex;      /* Añadido de tus estilos posteriores */
+  align-items: center;/* Añadido de tus estilos posteriores */
+  font-size: 0.85rem; /* Tomado de .verb-buttons-list .verb-button */
 }
 
-#verb-dropdown-menu #verb-buttons .verb-button.selected {
-  background: #1976d2;            
+#verb-dropdown-menu #verb-buttons .verb-button.selected {    
   opacity: 1;
 }
 
@@ -1897,16 +1899,46 @@ body.dropdown-open .dropdown-menu {
   border-radius: 4;
   height: 30px; 
 }
-.verb-buttons-list .verb-button .tick {
-  display: inline-block;
-  width: 16px; height: 16px;
-  margin-right: 8px;
-  border: 1px solid var(--border-color);
-  background: var(--bg-dark);
+
+#verb-buttons .verb-button .tick {
+  display: inline-flex;   /* Para centrar la marca ✓ con flexbox */
+  align-items: center;
+  justify-content: center;
+  
+  width: 1em;             /* Tamaño de la caja del tick, relativo al font-size del botón */
+  height: 1em;
+  
+  background-color: rgba(0, 0, 0, 0.2); /* Fondo oscuro sutil para la caja vacía */
+  border: 1px solid var(--text-color-light, white); /* Borde blanco/claro para que se vea el cuadrado */
+  border-radius: 3px;
+  
+  margin-right: 0.7em;    /* Espacio a la derecha del tick */
+  flex-shrink: 0;         /* Evita que la caja se encoja */
+  
+  /* Asegurarse de que el contenido del pseudo-elemento ::before sea el que aparezca */
+  color: transparent; /* Oculta cualquier texto que pudiera haber en el span.tick directamente */
+  overflow: hidden;   /* Para asegurar que el ::before no se salga si es muy grande */
 }
-.verb-buttons-list .verb-button.selected .tick {
-  background: var(--accent);
-  mask: url('icons/check.svg') center/contain no-repeat;
+
+/* 2. La marca de verificación (✓) que aparece DENTRO del .tick cuando .verb-button tiene .selected */
+#verb-buttons .verb-button.selected .tick::before {
+  content: '✔';         /* Carácter Unicode para la marca (✔). Puedes usar '\\2713' para ✓ */
+  color: var(--text-color-light, white); /* Color de la marca ✓. Debe contrastar con el fondo del .tick */
+  font-size: 0.8em;          /* Tamaño de la marca ✓, un poco más pequeña que la caja .tick */
+  font-weight: bold;
+  line-height: 1;            /* Para ayudar a centrarla verticalmente */
+  font-family: sans-serif;   /* Usar una fuente genérica para asegurar buena visualización del checkmark */
+}
+
+/* 3. Estilo de la cajita .tick cuando el verbo está seleccionado */
+#verb-buttons .verb-button.selected .tick {
+  background-color: transparent; /* Hacemos el fondo de la caja transparente */
+                                 /* El color de fondo será el del botón padre (.verb-button-ar, etc.) */
+  border-color: transparent;     /* También hacemos el borde de la caja transparente */
+                                 /* De esta forma, solo se verá la marca ✓ blanca sobre el color del botón */
+  /* Si prefieres que la caja del tick tenga su propio color de fondo cuando está seleccionada: */
+  /* background-color: var(--accent-color-green, #4CAF50); */ /* Ejemplo: fondo verde */
+  /* border-color: var(--accent-color-green-dark, #388E3C); */ /* Ejemplo: borde verde oscuro */
 }
 .verb-buttons-list .verb-button:hover {
   background: var(--bg-dark-light);
@@ -2015,7 +2047,7 @@ body.dropdown-open .dropdown-menu {
 
 /* 7) “-er” — azul */
 .group-button[data-group="er"].active {
-  background: #2196f3;
+  background: #1976d2;
   box-shadow: 0 0 6px rgba(33,150,243,0.6);
 }
 
@@ -2043,7 +2075,10 @@ body.dropdown-open .dropdown-menu {
   align-items: center;     
   border-radius: 6px;    
   padding: 4px 8px;       
-  font-size: 0.9rem; 
+  font-size: 0.9rem;
+  color: var(--text-color-light, white); /* Texto claro si los fondos son oscuros */
+  border: 1px solid transparent; /* Borde base, se puede sobreescribir */
+  transition: background-color 0.2s ease, background-image 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
 }
 
 /* Si quieres redondear también el dropdown en su conjunto: */
@@ -2057,39 +2092,87 @@ body.dropdown-open .dropdown-menu {
   padding: 4px 8px;        /* menos padding horizontal para que no desborde */
   font-size: 0.85rem;      /* también más compacto si lo deseas */
 }
-/* 1) La cajita en reposo */
-.verb-button .tick {
-  flex: 0 0 auto;          /* evita que el tick cambie de tamaño */
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.2em;
-  height: 1.2em;
-  border: 2px solid #555;
-  border-radius: 3px;
-  margin-right: 0.6em;
-  box-sizing: border-box;
-  background-color: transparent;
-  color: transparent;
-  font-size: 1em;
-  line-height: 1;
-}
 
-/* 2) Cuando está seleccionado: fondo + símbolo */
-.verb-button.selected .tick {
-  background-color: #4caf50;
-  border-color: #388E3C;
+.verb-button .tick {
+  display: inline-flex;   /* Para alinear y centrar el contenido (la marca ✓) */
+  align-items: center;    /* Centrado vertical del ✓ */
+  justify-content: center;/* Centrado horizontal del ✓ */
+
+  width: 1.1em;           
+  height: 1.1em;          
+
+  border: 1px solid var(--border-color, #555); /* Borde de la cajita */
+  background-color: rgba(0,0,0,0.2); /* Un fondo sutil para la cajita vacía */
+  border-radius: 3px;     /* Bordes ligeramente redondeados para la cajita */
+
+  margin-right: 0.6em;    /* Espacio entre la cajita y el texto del verbo */
+  color: transparent;     /* Por si acaso, para ocultar cualquier contenido de texto directo */
+
+  flex-shrink: 0;         /* Evita que la cajita se encoja si el texto del verbo es largo */
+  transition: background-color 0.2s, border-color 0.2s; /* Transición suave */
 }
 .verb-button.selected .tick::before {
-  content: '\\2714'; 
-  display: flex;         
-  align-items: center;   
-  justify-content: center;       
-  color: white;
-  font-size: 1em;    
-  line-height: 1; 
-  font-weight: bold;
-  font-family: sans-serif;  
+  content: '\\2714';         /* Carácter Unicode para la marca de verificación (✔) */
+                             /* Puedes probar también con '\\2713' (✓) si prefieres otro estilo de tick */
+  color: white;              
+                             /* Si algunos fondos de botón son muy claros, podrías necesitar un color oscuro. */
+  font-size: 0.85em;         /* Tamaño de la marca ✓ dentro de su cajita */
+  line-height: 1;            /* Ayuda a centrarla si es necesario */
+  font-weight: bold;         /* Para que la marca sea más visible */
+}
+.verb-button.selected .tick {
+  background-color: var(--accent-color-green, #4CAF50); /* Ejemplo: Fondo verde para la cajita del tick seleccionado */
+  border-color: var(--accent-color-green, #388E3C);     /* Borde verde más oscuro */
+}
+/* Verbos -AR (Verde) */
+.verb-button-ar {
+    background-color: var(--accent-color-green, #4CAF50);
+    border-color: #388E3C; /* Un verde un poco más oscuro para el borde */
+}
+.verb-button-ar:hover {
+    background-color: #5cb85c; /* Un verde más claro para hover */
+    border-color: #4CAF50;
+}
+
+/* Verbos -ER (Azul - como están ahora) */
+.verb-button-er {
+    background-color: #2196F3;
+    border-color: #1976D2; /* Un azul un poco más oscuro para el borde */
+}
+.verb-button-er:hover {
+    background-color: #64B5F6; /* Un azul más claro para hover */
+    border-color: #2196F3;
+}
+
+/* Verbos -IR (Morado) */
+.verb-button-ir {
+    background-color: var(--accent-color-purple, #673AB7);
+    border-color: #512DA8; /* Un morado un poco más oscuro para el borde */
+}
+.verb-button-ir:hover {
+    background-color: #7E57C2; /* Un morado más claro para hover */
+    border-color: #673AB7;
+}
+
+/* Verbos Reflexivos (-SE) (Degradado Rosa-Lila) */
+.verb-button-reflexive {
+    background-image: linear-gradient(to right, var(--accent-color-purple, #673AB7), var(--accent-color-pink, #E91E63));
+    border: 1px solid var(--accent-color-pink, #E91E63); /* Borde basado en uno de los colores del degradado */
+}
+.verb-button-reflexive:hover {
+    /* Para el hover en degradados, a veces es más fácil oscurecerlo un poco o cambiar la intensidad */
+    /* Podrías usar box-shadow o un ligero cambio en la opacidad o un degradado ligeramente diferente */
+    background-image: linear-gradient(to right, #7E57C2, #EC407A); /* Versión ligeramente más clara/brillante */
+    border-color: #EC407A;
+}
+.verb-button:active {
+    transform: translateY(1px);
+}
+.verb-button-ar:active { background-color: #388E3C; }
+.verb-button-er:active { background-color: #1976D2; }
+.verb-button-ir:active { background-color: #512DA8; }
+.verb-button-reflexive:active {
+    background-image: linear-gradient(to right, #512DA8, #C2185B); /* Versión más oscura */
 }
 
 /* 3) Ajuste de la etiqueta para que no se descuelgue */
@@ -2182,4 +2265,60 @@ body.dropdown-open .dropdown-menu {
 .select-groups-button:active {
     background-color: #B71C1C; /* Rojo más oscuro para el estado activo/clic */
     transform: translateY(1px);
+}
+/* Para todas las barras de scroll (principal de la página y de elementos internos) */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+.dropdown-menu::-webkit-scrollbar,
+#verb-buttons::-webkit-scrollbar,
+#tense-buttons::-webkit-scrollbar,
+#pronoun-buttons::-webkit-scrollbar,
+#tooltip::-webkit-scrollbar { /* Añade otros selectores de elementos con scroll si es necesario */
+    width: 10px;  /* Ancho de la barra de scroll vertical */
+    height: 10px; /* Altura de la barra de scroll horizontal (si la hay) */
+}
+
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track,
+.dropdown-menu::-webkit-scrollbar-track,
+#verb-buttons::-webkit-scrollbar-track,
+#tense-buttons::-webkit-scrollbar-track,
+#pronoun-buttons::-webkit-scrollbar-track,
+#tooltip::-webkit-scrollbar-track {
+    background: var(--container-bg, #2a3a2a); /* Color del riel (la base de la barra) */
+    border-radius: 0; /* Esquinas cuadradas para un look más retro/pixelado */
+}
+
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb,
+.dropdown-menu::-webkit-scrollbar-thumb,
+#verb-buttons::-webkit-scrollbar-thumb,
+#tense-buttons::-webkit-scrollbar-thumb,
+#pronoun-buttons::-webkit-scrollbar-thumb,
+#tooltip::-webkit-scrollbar-thumb {
+    background-color: var(--accent-color-green, #4CAF50); /* Color del pulgar (la parte móvil) */
+    border-radius: 0; /* Esquinas cuadradas */
+    border: 1px solid var(--bg-color, #1a2a1a); /* Un borde sutil alrededor del pulgar */
+}
+
+html::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover,
+.dropdown-menu::-webkit-scrollbar-thumb:hover,
+#verb-buttons::-webkit-scrollbar-thumb:hover,
+#tense-buttons::-webkit-scrollbar-thumb:hover,
+#pronoun-buttons::-webkit-scrollbar-thumb:hover,
+#tooltip::-webkit-scrollbar-thumb:hover {
+    background-color: #5cb85c; /* Un verde un poco más claro al pasar el ratón */
+}
+
+/* Estilos de la barra de scroll para Firefox */
+html, 
+body, 
+.dropdown-menu, 
+#verb-buttons, 
+#tense-buttons, 
+#pronoun-buttons, 
+#tooltip { /* Aplica a los elementos que puedan tener scroll */
+    scrollbar-width: thin; /* Opciones: 'auto', 'thin', 'none' */
+    scrollbar-color: var(--accent-color-green, #4CAF50) var(--container-bg, #2a3a2a); /* color del pulgar, color del riel */
 }
