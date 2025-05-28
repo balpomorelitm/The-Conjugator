@@ -1353,7 +1353,79 @@ button:active {
 	  font-size: 0.82em !important; /* Reducir tamaño de fuente base DENTRO del tooltip */
 	  line-height: 1.3 !important; /* Ajustar altura de línea para la nueva fuente */
 	}
+	    #verb-dropdown-menu {
+        width: 90vw; /* Que ocupe el 90% del ancho de la pantalla */
+        max-width: 350px; /* Un máximo absoluto para que no sea demasiado ancho en móviles "grandes" */
+        left: 50%;
+        transform: translateX(-50%); /* Estas dos líneas centran el menú si tiene position: absolute/fixed */
+        right: auto; /* Asegúrate de anular 'right' si estaba definido */
+        box-sizing: border-box; /* Importante para que el padding/border no lo hagan más ancho */
+        max-height: 70vh; 
+    }
 	
+	#verb-buttons .verb-button {
+        font-size: 13px; /* Reduce el tamaño de fuente general del botón */
+        padding: 6px 8px; /* Ajusta el padding si es necesario */
+    }
+    .verb-type-button {
+        padding-top: 4px;    
+        padding-bottom: 4px; 
+	}
+    .verb-type-button .verb-type-name {
+	    font-size: 12px;
+		line-height: 1.2;
+    }
+    .verb-type-button .verb-type-hint {
+        font-size: 10px;     
+        line-height: 1.1;    /* Reduce la altura de línea para la pista. */
+        display: block;      /* Asegura que ocupe su propia línea (aunque <br> ya lo hace) */
+        margin-top: 1px;     
+    }	
+    #verb-buttons .verb-button .label {
+        font-size: 13px; 
+    }
+	    #pronoun-dropdown-menu {
+        position: absolute; /
+        width: 90vw;        
+        max-width: 250px;   
+
+        box-sizing: border-box;
+
+        /* ANCLAR AL LADO DERECHO DE LA PANTALLA */
+        right: 5vw;       /* Posiciona el borde derecho del menú a 5% del borde derecho de la pantalla */
+                          /* O un valor fijo como '10px' si prefieres: right: 10px; */
+        left: auto;       /* Anula cualquier posicionamiento izquierdo para que 'right' tenga precedencia */
+        transform: none;  /* Si estabas usando transform: translateX(-50%) para centrar otros menús,
+                               anúlalo aquí ya que estamos alineando a la derecha. */
+        
+        /* Estilos para el scroll interno y altura máxima */
+        max-height: 60vh; /* Que no ocupe más del 60% de la altura de la pantalla */
+        /* Si el contenido total del menú (incluyendo el botón "All pronouns" y la lista) 
+           necesita scroll, puedes añadir overflow-y: auto; aquí. */
+    }
+
+    /* Para la lista específica de botones de pronombres dentro del menú */
+    #pronoun-buttons {
+        max-height: 200px;  /* Ajusta según la cantidad de botones y el espacio deseado. 
+                               Podrías usar también unidades vh, ej: 30vh o 40vh */
+        overflow-y: auto;   /* Habilita el scroll vertical para la lista */
+        overflow-x: hidden; /* Previene el scroll horizontal */
+    }
+	#tense-dropdown-menu {
+        /* Asumimos que ya tiene position: absolute; de una regla general para .dropdown-menu */
+        
+        width: auto;        /* Permitir que el contenido defina el ancho inicial */
+        min-width: 200px;   /* Un ancho mínimo para que no se vea demasiado apretado. Ajusta según necesidad. */
+        max-width: 260px;
+		box-sizing: border-box;
+		max-height: 60vh;
+   }
+    #tense-buttons {
+        max-height: 250px;  /* Ajusta la altura máxima para la lista de botones.
+                               Unidades como 35vh o 40vh también podrían funcionar. */
+        overflow-y: auto;   /* Habilita el scroll vertical para la lista de tiempos */
+        overflow-x: hidden; /* Previene el scroll horizontal */
+    }
 .tooltip-content-wrapper {
   display: flex !important;         /* <<<< Convertir en contenedor flex */
   flex-direction: row !important;  /* <<<< Para poner las "filas" (ahora columnas) una al lado de la otra */
@@ -1740,8 +1812,10 @@ body.dropdown-open .dropdown-menu {
 }
 #verb-dropdown-menu .dropdown-header {
   display: flex;
+  align-items: stretch;
+  gap: 8px;
+  margin-bottom: 10px;
   justify-content: space-between;
-  margin-bottom: 4px;
 }
 .select-all-button,
 .select-groups-button {
@@ -1952,7 +2026,10 @@ body.dropdown-open .dropdown-menu {
 }
 #verb-dropdown-menu,
 #verb-buttons {
+  max-height: 600px; /* O un valor que deje espacio para el groups-panel y search */
   overflow-x: hidden;      /* no permitimos desplazamiento horizontal */
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
 }
 
 /* Ajusta anchura si sigue cambiando: */
@@ -2076,5 +2153,33 @@ body.dropdown-open .dropdown-menu {
 
 .select-all-button:active {
     background-color: #FFA000;  /* Un poco más oscuro para active - ¡AJUSTA SEGÚN TU COLOR BASE! */
+    transform: translateY(1px);
+}
+.select-groups-button { /* O #verb-groups-button si prefieres más especificidad */
+    /* Mantén o define su color de fondo y texto distintivo si ya lo tiene. Ejemplo: */
+    background-color: #D32F2F; /* Un rojo estándar, ajústalo al tuyo si es diferente */
+    color: white;
+    border: 1px solid #B71C1C; /* Un borde rojo más oscuro */
+
+    /* Propiedades para igualar la forma y tamaño con .select-all-button */
+    padding: 8px 12px;         /* IGUALA este padding al de .select-all-button */
+    border-radius: 5px;        /* IGUALA este border-radius al de .select-all-button */
+    font-weight: 500;          /* IGUALA este font-weight si quieres la misma "grosura" de texto */
+
+    /* Otras propiedades comunes de botón */
+    text-align: center;
+    cursor: pointer;
+    line-height: normal;       /* Ayuda a alinear el texto verticalmente de forma consistente */
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
+    vertical-align: middle;    /* Puede ayudar si están en línea y tienen alturas ligeramente diferentes */
+}
+
+.select-groups-button:hover {
+    background-color: #E53935; /* Un rojo un poco más claro para el hover */
+    border-color: #C62828;
+}
+
+.select-groups-button:active {
+    background-color: #B71C1C; /* Rojo más oscuro para el estado activo/clic */
     transform: translateY(1px);
 }
