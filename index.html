@@ -252,7 +252,6 @@
     </div>
   </div>
 
-<!-- Cargar los SDKs de Firebase (NO usar "import", usar "src") -->
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-analytics-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
@@ -263,7 +262,6 @@
 </script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-check-compat.js"></script>
 <script>
-  // 1. Config de Firebase
 	const firebaseConfig = {
 	  apiKey: "AIzaSyAhM7lmdO1TN__8X6728EPJfqxBXjFE5ds",
 	  authDomain: "el-conjugador.firebaseapp.com",
@@ -278,13 +276,13 @@
   const appCheck = firebase.appCheck();
    appCheck.activate(
       new firebase.appCheck.ReCaptchaEnterpriseProvider(
-        '6Lc2kk8rAAAAAJk8EqzpmrxkdIe3Vd4QiLvivwM_'
+        '6Lckk08rAAAAAPnC6w_6DGuLrdytV7DfhwZRf67q'
       ),
-      true  // auto-refresh
+      true  
     );
 
-  // 3. Ahora sí crea tu instancia de Firestore
   const db = firebase.firestore();
+  
 </script>
 <div id="left-bubbles"></div>
 <div id="right-bubbles"></div>
