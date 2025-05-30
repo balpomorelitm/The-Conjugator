@@ -519,9 +519,6 @@ button:active {
 .verb-type-button:hover {
   background-color: #555;
   border-color: #777;
-   /* Sobrescribir efecto hover general si no lo quieres */
-   transform: none;
-   box-shadow: 1px 1px 0px rgba(0,0,0,0.4);
    }
 
 
@@ -531,7 +528,7 @@ button:active {
   color: var(--title-color);
   display: block; 
   margin-bottom: 2px; 
-  text-shadow: 2px 2px #111; 
+  text-shadow: 1px 1px rgba(0,0,0,0.5)
   }
 
 /* Estilo de la pista/hint */
@@ -1421,10 +1418,15 @@ button:active {
         padding-top: 4px;    
         padding-bottom: 4px; 
 	}
-    .verb-type-button .verb-type-name {
-	    font-size: 12px;
-		line-height: 0.1;
-    }
+	.verb-type-name {
+	  font-size: 1em; 
+	  font-weight: bold; 
+	  color: var(--title-color);
+	  display: block; 
+	  margin-bottom: 2px; 
+	  /* text-shadow: 2px 2px #111; */ /* Comenta o reduce esto */
+	  text-shadow: 1px 1px #111; /* O prueba una sombra más sutil */
+	}
     .verb-type-button .verb-type-hint {
         font-size: 10px;     
         line-height: 1;    /* Reduce la altura de línea para la pista. */

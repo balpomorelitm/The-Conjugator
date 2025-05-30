@@ -1990,8 +1990,8 @@ updateGameTitle(); // Para que muestre las vidas
 		  mode: selectedGameMode,
 		  timestamp: firebase.firestore.FieldValue.serverTimestamp(),
 		  tense: currentOptions.tenses,
-		  verb: currentQuestion.verb.infinitive_es, // Asegúrate de que currentQuestion.verb y .infinitive_es sean válidos
-		  streak: bestStreak // <--- CAMBIO: Usar siempre bestStreak
+		  verb: currentQuestion.verb.infinitive_es, 
+		  streak: bestStreak 
 		};
 
 		// 2. Imprimir el objeto en la consola ANTES de intentar guardarlo
@@ -2061,11 +2061,9 @@ function renderVerbTypeButtons() {
         }
       }
       
-      console.log(`Clic en tipo irregular: ${button.dataset.value}, ahora seleccionado: ${isNowSelected}`);
-      console.log("Listener de Tipo Irregular -> llamando a applyIrregularityAndTenseFiltersToVerbList");
-      applyIrregularityAndTenseFiltersToVerbList(); 
-      console.log("Listener de Tipo Irregular -> llamando a updateVerbTypeButtonsVisualState");
-      updateVerbTypeButtonsVisualState(); 
+		console.log(`Clic en tipo irregular: ${button.dataset.value}, ahora seleccionado: ${isNowSelected}`);
+		console.log("Listener de Tipo Irregular -> llamando a applyIrregularityAndTenseFiltersToVerbList");
+		applyIrregularityAndTenseFiltersToVerbList(); 
     });
     // --- FIN DEL LISTENER DE CLIC ---
 
