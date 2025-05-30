@@ -264,25 +264,25 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-check-compat.js"></script>
 <script>
   // 1. Config de Firebase
-  const firebaseConfig = {
-    apiKey: "AIzaSyAhM7lmdO1TN__8X6728EPJfqxBXjFE5ds",
-    authDomain: "el-conjugador.firebaseapp.com",
-    projectId: "el-conjugador",
-    storageBucket: "el-conjugador.appspot.com",
-    messagingSenderId: "1042408130577",
-    appId: "1:1042408130577:web:ecfdf6121cf191282689b0",
-    measurementId: "G-GCCQW0PMH9"
-  };
+	const firebaseConfig = {
+	  apiKey: "AIzaSyAhM7lmdO1TN__8X6728EPJfqxBXjFE5ds",
+	  authDomain: "el-conjugador.firebaseapp.com",
+	  projectId: "el-conjugador",
+	  storageBucket: "el-conjugador.firebasestorage.app",
+	  messagingSenderId: "1042408130577",
+	  appId: "1:1042408130577:web:ecfdf6121cf191282689b0",
+	  measurementId: "G-GCCQW0PMH9"
+	};
   firebase.initializeApp(firebaseConfig);
 
   // 2. Inicializa App Check con el provider correcto
-  const appCheck = firebase.appCheck();
-   appCheck.activate(
-      new firebase.appCheck.ReCaptchaEnterpriseProvider(
-        '6Le1mU8rAAAAAERFE6hwLOpE5jsL4_i_ZOGMATHV'
-      ),
-      true  // auto-refresh
-    );
+ // const appCheck = firebase.appCheck();
+ //  appCheck.activate(
+  //    new firebase.appCheck.ReCaptchaEnterpriseProvider(
+   //     '6Le1mU8rAAAAAERFE6hwLOpE5jsL4_i_ZOGMATHV'
+   //   ),
+   //   true  // auto-refresh
+  //  );
 
   // 3. Ahora sí crea tu instancia de Firestore
   const db = firebase.firestore();
