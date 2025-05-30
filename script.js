@@ -119,6 +119,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   const soundGameOver = new Audio('sounds/gameover.mp3');
   const soundbubblepop = new Audio('sounds/soundbubblepop.mp3');
   const soundLifeGained = new Audio('sounds/soundLifeGained.mp3');
+  const container = document.getElementById('verb-buttons');
+  const allBtns   = () => Array.from(container.querySelectorAll('.verb-button'));
+
   music.loop = true;
   setInterval(() => {
     titleElement.classList.add('glitch-active');
@@ -534,20 +537,33 @@ function renderVerbButtons() {
 	
 	// Recorre cada group-button y marca .active si TODOS sus verbos están seleccionados
 	function updateGroupButtons() {
-	  const container = document.getElementById('verb-buttons');
-	  const allBtns   = Array.from(container.querySelectorAll('.verb-button'));
+	  // Ya NO necesitas definir 'container' ni 'allBtns' localmente si usas las globales.
+	  // const container = document.getElementById('verb-buttons'); // COMENTA O QUITA ESTO
+	  // const allBtns   = Array.from(container.querySelectorAll('.verb-button')); // COMENTA O QUITA ESTO
+
+	  // Llama a la función global allBtns() para obtener el array de botones
+	  const currentVerbButtons = allBtns(); // <--- Esta línea obtiene el array de la función global
 
 	  document.querySelectorAll('#verb-groups-panel .group-button')
 		.forEach(gb => {
 		  const grp = gb.dataset.group;
-		  // Filtramos los botones de verbo que pertenecen a este grupo
-		  const matched = allBtns.filter(b => {
+
+		  // USA 'currentVerbButtons' para filtrar, NO 'allBtns' directamente
+		  const matched = currentVerbButtons.filter(b => { // <--- CAMBIO CRUCIAL AQUÍ: usa currentVerbButtons
 			const inf = b.dataset.value;
-			if (grp === 'all')        return true;
-			if (grp === 'reflexive')  return inf.endsWith('se');
-			return inf.endsWith(grp);
+			const normalizedInf = removeAccents(inf); // Asumo que tienes removeAccents globalmente
+
+			if (grp === 'all') return true;
+			if (grp === 'reflexive') return inf.endsWith('se');
+			// Tu lógica original para ar, er, ir:
+			if (grp === 'ar') return !inf.endsWith('se') && inf.endsWith('ar'); 
+			if (grp === 'er') return !inf.endsWith('se') && inf.endsWith('er');
+			if (grp === 'ir') return !inf.endsWith('se') && inf.endsWith('ir');
+			// Esto era de mi ejemplo, tu lógica puede ser diferente, adáptala si es necesario
+			// return inf.endsWith(grp); 
+			return false; // Fallback si no es ninguno de los anteriores
 		  });
-		  // Está activo si hay al menos uno y TODOS están .selected
+
 		  const allOn = matched.length > 0 && matched.every(b => b.classList.contains('selected'));
 		  gb.classList.toggle('active', allOn);
 		});
@@ -564,6 +580,20 @@ function renderVerbButtons() {
 	  const allSelected = Array.from(tenseButtons).every(btn => btn.classList.contains('selected'));
 	  selectAllTensesBtn.textContent = allSelected ? 'No tenses...' : 'All tenses!';
 	}
+	function updateDeselectAllButton() {
+	  const verbButtons = allBtns(); 
+	  const deselectAllBtn = document.getElementById('deselect-all-verbs'); // Asegúrate de tener la referencia
+
+	  if (verbButtons.length === 0) {
+		deselectAllBtn.textContent = 'Seleccionar Todo';
+		return;
+	  }
+	  // Comprueba si TODOS los botones de verbo están seleccionados
+	  const allSelected = verbButtons.every(b => b.classList.contains('selected'));
+	  deselectAllBtn.textContent = allSelected
+		? 'No verbs'
+		: 'All verbs';
+	}
 	function initVerbDropdown() {
 	  const ddBtn          = document.getElementById('verb-dropdown-button');
 	  const menu           = document.getElementById('verb-dropdown-menu');
@@ -571,26 +601,7 @@ function renderVerbButtons() {
 	  const groupsBtn      = document.getElementById('verb-groups-button');
 	  const groupsPanel    = document.getElementById('verb-groups-panel');
 	  const searchInput    = document.getElementById('verb-search');
-	  const container      = document.getElementById('verb-buttons');
-	  
 
-	  const allBtns = () => Array.from(container.querySelectorAll('.verb-button'));
-
-	  // Función para alternar el texto del botón
-		function updateDeselectAllButton() {
-		  const verbButtons = allBtns(); // allBtns es () => Array.from(container.querySelectorAll('.verb-button'))
-		  const deselectAllBtn = document.getElementById('deselect-all-verbs'); // Asegúrate de tener la referencia
-
-		  if (verbButtons.length === 0) {
-			deselectAllBtn.textContent = 'Seleccionar Todo';
-			return;
-		  }
-		  // Comprueba si TODOS los botones de verbo están seleccionados
-		  const allSelected = verbButtons.every(b => b.classList.contains('selected'));
-		  deselectAllBtn.textContent = allSelected
-			? 'No verbs'
-			: 'All verbs';
-		}
 
 	  // 0) Abrir/Cerrar el menú
 		ddBtn.addEventListener('click', e => {
@@ -693,10 +704,7 @@ function renderVerbButtons() {
 			searchInput.addEventListener('keydown', e => {
 				if (e.key === 'Enter' || e.keyCode === 13) { // 'Enter' o código 13 para Enter
 					e.preventDefault(); // Previene la acción por defecto (enviar el formulario)
-					// Opcional: Podrías añadir aquí alguna acción específica si quisieras que "Intro"
-					// hiciera algo en la búsqueda, como seleccionar el primer verbo visible,
-					// pero por ahora, solo prevenimos el inicio del juego.
-					// console.log('Enter pressed in verb search, action prevented.');
+
 				}
 			});
 	  // 5) Delegación de clicks para toggle individual
@@ -1578,7 +1586,7 @@ function checkAnswer() {
 		ansES.disabled = true;
 
         if (name) {
-		  db.collection("records").add({
+		db.collection("records").add({
         name: name,
         score: score,
         mode: selectedGameMode,
@@ -1970,28 +1978,39 @@ updateGameTitle(); // Para que muestre las vidas
   prepareNextQuestion(); 
 });
 
-  checkButton.addEventListener('click', checkAnswer);
-  skipButton.addEventListener('click', skipQuestion);
-  endButton.addEventListener('click', () => {
-    const name = prompt('¿Cómo te llamas?');
-    if (name) {
-	  db.collection("records").add({
-        name: name,
-        score: score,
-        mode: selectedGameMode,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-		tense: currentOptions.tenses,
-		verb: currentQuestion.verb.infinitive_es,
-		streak: streak
-      })
-      .then(() => {
-        console.log("Record saved online!");
-		renderSetupRecords(); // refresca la lista con el nuevo récord
-      })
-      .catch(error => console.error("Error saving record:", error));
-	}
-    quitToSettings();
-  });
+	checkButton.addEventListener('click', checkAnswer);
+	skipButton.addEventListener('click', skipQuestion);
+	endButton.addEventListener('click', () => {
+	  const name = prompt('¿Cómo te llamas?');
+	  if (name) {
+		// 1. Crear el objeto de datos para Firestore
+		const recordData = {
+		  name: name,
+		  score: score,
+		  mode: selectedGameMode,
+		  timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+		  tense: currentOptions.tenses,
+		  verb: currentQuestion.verb.infinitive_es, // Asegúrate de que currentQuestion.verb y .infinitive_es sean válidos
+		  streak: bestStreak // <--- CAMBIO: Usar siempre bestStreak
+		};
+
+		// 2. Imprimir el objeto en la consola ANTES de intentar guardarlo
+		console.log("Intentando guardar este récord (endButton):", JSON.stringify(recordData, null, 2));
+
+		// 3. Intentar guardar en Firestore
+		db.collection("records").add(recordData)
+		  .then(() => {
+			console.log("Record saved online!");
+			renderSetupRecords(); // refresca la lista con el nuevo récord
+		  })
+		  .catch(error => {
+			console.error("Error saving record (endButton):", error);
+			// Opcional: también puedes loguear los datos aquí si quieres verlos específicamente cuando hay error
+			// console.error("Datos que fallaron al guardar (endButton):", recordData);
+		  });
+	  }
+	  quitToSettings();
+	});
 
   ansES.addEventListener('keypress', e => { if (e.key === 'Enter') checkAnswer(); });
   ansEN.addEventListener('keypress', e => { if (e.key === 'Enter') checkAnswer(); });
