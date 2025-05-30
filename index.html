@@ -275,14 +275,13 @@
 	};
   firebase.initializeApp(firebaseConfig);
 
-  // 2. Inicializa App Check con el provider correcto
- // const appCheck = firebase.appCheck();
- //  appCheck.activate(
-  //    new firebase.appCheck.ReCaptchaEnterpriseProvider(
-   //     '6Le1mU8rAAAAAERFE6hwLOpE5jsL4_i_ZOGMATHV'
-   //   ),
-   //   true  // auto-refresh
-  //  );
+  const appCheck = firebase.appCheck();
+   appCheck.activate(
+      new firebase.appCheck.ReCaptchaEnterpriseProvider(
+        '6Le1mU8rAAAAAERFE6hwLOpE5jsL4_i_ZOGMATHV'
+      ),
+      true  // auto-refresh
+    );
 
   // 3. Ahora sí crea tu instancia de Firestore
   const db = firebase.firestore();
