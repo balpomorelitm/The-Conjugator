@@ -42,6 +42,7 @@ function handleReflexiveToggle() {
 
 const soundClick = document.getElementById('sound-click');
 let openFilterDropdownMenu = null; // Para rastrear el menú de filtro abierto
+let tenseDropdownInitialized = false;
 
 document.addEventListener('DOMContentLoaded', async () => {
   let selectedGameMode = 'infinite'; 
@@ -158,7 +159,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       const resp = await fetch(`verbos.json?cb=${Date.now()}`);
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
       initialRawVerbData = await resp.json();
-      console.log(`Loaded ${initialRawVerbData.length} verbs from JSON`);
       loaded = true;
     } catch (err) {
       console.error('Could not fetch verbos.json:', err);
@@ -337,45 +337,66 @@ if (loaded) {
     }
 
 function initTenseDropdown() {
-  const dropdownBtn     = document.getElementById('tense-dropdown-button');
-  const dropdownMenu    = document.getElementById('tense-dropdown-menu');
-  const selectAllTenses = document.getElementById('select-all-tenses');
-  
-  // Función auxiliar para obtener los botones de tiempo actuales.
-  // Usar un selector más específico es una buena práctica.
-  const getAllTenseButtons = () => Array.from(document.querySelectorAll('#tense-buttons .tense-button'));
+  let dropdownBtnEl = document.getElementById('tense-dropdown-button');
+  let dropdownMenuEl = document.getElementById('tense-dropdown-menu');
+  let selectAllTensesEl = document.getElementById('select-all-tenses');
 
-  // Toggle de mostrar/ocultar el menú
-  dropdownBtn.addEventListener('click', e => {
-    e.stopPropagation();
-    const isOpening = dropdownMenu.classList.contains('hidden');
+  // --- INICIO DE CAMBIOS: Clonar y reemplazar para limpiar listeners ---
+  if (dropdownBtnEl) {
+    let newDropdownBtn = dropdownBtnEl.cloneNode(true); // true para clonar hijos (texto, spans)
+    dropdownBtnEl.parentNode.replaceChild(newDropdownBtn, dropdownBtnEl);
+    dropdownBtnEl = newDropdownBtn; // Actualizamos la referencia al nuevo botón
+  }
 
-    closeOtherFilterDropdowns(null); // Cierra otros menús o este mismo si se hace clic de nuevo
+  if (selectAllTensesEl) {
+    let newSelectAllTenses = selectAllTensesEl.cloneNode(true);
+    selectAllTensesEl.parentNode.replaceChild(newSelectAllTenses, selectAllTensesEl);
+    selectAllTensesEl = newSelectAllTenses; // Actualizamos la referencia
+  }
+  // --- FIN DE CAMBIOS ---
 
-    if (isOpening) { // Si estaba oculto (y por tanto ahora se va a abrir)
-      dropdownMenu.classList.remove('hidden');
-      openFilterDropdownMenu = dropdownMenu; // Registrar como abierto
-    }
-  });
+  // Ahora, los listeners se añaden a los botones "limpios"
+  if (dropdownBtnEl && dropdownMenuEl) {
+    dropdownBtnEl.addEventListener('click', e => {
+      e.stopPropagation();
+      const isCurrentlyHidden = dropdownMenuEl.classList.contains('hidden');
 
-  selectAllTenses.addEventListener('click', () => {
-    if (typeof soundClick !== 'undefined' && soundClick.play) {
-        soundClick.play();
-    }
-    
-    const currentTenseButtons = getAllTenseButtons();
-    const allCurrentlySelected = currentTenseButtons.length > 0 && currentTenseButtons.every(btn => btn.classList.contains('selected'));
-    currentTenseButtons.forEach(btn => {
-        btn.classList.toggle('selected', !allCurrentlySelected);
+      if (isCurrentlyHidden) {
+        // Si está oculto, cerramos cualquier otro menú de filtro abierto y luego abrimos este
+        closeOtherFilterDropdowns(null); // Cierra todos los demás
+        dropdownMenuEl.classList.remove('hidden');
+        openFilterDropdownMenu = dropdownMenuEl; // Marcar este como el abierto
+      } else {
+        // Si está visible, simplemente lo ocultamos (toggle off)
+        dropdownMenuEl.classList.add('hidden');
+        if (openFilterDropdownMenu === dropdownMenuEl) {
+          openFilterDropdownMenu = null; // Ya no hay ninguno abierto
+        }
+      }
     });
-    
-    filterVerbTypes();                // Re-aplicar filtros de tipo de verbo
-    updateTenseDropdownCount();       // Actualizar el contador numérico (ej. "3/6")
-    updateSelectAllTensesButtonText(); 
-  });
+  }
+
+  if (selectAllTensesEl) {
+    selectAllTensesEl.addEventListener('click', () => {
+      if (typeof soundClick !== 'undefined' && soundClick.play) {
+          soundClick.play();
+      }
+      
+      const currentTenseButtons = Array.from(document.querySelectorAll('#tense-buttons .tense-button'));
+      const allCurrentlySelected = currentTenseButtons.length > 0 && currentTenseButtons.every(btn => btn.classList.contains('selected'));
+      
+      currentTenseButtons.forEach(btn => {
+          btn.classList.toggle('selected', !allCurrentlySelected);
+      });
+      
+      filterVerbTypes();
+      updateTenseDropdownCount();
+      updateSelectAllTensesButtonText(); 
+    });
+  }
 
   updateTenseDropdownCount();
-  updateSelectAllTensesButtonText(); // Llamada inicial para establecer el texto correcto del botón
+  updateSelectAllTensesButtonText();
 }
 	
 function updateCurrentPronouns() {
@@ -1171,9 +1192,9 @@ function prepareNextQuestion() {
 	if (selectedGameMode === 'lives' && (currentOptions.mode === 'productive_easy' || currentOptions.mode === 'productive')) {
 	  let prizeChance = 0;
 	  if (currentOptions.mode === 'productive_easy') { // Conjugate
-		prizeChance = 1/40;
+		prizeChance = 1/30;
 	  } else if (currentOptions.mode === 'productive') { // Produce
-		prizeChance = 1/3;
+		prizeChance = 1/20;
 	  }
 
 	  const isVerbReflexive = currentQuestion.verb.infinitive_es.endsWith('se');
@@ -2032,7 +2053,141 @@ function renderVerbTypeButtons() {
     container.appendChild(button);
   });
 }
+// --- INICIO: Nuevo Sistema Modal Específico ---
+const specificModal = document.getElementById('specific-info-modal');
+const specificModalBackdrop = document.getElementById('specific-modal-backdrop');
+const specificModalContent = specificModal.querySelector('.specific-modal-content');
+const closeSpecificModalBtn = document.getElementById('close-specific-modal-btn');
 
+// Contenido para cada clave de información
+// A medida que crees más, los añades aquí.
+const specificInfoData = {
+  infiniteMode: {
+    title: "♾️ Infinite Mode",
+    html: `<p>Play without time or life limits. Ideal for practicing at your own pace.</p>
+           <p><strong class="modal-subtitle">Goal:</strong> Achieve the highest score and longest streak possible!</p>
+           <p><strong class="modal-subtitle">Bonuses:</strong> Awarded for speed and accuracy.</p>`
+  },
+  timerMode: {
+    title: "⏱️ Timer Mode (4 Minutes)",
+    html: `You have <strong>4 minutes</strong> to score as many points as possible.<br>
+           <strong class="modal-subtitle">Time Mechanics:</strong><br>
+           - Start with 4:00 minutes.<br>
+           - Correct answers ✅ add time based on your streak (<span class="emphasis-mechanic">+5s to +10s</span>). Max time is 4:00.<br>
+           - Incorrect/Skipped answers ❌ deduct <span class="emphasis-mechanic">3 seconds</span>.<br><br>
+           <strong class="modal-subtitle">Time UI:</strong><br>
+           - ⏳ Remaining Time: Main clock (turns <span class="text-red">red</span> and pulses in the last 10s).<br>
+           - ➕➖ Time Change: Brief notes like "<span class="text-green">+5s</span>" or "<span class="text-red">-3s</span>".<br>
+           - 🏁 Total Time Played: Shows your current session duration.<br><br>
+           <strong class="modal-subtitle">Scoring Bonuses (per question):</strong><br>
+           - Streak Bonus: Multiplies points for consecutive correct answers.<br>
+           - Speed Bonus: Answering in under 5 seconds gives an additional score multiplier (up to <span class="points-value">x2.0</span>).<br><br>
+           <strong class="modal-subtitle">Goal:</strong> Maximize your score before time runs out!`
+  },
+  livesMode: {
+    title: "💖 Lives Mode",
+    html: `Survive as long as you can! You start with <strong>5 lives</strong> (❤️).<br>
+           Each incorrect or skipped answer costs one life.<br><br>
+           <strong class="modal-subtitle">Gaining Extra Lives:</strong><br>
+           1. <strong>Accumulated Correct Answers:</strong> Earn a life by getting a specific total number of correct answers (e.g., <code>🎯 X to get 1❤️</code>). The target increases each time.<br>
+           2. <strong>Streaks:</strong> Achieve specific streaks of consecutive correct answers (e.g., <code>🔥 Y in a row for 1❤️</code>). This target also increases.<br>
+           3. <strong class="emphasis-mechanic">🎁 Prize Verbs:</strong>
+              - Appear randomly in "<span class="difficulty-normal">Conjugate</span>" (⚙️) and "<span class="difficulty-hard">Produce</span>" (⌨️) difficulties if the verb is irregular or reflexive.<br>
+              - Chance: Approx. <span class="emphasis-mechanic">1 in 30</span> for "Conjugate", approx. <span class="emphasis-mechanic">1 in 20</span> for "Produce".<br>
+              - Correctly conjugating a prize verb (marked with 🎁) grants an <span class="emphasis-mechanic">extra life!</span><br>
+           <br><strong class="modal-subtitle">Goal:</strong> Stay alive and get the highest score!`
+  },
+  receptiveConfig: {
+    title: "💭 Recall Mode",
+    html: `<strong>Difficulty:</strong> <span class="difficulty-easy">Easy to Medium</span><br>
+           You'll see a conjugated Spanish verb and its tense. Your task is to provide the correct <strong>English subject pronoun AND the conjugated English verb</strong>.<br><br>
+           <strong class="modal-subtitle">Quick Tense Translation Guide (Spanish to English):</strong><br>
+             <li><strong>Present (Presente):</strong> Usually like "<span class="tense-example">I eat</span>", "<span class="tense-example">he eats</span>".</li>
+             <li><strong>Simple Past (Pretérito):</strong> Usually "<span class="tense-example">I ate</span>", "<span class="tense-example">he ate</span>".</li>
+             <li><strong>Present Perfect (Pret. Perfecto):</strong> "<span class="tense-example">I have eaten</span>", "<span class="tense-example">he has eaten</span>".</li>
+             <li><strong>Imperfect (Imperfecto):</strong> Often "<span class="tense-example">I was eating</span>" (ongoing past) or "<span class="tense-example">I used to eat</span>" (habitual past). Context is key!</li>
+             <li><strong>Future (Futuro):</strong> "<span class="tense-example">I will eat</span>", "<span class="tense-example">he will eat</span>".</li>
+             <li><strong>Conditional (Condicional):</strong> "<span class="tense-example">I would eat</span>", "<span class="tense-example">he would eat</span>".</li>
+           </ul>
+           <em>Example:</em> <span class="example-prompt-text">SIMPLE PAST: comí</span> You type:
+           <div class="typing-animation-container"><div class="typing-animation" id="recall-example-anim"></div></div>
+           <strong>Base Points:</strong> <span class="points-value">+5</span> per correct answer.<br>
+           While this is the easiest mode, translation can be tricky! Some Spanish verbs don't have a single, direct English equivalent, and tenses can translate in multiple ways.`
+  },
+  productiveEasyConfig: {
+    title: "⚙️ Conjugate Mode",
+    html: `<strong>Difficulty:</strong> <span class="difficulty-normal">Normal</span><br>
+           This mode is a direct test of your Spanish conjugation skills. You'll be given a Spanish verb infinitive, a Spanish pronoun, and the tense.<br><br>
+           Your mission is to type the correctly conjugated Spanish verb form. Focus on standard conjugation rules and irregularities.<br>
+           <em>Example:</em> <span class="example-prompt-text">Presente: conjugar – nosotros</span> You type:
+           <div class="typing-animation-container"><div class="typing-animation" id="conjugate-example-anim"></div></div>
+           <strong>Base Points:</strong> <span class="points-value">+10</span> per correct answer.<br>
+           <strong class="emphasis-mechanic">💖 Lives Mode Bonus:</strong> When playing in "Lives Mode", irregular or reflexive verbs in "Conjugate" have a <span class="emphasis-mechanic">~1 in 30</span> chance of being a 🎁 Prize Verb for an extra life!`
+  },
+  productiveConfig: {
+    title: "⌨️ Produce Mode",
+    html: `<strong>Difficulty:</strong> <span class="difficulty-hard">Hard</span><br>
+           The most challenging mode! You'll get an English verb infinitive, a Spanish pronoun, and the tense.<br><br>
+           You need to:<br>
+             <li>Know the correct Spanish infinitive for the English verb.</li>
+             <li>Correctly conjugate that Spanish verb according to the pronoun and tense, including irregularities.</li>
+           </ol>
+           This truly tests your ability to think in Spanish.<br>
+           <em>Example:</em> <span class="example-prompt-text">Present: to love – yo</span> You type:
+           <div class="typing-animation-container"><div class="typing-animation" id="produce-example-anim"></div></div>
+           <strong>Base Points:</strong> <span class="points-value">+15</span> per correct answer.<br>
+           <strong class="emphasis-mechanic">💖 Lives Mode Bonus:</strong> When playing in "Lives Mode", irregular or reflexive verbs in "Produce" have a <span class="emphasis-mechanic">~1 in 20</span> chance of being a 🎁 Prize Verb for an extra life!`
+  },
+};
+
+function openSpecificModal(infoKey) {
+  const info = specificInfoData[infoKey];
+  if (info && specificModal && specificModalContent && specificModalBackdrop) {
+    specificModalContent.innerHTML = `<h2>${info.title}</h2>${info.html}`;
+    specificModal.style.display = 'flex';
+    specificModalBackdrop.style.display = 'block';
+    document.body.classList.add('tooltip-open-no-scroll');
+
+    // Limpiar intervalo anterior si existiera (de la función typeWriter global)
+    if (window.typeInterval) clearInterval(window.typeInterval);
+    
+    // Activar nuevas animaciones de typewriter
+    const recallAnim = specificModalContent.querySelector('#recall-example-anim');
+    const conjugateAnim = specificModalContent.querySelector('#conjugate-example-anim');
+    const produceAnim = specificModalContent.querySelector('#produce-example-anim');
+
+    if (recallAnim) setTimeout(() => typeWriter(recallAnim, 'I ate', 150), 50);
+    if (conjugateAnim) setTimeout(() => typeWriter(conjugateAnim, 'conjugamos', 150), 50);
+    if (produceAnim) setTimeout(() => typeWriter(produceAnim, 'amo', 150), 50);
+
+  } else {
+    console.warn('Modal, content area, backdrop not found, or infoKey invalid:', infoKey);
+  }
+}
+
+function closeSpecificModal() {
+  if (specificModal && specificModalBackdrop) {
+    specificModal.style.display = 'none';
+    specificModalBackdrop.style.display = 'none';
+    document.body.classList.remove('tooltip-open-no-scroll');
+  }
+}
+
+const infoIcons = document.querySelectorAll('.context-info-icon');
+infoIcons.forEach(icon => {
+  icon.addEventListener('click', function() {
+    if (typeof soundClick !== 'undefined') soundClick.play();
+    const infoKey = this.dataset.infoKey;
+    openSpecificModal(infoKey);
+  });
+});
+
+if (closeSpecificModalBtn) {
+  closeSpecificModalBtn.addEventListener('click', closeSpecificModal);
+}
+if (specificModalBackdrop) {
+  specificModalBackdrop.addEventListener('click', closeSpecificModal);
+}
 function updateGameTitle() {
   const modeLabels = {
     'infinite':   'Infinite',
@@ -2289,7 +2444,15 @@ function showLifeGainedAnimation() {
 }
 
 
+  if (specificModal) specificModal.style.display = 'none';
+  if (specificModalBackdrop) specificModalBackdrop.style.display = 'none';
 
+  const generalTooltip = document.getElementById('tooltip'); // Asegúrate de tener esta referencia si no la tienes global
+  const generalBackdrop = document.querySelector('.modal-backdrop'); // El primer backdrop que tenías
+
+  if (generalTooltip) generalTooltip.style.display = 'none';
+  if (generalBackdrop) generalBackdrop.style.display = 'none';
+  
 function startBubbles() {
   if (bubblesActive) return;   // ya arrancadas
   bubblesActive = true;
@@ -2308,6 +2471,7 @@ function stopBubbles() {
   leftBubbles.innerHTML  = '';
   rightBubbles.innerHTML = '';
 }
+
 function createBubble(side) {
   const bubble = document.createElement('div');
   bubble.classList.add('bubble');
@@ -2345,7 +2509,18 @@ window.addEventListener('resize', () => {
   }
 });
 if (window.innerWidth > 1200) startBubbles();
-});                      // cierra DOMContentLoaded', …)
+  document.body.classList.remove('is-loading'); // Quitar la clase del body
+
+  if (specificModal) specificModal.style.display = 'none';
+  if (specificModalBackdrop) specificModalBackdrop.style.display = 'none';
+  
+  const generalTooltipForHiding = document.getElementById('tooltip');
+  const generalBackdropForHiding = document.querySelector('.modal-backdrop:not(.specific-modal-backdrop)');
+
+  if (generalTooltipForHiding) generalTooltipForHiding.style.display = 'none';
+  if (generalBackdropForHiding) generalBackdropForHiding.style.display = 'none';
+
+});                     // cierra DOMContentLoaded', …)
 
 // © 2025 Pablo Torrado, University of Hong Kong.
 // Licensed under CC BY-NC-ND 4.0: https://creativecommons.org/licenses/by-nc-nd/4.0/

@@ -276,7 +276,7 @@
       "present_perfect": {"I": "have had", "you": "have had", "he": "has had", "she": "has had", "it": "has had", "we": "have had", "they": "have had"},
       "future_simple": {"I": "will have", "you": "will have", "he": "will have", "she": "will have", "it": "will have", "we": "will have", "they": "will have"},
       "condicional_simple": {"I": "would have", "you": "would have", "he": "would have", "she": "would have", "it": "would have", "we": "would have", "they": "would have"},
-      "imperfect_indicative": {"I": "used to have", "you": "used to have", "he": "used to have", "she": "used to have", "it": "used to have", "we": "used to have", "they": "used to have"}
+      "imperfect_indicative": {"I": "was having", "you": "were having", "he": "was having", "she": "was having", "it": "was having", "we": "were having", "they": "were having"}
     }
   },
   {
@@ -304,7 +304,7 @@
       "present_perfect": {"I": "have gone", "you": "have gone", "he": "has gone", "she": "has gone", "it": "has gone", "we": "have gone", "they": "have gone"},
       "future_simple": {"I": "will go", "you": "will go", "he": "will go", "she": "will go", "it": "will go", "we": "will go", "they": "will go"},
       "condicional_simple": {"I": "would go", "you": "would go", "he": "would go", "she": "would go", "it": "would go", "we": "would go", "they": "would go"},
-      "imperfect_indicative": {"I": "used to go", "you": "used to go", "he": "used to go", "she": "used to go", "it": "used to go", "we": "used to go", "they": "used to go"}
+      "imperfect_indicative": {"I": "was going", "you": "were going", "he": "was going", "she": "was going", "it": "was going", "we": "were going", "they": "were going"}
     }
   },
   {

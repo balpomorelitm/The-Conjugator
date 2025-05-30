@@ -25,8 +25,15 @@
 </head>
   
 
-<body>
-  <div id="tooltip" class="tooltip-popup"></div>
+
+<body class="is-loading"> <div id="specific-modal-backdrop" class="specific-modal-backdrop"></div>
+  <div id="specific-info-modal" class="specific-modal">
+    <div class="specific-modal-content">
+      </div>
+    <button id="close-specific-modal-btn" class="specific-modal-close-btn">&times;</button>
+  </div>
+
+  <div class="modal-backdrop"></div> <div id="tooltip" class="tooltip-popup"></div> <header class="main-header">
 
 	<header class="main-header">
 	  <img src="images/conjucityhk.png" class="header-city" alt="city"/>
@@ -39,29 +46,49 @@
 	</header>
 <div class="music-controls">
     <button id="music-toggle" class="music-button" title="Toggle music">🔊</button>
-	
   </div>
 <input  type="range" id="volume-slider"
     min="0" max="1" step="0.05" value="0.6"
     style="position:fixed; bottom:20px; right:130px; width:120px;
           cursor:pointer; display:none;">
-		 
-<!-- 🔘 BOTONES DE MODO -->
+
 <div id="setup-screen" class="screen">
-  <div id="game-modes" class="mode-selector">
-    <button class="mode-button selected-mode" data-mode="infinite">♾️Infinite♾️</button>
-    <button class="mode-button" data-mode="timer">⏱️Timer 4m⏱️</button>
-    <button class="mode-button" data-mode="lives">5x💖</button>
-	<button id="help-button" type="button">?</button>
-  </div>
+	<div id="game-modes" class="mode-selector">
+	  <button class="mode-button selected-mode" data-mode="infinite">
+		♾️Infinite♾️
+		<span class="context-info-icon" data-info-key="infiniteMode"></span>
+	  </button>
+
+	  <button class="mode-button" data-mode="timer">
+		Timer 4m⏱️
+		<span class="context-info-icon" data-info-key="timerMode"></span>
+	  </button>
+
+	  <button class="mode-button" data-mode="lives">
+		5x💖
+		<span class="context-info-icon" data-info-key="livesMode"></span>
+	  </button>
+	  <button id="help-button" type="button">Game Summary</button>
+	</div>
 
    <form id="setup-form">
-    <p><strong>Settings:</strong></p>
-    <div class="mode-selector"> 
-	    <button type="button" class="mode-button config-button" data-mode="receptive">💭ReCall💭</button>
-		<button type="button" class="mode-button config-button selected-mode" data-mode="productive_easy">⚙️conjugATE⚙️</button>
-	    <button type="button" class="mode-button config-button" data-mode="productive">⌨️Pr0duc€⌨️</button>
-    </div>
+    <p><strong>Config:</strong></p>
+	<div class="mode-selector">
+	  <button type="button" class="mode-button config-button" data-mode="receptive">
+		💭ReCall💭
+		<span class="context-info-icon" data-info-key="receptiveConfig"></span>
+	  </button>
+
+	  <button type="button" class="mode-button config-button selected-mode" data-mode="productive_easy">
+		⚙️conjugATE⚙️
+		<span class="context-info-icon" data-info-key="productiveEasyConfig"></span>
+	  </button>
+
+	  <button type="button" class="mode-button config-button" data-mode="productive">
+		⌨️Pr0duc€⌨️
+		<span class="context-info-icon" data-info-key="productiveConfig"></span>
+	  </button>
+	</div>
 	<p><strong>Conjugation Options:</strong></p>
 
   <div class="filter-bar">	
