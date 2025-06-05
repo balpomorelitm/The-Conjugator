@@ -41,6 +41,9 @@ function handleReflexiveToggle() {
 }
 
 const soundClick = document.getElementById('sound-click');
+let openFilterDropdownMenu = null; // Para rastrear el menú de filtro abierto
+let tenseDropdownInitialized = false;
+
 document.addEventListener('DOMContentLoaded', async () => {
   let selectedGameMode = 'infinite'; 
   let allVerbData = [];
@@ -85,25 +88,24 @@ document.addEventListener('DOMContentLoaded', async () => {
   let totalQuestions = 0;           
   let totalCorrect = 0;  
   let initialRawVerbData = [];  
-  const setupScreen  = document.getElementById('setup-screen');
   const gameScreen   = document.getElementById('game-screen');
-  const setupForm    = document.getElementById('setup-form');
   const quitButton   = document.getElementById('quit-button');
-  const checkButton  = document.getElementById('check-button');
-  const skipButton   = document.getElementById('skip-button');
-  const endButton    = document.getElementById('end-button');
+  //const checkButton  = document.getElementById('check-button');
+  //const skipButton   = document.getElementById('skip-button');
+  //const endButton    = document.getElementById('end-button');
   const scoreDisplay = document.getElementById('score-display');
   const rankingBox   = document.getElementById('ranking-box');
   const flameEl      = document.getElementById('flames');
   const gameTitle    = document.getElementById('game-title');
   const qPrompt      = document.getElementById('question-prompt');
-  const ansES        = document.getElementById('answer-input-es');
-  const ansEN        = document.getElementById('answer-input-en');
+  //const ansES        = document.getElementById('answer-input-es');
+  //const ansEN        = document.getElementById('answer-input-en');*/
   const esContainer  = document.getElementById('input-es-container');
   const enContainer  = document.getElementById('input-en-container');
   const feedback     = document.getElementById('feedback-area');
   const helpButton = document.getElementById('help-button'); 
-  const tooltip = document.getElementById('tooltip');       
+  const tooltip = document.getElementById('tooltip');   
+  const toggleReflexiveBtn = document.getElementById('toggle-reflexive');
   const titleElement = document.querySelector('.glitch-title');
   const verbTypeLabels = Array.from(document.querySelectorAll('label[data-times]'));
   const soundCorrect = new Audio('sounds/correct.mp3');
@@ -115,6 +117,144 @@ document.addEventListener('DOMContentLoaded', async () => {
   const soundGameOver = new Audio('sounds/gameover.mp3');
   const soundbubblepop = new Audio('sounds/soundbubblepop.mp3');
   const soundLifeGained = new Audio('sounds/soundLifeGained.mp3');
+  const container = document.getElementById('verb-buttons');
+  const allBtns   = () => Array.from(container.querySelectorAll('.verb-button'));
+let currentConfigStep = 'splash'; // 'splash', 'mode', 'difficulty', 'details'
+let selectedMode = null;
+let selectedDifficulty = null;
+let provisionallySelectedOption = null; // Para guardar el botón antes de confirmar
+
+// Referencias a los nuevos elementos del DOM
+const configFlowScreen = document.getElementById('config-flow-screen');
+const splashStep = document.getElementById('splash-step');
+const pressKeyText = document.getElementById('press-key-text');
+const initialStartButton = document.getElementById('initial-start-button');
+
+const modeSelectionStep = document.getElementById('mode-step');
+const gameModesContainer = document.getElementById('game-modes-container');
+const confirmModeButton = document.getElementById('confirm-mode-button');
+
+const difficultySelectionStep = document.getElementById('difficulty-step');
+const difficultyButtonsContainer = document.getElementById('difficulty-buttons-container');
+const confirmDifficultyButton = document.getElementById('confirm-difficulty-button');
+
+const detailsConfigStep = document.getElementById('details-config-step');
+const finalStartGameButton = document.getElementById('final-start-game-button');
+const backButton = document.getElementById('back-button');
+
+const infoPanelTitle = document.getElementById('info-panel-title');
+const infoPanelContent = document.getElementById('info-panel-content');
+
+// Mapeo de botones de modo/dificultad a sus datos
+const configButtonsData = {}; // Se llenará al inicializar	
+
+confirmModeButton.addEventListener('click', () => {
+    if (provisionallySelectedOption) {
+        if (soundClick) soundClick.play();
+        selectedMode = provisionallySelectedOption.dataset.mode;
+        window.selectedGameMode = selectedMode; 
+
+        gameModesContainer.querySelectorAll('.config-flow-button').forEach(btn => {
+            btn.classList.remove('provisional-selection');
+            if (btn === provisionallySelectedOption) {
+                btn.classList.add('confirmed-selection');
+                btn.style.display = ''; // Asegurar que es visible
+            } else {
+                btn.classList.remove('confirmed-selection');
+                btn.style.display = 'none'; // Ocultar los no seleccionados
+            }
+        });
+
+        // modeSelectionStep es la constante para document.getElementById('mode-step')
+        if (modeSelectionStep) modeSelectionStep.classList.add('step-section-completed'); //
+
+        confirmModeButton.style.display = 'none';
+        navigateToStep('difficulty');
+    }
+});
+
+confirmDifficultyButton.addEventListener('click', () => {
+    if (provisionallySelectedOption) {
+        if (soundClick) soundClick.play();
+        selectedDifficulty = provisionallySelectedOption.dataset.mode;
+
+        difficultyButtonsContainer.querySelectorAll('.config-flow-button').forEach(btn => {
+            btn.classList.remove('provisional-selection');
+            if (btn === provisionallySelectedOption) {
+                btn.classList.add('confirmed-selection');
+                btn.style.display = '';
+            } else {
+                btn.classList.remove('confirmed-selection');
+                btn.style.display = 'none';
+            }
+        });
+
+        // difficultySelectionStep es la constante para document.getElementById('difficulty-step')
+        if (difficultySelectionStep) difficultySelectionStep.classList.add('step-section-completed'); //
+
+        confirmDifficultyButton.style.display = 'none';
+        navigateToStep('details');
+    }
+});
+backButton.addEventListener('click', () => {
+    if (soundClick) soundClick.play();
+    let targetStepToGoBackTo = '';
+
+    if (currentConfigStep === 'details') {
+        document.getElementById('details-step').classList.remove('active-step');
+        document.getElementById('details-step').style.display = 'none'; 
+
+        const difficultyStepDiv = document.getElementById('difficulty-step');
+        if (difficultyStepDiv) { // Comprobar si existe
+            difficultyStepDiv.classList.remove('step-section-completed');
+            difficultyButtonsContainer.querySelectorAll('.config-flow-button').forEach(btn => {
+                btn.style.display = ''; 
+                btn.disabled = false;
+                btn.classList.remove('confirmed-selection', 'provisional-selection');
+            });
+            if (configButtonsData[selectedDifficulty]?.buttonElement) {
+                configButtonsData[selectedDifficulty].buttonElement.classList.remove('confirmed-selection');
+            }
+        }
+        selectedDifficulty = null; 
+        targetStepToGoBackTo = 'difficulty';
+
+    } else if (currentConfigStep === 'difficulty') {
+        const difficultyStepDiv = document.getElementById('difficulty-step');
+        if (difficultyStepDiv) {
+            difficultyStepDiv.classList.remove('active-step', 'step-section-completed');
+            difficultyStepDiv.style.display = 'none';
+        }
+
+        const modeStepDiv = document.getElementById('mode-step');
+        if (modeStepDiv) {
+            modeStepDiv.classList.remove('step-section-completed');
+            gameModesContainer.querySelectorAll('.config-flow-button').forEach(btn => {
+                btn.style.display = ''; 
+                btn.disabled = false;
+                btn.classList.remove('confirmed-selection', 'provisional-selection');
+            });
+            if (configButtonsData[selectedMode]?.buttonElement) {
+               configButtonsData[selectedMode].buttonElement.classList.remove('confirmed-selection');
+            }
+        }
+        selectedMode = null; 
+        window.selectedGameMode = null;
+        targetStepToGoBackTo = 'mode';
+
+    } else if (currentConfigStep === 'mode') {
+        const modeStepDiv = document.getElementById('mode-step');
+        if (modeStepDiv) {
+             modeStepDiv.classList.remove('active-step', 'step-section-completed');
+             modeStepDiv.style.display = 'none';
+        }
+        targetStepToGoBackTo = 'splash';
+    }
+
+    if(targetStepToGoBackTo) {
+        navigateToStep(targetStepToGoBackTo); 
+    }
+});
   music.loop = true;
   setInterval(() => {
     titleElement.classList.add('glitch-active');
@@ -155,7 +295,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       const resp = await fetch(`verbos.json?cb=${Date.now()}`);
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
       initialRawVerbData = await resp.json();
-      console.log(`Loaded ${initialRawVerbData.length} verbs from JSON`);
       loaded = true;
     } catch (err) {
       console.error('Could not fetch verbos.json:', err);
@@ -195,7 +334,7 @@ function updatePronounDropdownCount() {
 }
 
   const irregularityTypes = [
-    { value: 'regular', name: 'Regular', times: ['present', 'past_simple', 'present_perfect'], hint: '' }, // Sin pista específica
+    { value: 'regular', name: 'Regular', times: ['present', 'past_simple', 'present_perfect', 'future_simple', 'condicional_simple', 'imperfect_indicative'], hint: '' }, 
     { value: 'first_person_irregular', name: '1st Person', times: ['present'], hint: '⚙️ salir -> salgo' },
     { value: 'stem_changing', name: 'Stem Change', times: ['present'], hint: '⚙️ dormir -> duermo' },
     { value: 'multiple_irregularities', name: 'Multiple', times: ['present'], hint: '⚙️ tener -> tengo, tienes' },
@@ -203,15 +342,20 @@ function updatePronounDropdownCount() {
     { value: 'irregular_root', name: 'Irreg. Root', times: ['past_simple'], hint: '⚙️ estar -> estuve' },
     { value: 'stem_change_3rd_person', name: 'Stem 3rd P.', times: ['past_simple'], hint: '⚙️ morir -> murió' },
     { value: 'totally_irregular', name: 'Totally Irreg.', times: ['past_simple'], hint: '⚙️ ser/ir -> fui' }, // Añadí esta que vi en tu JSON
-    { value: 'irregular_participle', name: 'Irreg. Participle', times: ['present_perfect'], hint: '⚙️ ver -> visto' }
+    { value: 'irregular_participle', name: 'Irreg. Participle', times: ['present_perfect'], hint: '⚙️ ver -> visto' },
+	{ value: 'irregular_future_conditional', name: 'Irregular Future / Conditional', times: ['future_simple', 'condicional_simple'], hint: '⚙️ tener -> tendré'},
+	{ value: 'irregular_imperfect', name: 'Irregular imperfect', times: ['imperfect_indicative'], hint: '⚙️ ir -> iba'}
 ];
   const tenses = [
     { value: 'present',        name: 'Present'       },
     { value: 'past_simple',    name: 'Simple Past'   },
-    { value: 'present_perfect',name: 'Present Perfect'}
+    { value: 'present_perfect',name: 'Present Perfect'},
+	{ value: 'imperfect_indicative', name: 'Imperfect' },
+	{ value: 'future_simple',        name: 'Future' },
+	{ value: 'condicional_simple',   name: 'Condicional' }
 ];
 
-  let totalCorrectAnswersForLife = 0; // Para Mecánica 1
+  let totalCorrectAnswersForLife = 0; 
   let correctAnswersToNextLife = 10;  // Objetivo inicial para Mecánica 1
   let nextLifeIncrement = 10;         // El 'n' inicial para la progresión de Mecánica 1
 
@@ -219,16 +363,165 @@ function updatePronounDropdownCount() {
   let streakGoalForLife = 5;          // Objetivo inicial para Mecánica 2
   let lastStreakGoalAchieved = 0;     // Para recordar la última meta de racha alcanzada
 
-  let isPrizeVerbActive = false;      // Para Mecánica 3
+  let isPrizeVerbActive = false;      
+	document.addEventListener('keydown', (e) => {
+		if (e.key === 'Escape') {
+			// Primero, cerrar modales/tooltips si están abiertos
+			if (specificModal && (specificModal.style.display === 'flex' || specificModal.style.display === 'block') ) {
+				closeSpecificModal();
+				return; // Importante: no procesar más el Escape si se cerró un modal
+			}
+			if (tooltip && tooltip.style.display === 'block') {
+				tooltip.style.display = 'none';
+				if (document.body) document.body.classList.remove('tooltip-open-no-scroll');
+				if (window.typeInterval) clearInterval(window.typeInterval);
+				return; // Importante: no procesar más el Escape si se cerró un tooltip
+			}
 
+			// Lógica de navegación para la configuración
+			if (configFlowScreen.style.display === 'flex') { // Asegurarse que la pantalla de config esté activa
+				if (currentConfigStep === 'details' || currentConfigStep === 'difficulty') {
+					if (backButton.style.display !== 'none') { // Si el botón back está visible (debería estarlo)
+						backButton.click(); // Simula el clic en el botón "Back"
+					}
+				} else if (currentConfigStep === 'mode') {
+					// Desde 'mode', Escape va directamente a 'splash'
+					navigateToStep('splash');
+				}
+				// No hacemos nada con Escape si estamos en 'splash' o si la pantalla de config no está visible
+			}
+		}
+	});
 function playHeaderIntro() {
-  console.log("playHeaderIntro fired")
   const header = document.querySelector('.main-header');
   header.classList.remove('animate');
   void header.offsetWidth;
   header.classList.add('animate');
 }
 playHeaderIntro();
+function navigateToStep(stepName) {
+    const allSteps = document.querySelectorAll('.config-step');
+    const stepsOrder = ['splash', 'mode', 'difficulty', 'details'];
+    const targetIndex = stepsOrder.indexOf(stepName);
+    const configFlowScreenDiv = document.getElementById('config-flow-screen'); // Necesaria para .splash-active
+    const infoPanel = document.querySelector('.config-info-panel'); // Referencia al panel derecho
+	
+
+    allSteps.forEach(stepDiv => {
+        const stepIdWithoutSuffix = stepDiv.id.replace('-step', '');
+        const stepIndexInOrder = stepsOrder.indexOf(stepIdWithoutSuffix);
+
+        if (stepIndexInOrder === targetIndex) {
+            stepDiv.classList.add('active-step');
+            stepDiv.classList.remove('step-section-completed');
+            stepDiv.style.display = 'block';
+        } else if (stepDiv.classList.contains('step-section-completed') && stepIndexInOrder < targetIndex) {
+            stepDiv.classList.remove('active-step');
+            stepDiv.style.display = 'block';
+        } else {
+            stepDiv.classList.remove('active-step', 'step-section-completed');
+            stepDiv.style.display = 'none';
+        }
+    });
+
+    currentConfigStep = stepName;
+    provisionallySelectedOption = null; 
+
+    if (confirmModeButton) confirmModeButton.style.display = 'none';
+    if (confirmDifficultyButton) confirmDifficultyButton.style.display = 'none';
+
+    if (stepName === 'splash') {
+        if (configFlowScreenDiv) configFlowScreenDiv.classList.add('splash-active'); // Para que CSS pueda ocultar el panel derecho
+        if (infoPanel) infoPanel.style.display = 'none'; // Ocultar explícitamente el panel derecho
+        if (backButton) backButton.style.display = 'none';
+        document.addEventListener('keydown', handleInitialKeyPress);
+        if (initialStartButton) initialStartButton.disabled = false; 
+        // No actualizamos el panel de info aquí si va a estar oculto.
+        // El contenido por defecto del panel de info en el HTML se mostrará cuando sea visible.
+
+        // Limpiar todas las selecciones y estados de completado al volver al splash
+        allSteps.forEach(s => {
+            if (s.id !== 'splash-step') {
+                s.classList.remove('active-step', 'step-section-completed');
+                s.style.display = 'none'; 
+                s.querySelectorAll('.config-flow-button').forEach(btn => {
+                    btn.classList.remove('confirmed-selection', 'provisional-selection');
+                    btn.style.display = ''; 
+                    btn.disabled = false;
+                });
+            }
+        });
+        selectedMode = null; window.selectedGameMode = null;
+        selectedDifficulty = null;
+
+    } else { // Para 'mode', 'difficulty', 'details'
+        if (configFlowScreenDiv) configFlowScreenDiv.classList.remove('splash-active'); // Para que CSS pueda mostrar el panel derecho
+        if (infoPanel) infoPanel.style.display = 'block'; // Mostrar explícitamente el panel derecho
+        if (backButton) backButton.style.display = 'block'; 
+        document.removeEventListener('keydown', handleInitialKeyPress);
+        if (initialStartButton) initialStartButton.disabled = true; 
+
+        const modeInfoTitle = selectedMode ? (specificInfoData[configButtonsData[selectedMode]?.infoKey]?.title || selectedMode.replace(/_/g, ' ')) : "Not selected";
+        const diffInfoTitle = selectedDifficulty ? (specificInfoData[configButtonsData[selectedDifficulty]?.infoKey]?.title || selectedDifficulty.replace(/_/g, ' ')) : "Not selected";
+
+        if (stepName === 'mode') {
+            updateInfoPanelContent('Select Game Mode', '<p>Choose how you want to play. Details will appear here when you select a mode.</p>');
+            const firstModeButton = gameModesContainer.querySelector('.config-flow-button:not([style*="display: none"])');
+            if (firstModeButton) focusOption(firstModeButton, gameModesContainer);
+        } else if (stepName === 'difficulty') {
+            updateInfoPanelContent('Select Difficulty', `<p>Mode: <strong>${modeInfoTitle}</strong>.<br>Choose the game's challenge level. Details for the selected difficulty will appear here.</p>`);
+            const firstDiffButton = difficultyButtonsContainer.querySelector('.config-flow-button:not([style*="display: none"])');
+            if (firstDiffButton) focusOption(firstDiffButton, difficultyButtonsContainer);
+        } else if (stepName === 'details') {
+            // Corrección de los backticks:
+            updateInfoPanelContent('Customize Your Game', `<p> <strong><span class="math-inline">\</strong\> </strong>.<br>Adjust tenses, verbs, pronouns, and other options.</p>`);
+            checkFinalStartButtonState();
+        }
+    }
+}
+function updateInfoPanelContent(title, htmlContent) {
+    infoPanelTitle.textContent = title;
+    infoPanelContent.innerHTML = htmlContent;
+    // Activar animaciones de typewriter si es necesario para el nuevo contenido
+    const recallAnim = infoPanelContent.querySelector('#recall-example-anim');
+    const conjugateAnim = infoPanelContent.querySelector('#conjugate-example-anim');
+    const produceAnim = infoPanelContent.querySelector('#produce-example-anim');
+
+    if (window.typeInterval) clearInterval(window.typeInterval); // Limpiar global
+
+    if (recallAnim) setTimeout(() => typeWriter(recallAnim, 'I ate', 150), 50);
+    if (conjugateAnim) setTimeout(() => typeWriter(conjugateAnim, 'conjugamos', 150), 50);
+    if (produceAnim) setTimeout(() => typeWriter(produceAnim, 'amo', 150), 50);
+}
+function updateSelectAllPronounsButtonText() {
+  const pronounButtons = document.querySelectorAll('#pronoun-buttons .pronoun-group-button');
+  const selectAllPronounsBtn = document.getElementById('select-all-pronouns');
+
+  if (!selectAllPronounsBtn || pronounButtons.length === 0) {
+    if (selectAllPronounsBtn) selectAllPronounsBtn.textContent = 'Seleccionar Todo';
+    return;
+  }
+
+  const allSelected = Array.from(pronounButtons).every(btn => btn.classList.contains('selected'));
+  selectAllPronounsBtn.textContent = allSelected ? 'No pronouns' : 'All pronouns';
+}
+
+function closeOtherFilterDropdowns(currentMenuToIgnore) {
+    const allFilterMenus = document.querySelectorAll('.filter-bar .dropdown-menu');
+    allFilterMenus.forEach(menu => {
+        if (menu !== currentMenuToIgnore) {
+            menu.classList.add('hidden');
+        }
+    });
+    // Si el menú que no se debe ignorar está de hecho abierto (visible),
+    // entonces ese es el nuevo openFilterDropdownMenu.
+    // Si no, o si currentMenuToIgnore es null, ningún menú de filtro está "oficialmente" abierto.
+    if (currentMenuToIgnore && !currentMenuToIgnore.classList.contains('hidden')) {
+        openFilterDropdownMenu = currentMenuToIgnore;
+    } else {
+        openFilterDropdownMenu = null;
+    }
+}
 
 function updateVerbDropdownCount() {
   const buttons = document.querySelectorAll('#verb-buttons .verb-button');
@@ -240,20 +533,14 @@ function updateVerbDropdownCount() {
           .textContent = `(${selected}/${total})`;
 }
 if (loaded) {
-  // Pintamos los verbos y preparamos su dropdown
   renderVerbButtons();
   initVerbDropdown();
-
-  
-
   renderTenseButtons();
   initTenseDropdown();
-
   renderPronounButtons();
   initPronounDropdown();
-
   renderVerbTypeButtons();
-  filterVerbTypes();
+  filterVerbTypes();  
   renderSetupRecords();
 }
   const dropdownBtn     = document.getElementById('verb-dropdown-button');
@@ -269,7 +556,18 @@ if (loaded) {
         soundClick.play();
       });
     });
-
+	
+   function updateTenseDropdownCount() {
+		const tenseButtonsNodeList = document.querySelectorAll('#tense-buttons .tense-button'); 
+		const total = tenseButtonsNodeList.length;
+		const selected = Array.from(tenseButtonsNodeList).filter(btn => btn.classList.contains('selected')).length;
+		
+		const countElement = document.getElementById('tense-dropdown-count');
+		if (countElement) {
+			countElement.textContent = `(${selected}/${total})`;
+		}
+   }
+	
   function renderTenseButtons() {
     const container = document.getElementById('tense-buttons');
     container.innerHTML = '';
@@ -284,54 +582,88 @@ if (loaded) {
       btn.addEventListener('click', () => {
         soundClick.play();
         btn.classList.toggle('selected');
-        filterVerbTypes();  // re-filtra tipos tras cambiar los tiempos
+        document.querySelectorAll('.verb-type-button.selected').forEach(typeBtn => {
+            typeBtn.classList.remove('selected'); // Desmarcar todos primero
+        });
+        
+        const regularTypeBtn = document.querySelector('.verb-type-button[data-value="regular"]');
+        if (regularTypeBtn && !regularTypeBtn.disabled) { // Si 'regular' existe y no está deshabilitado por el tiempo actual
+            regularTypeBtn.classList.add('selected');
+        }
+        filterVerbTypes();  
+		updateTenseDropdownCount(); // Ya la tienes
+        updateSelectAllTensesButtonText(); // << --- AÑADIR ESTA LLAMADA
       });
       container.appendChild(btn);
     });
+    updateTenseDropdownCount(); // Llamada existente
+    updateSelectAllTensesButtonText(); // << --- AÑADIR ESTA LLAMADA (actualización inicial)
+    }
+
+function initTenseDropdown() {
+  let dropdownBtnEl = document.getElementById('tense-dropdown-button');
+  let dropdownMenuEl = document.getElementById('tense-dropdown-menu');
+  let selectAllTensesEl = document.getElementById('select-all-tenses');
+
+  // --- INICIO DE CAMBIOS: Clonar y reemplazar para limpiar listeners ---
+  if (dropdownBtnEl) {
+    let newDropdownBtn = dropdownBtnEl.cloneNode(true); // true para clonar hijos (texto, spans)
+    dropdownBtnEl.parentNode.replaceChild(newDropdownBtn, dropdownBtnEl);
+    dropdownBtnEl = newDropdownBtn; // Actualizamos la referencia al nuevo botón
+  }
+
+  if (selectAllTensesEl) {
+    let newSelectAllTenses = selectAllTensesEl.cloneNode(true);
+    selectAllTensesEl.parentNode.replaceChild(newSelectAllTenses, selectAllTensesEl);
+    selectAllTensesEl = newSelectAllTenses; // Actualizamos la referencia
+  }
+  // --- FIN DE CAMBIOS ---
+
+  // Ahora, los listeners se añaden a los botones "limpios"
+  if (dropdownBtnEl && dropdownMenuEl) {
+    dropdownBtnEl.addEventListener('click', e => {
+      e.stopPropagation();
+      const isCurrentlyHidden = dropdownMenuEl.classList.contains('hidden');
+
+      if (isCurrentlyHidden) {
+        // Si está oculto, cerramos cualquier otro menú de filtro abierto y luego abrimos este
+        closeOtherFilterDropdowns(null); // Cierra todos los demás
+        dropdownMenuEl.classList.remove('hidden');
+        openFilterDropdownMenu = dropdownMenuEl; // Marcar este como el abierto
+      } else {
+        // Si está visible, simplemente lo ocultamos (toggle off)
+        dropdownMenuEl.classList.add('hidden');
+        if (openFilterDropdownMenu === dropdownMenuEl) {
+          openFilterDropdownMenu = null; // Ya no hay ninguno abierto
+        }
+      }
+    });
+  }
+
+  if (selectAllTensesEl) {
+    selectAllTensesEl.addEventListener('click', () => {
+      if (typeof soundClick !== 'undefined' && soundClick.play) {
+          soundClick.play();
+      }
+      
+      const currentTenseButtons = Array.from(document.querySelectorAll('#tense-buttons .tense-button'));
+      const allCurrentlySelected = currentTenseButtons.length > 0 && currentTenseButtons.every(btn => btn.classList.contains('selected'));
+      
+      currentTenseButtons.forEach(btn => {
+          btn.classList.toggle('selected', !allCurrentlySelected);
+      });
+      
+      filterVerbTypes();
+      updateTenseDropdownCount();
+      updateSelectAllTensesButtonText(); 
+    });
+  }
+
+  updateTenseDropdownCount();
+  updateSelectAllTensesButtonText();
 }
-
-	function initTenseDropdown() {
-	  // 1) Capturamos elementos
-	  const dropdownBtn       = document.getElementById('tense-dropdown-button');
-	  const dropdownMenu      = document.getElementById('tense-dropdown-menu');
-	  const selectAllTenses   = document.getElementById('select-all-tenses');
-	  const allTenseButtons   = () => Array.from(document.querySelectorAll('.tense-button'));
-
-	  // 2) Función que actualiza el contador (X/total)
-	  function updateTenseDropdownCount() {
-		const total    = allTenseButtons().length;
-		const selected = allTenseButtons().filter(btn => btn.classList.contains('selected')).length;
-		document.getElementById('tense-dropdown-count').textContent = `(${selected}/${total})`;
-	  }
-
-	  // 3) Toggle de mostrar/ocultar el menú
-	  dropdownBtn.addEventListener('click', e => {
-		e.stopPropagation();               // que no cierre al mismo tiempo el listener global
-		dropdownMenu.classList.toggle('hidden');
-	  });
-
-	  // 4) Botón “Seleccionar Todo”
-	  selectAllTenses.addEventListener('click', () => {
-		allTenseButtons().forEach(btn => btn.classList.add('selected'));
-		filterVerbTypes();                // tu función existente de filtrado
-		updateTenseDropdownCount();
-	  });
-
-
-	  // 6) Iniciamos el contador con el estado actual
-	  updateTenseDropdownCount();
-
-	  // 7) Cerrar al hacer clic fuera
-	  document.addEventListener('click', e => {
-		if (!dropdownBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
-		  dropdownMenu.classList.add('hidden');
-		}
-	  });
-	}
 	
 function updateCurrentPronouns() {
-  // toma todos los botones de grupo, filtra los seleccionados,
-  // parsea el dataset.values y los aplana en un solo array
   const selectedBtns = Array.from(document.querySelectorAll('.pronoun-group-button'))
                             .filter(b => b.classList.contains('selected'));
   const flat = selectedBtns.flatMap(b => JSON.parse(b.dataset.values));
@@ -340,17 +672,43 @@ function updateCurrentPronouns() {
 }
   
 function filterVerbTypes() {
-  const selTenses = Array.from(document.querySelectorAll('.tense-button.selected'))
-                         .map(btn => btn.dataset.value);
+  console.log("filterVerbTypes ejecutándose...");
+  const selectedTenses = getSelectedTenses();
+
   document.querySelectorAll('.verb-type-button').forEach(button => {
-    const app = button.dataset.times.split(',');
-    const ok = app.some(t => selTenses.includes(t));
-      button.disabled = !ok;
-      button.classList.toggle('disabled', !ok);
-      if (!ok) button.classList.remove('selected');
-      else button.classList.add('selected'); // Mantener seleccionado si está habilitado (o según lógica previa)
-    });
-  }
+    const applicableTensesForButton = button.dataset.times.split(',');
+    const isEnabled = applicableTensesForButton.some(t => selectedTenses.includes(t));
+    
+    button.disabled = !isEnabled;
+    button.classList.toggle('disabled', !isEnabled);
+
+    if (!isEnabled && button.classList.contains('selected')) {
+      button.classList.remove('selected');
+
+      if (selectedTenses.includes('present')) {
+        const verbTypeValue = button.dataset.value;
+        const typeInfoFromArray = irregularityTypes.find(it => it.value === verbTypeValue); 
+        const multipleIrrBtn = document.querySelector('.verb-type-button[data-value="multiple_irregularities"]');
+
+        if (multipleIrrBtn && multipleIrrBtn.classList.contains('selected')) {
+          const irregularRootDef = irregularityTypes.find(it => it.value === 'irregular_root');
+          const irregularRootAppliesToPresent = irregularRootDef ? irregularRootDef.times.includes('present') : false;
+          
+          if (verbTypeValue === 'first_person_irregular' || 
+              (verbTypeValue === 'irregular_root' && irregularRootAppliesToPresent)) {
+            console.log(`Dependencia: Deseleccionando 'multiple_irregularities' (en filterVerbTypes) debido a ${verbTypeValue}`);
+            multipleIrrBtn.classList.remove('selected');
+          }
+        }
+      }
+    }
+  });
+
+  console.log("filterVerbTypes -> llamando a applyIrregularityAndTenseFiltersToVerbList");
+  applyIrregularityAndTenseFiltersToVerbList();
+  console.log("filterVerbTypes -> llamando a updateVerbTypeButtonsVisualState");
+  updateVerbTypeButtonsVisualState(); 
+}
 
   const gameModeButtons = document.querySelectorAll('#game-modes .mode-button');
   gameModeButtons.forEach(btn => {
@@ -400,48 +758,102 @@ musicToggle.addEventListener('click', () => {
   }
 });
 
-	function renderVerbButtons() {
-	  const container = document.getElementById('verb-buttons');
-	  container.innerHTML = '';
+function renderVerbButtons() {
+  const container = document.getElementById('verb-buttons');
+  container.innerHTML = '';
 
-	  // ① Clonamos y ordenamos alfabéticamente por infinitive_es
-	  const verbsSorted = [...initialRawVerbData].sort((a, b) =>
-		a.infinitive_es.localeCompare(b.infinitive_es, 'es', { sensitivity: 'base' })
-	  );
+  const verbsSorted = [...initialRawVerbData].sort((a, b) =>
+    a.infinitive_es.localeCompare(b.infinitive_es, 'es', { sensitivity: 'base' })
+  );
 
-	  // ② Creamos cada botón
-	  verbsSorted.forEach(v => {
-		const btn = document.createElement('button');
-		btn.type          = 'button';
-		btn.classList.add('verb-button', 'selected');
-		btn.dataset.value = v.infinitive_es;
-		btn.innerHTML = `
-		  <span class="tick"></span>
-		  <span class="label">${v.infinitive_es} — ${v.infinitive_en}</span>
-		`;
-		container.appendChild(btn);
-	  });
-	}
+  verbsSorted.forEach(v => {
+    const btn = document.createElement('button');
+    btn.type          = 'button';
+    const infinitive = v.infinitive_es.trim();
+    btn.classList.add('verb-button');
+
+    if (infinitive.endsWith('se')) {
+      btn.classList.add('verb-button-reflexive');
+    } else if (infinitive.endsWith('ar')) {
+      btn.classList.add('verb-button-ar');
+    } else if (infinitive.endsWith('er')) {
+      btn.classList.add('verb-button-er');
+    } else if (infinitive.endsWith('ir')) {
+      btn.classList.add('verb-button-ir');
+    }
+
+    //const typesInPresent = v.types['present'] || [];
+    //if (!infinitive.endsWith('se') && typesInPresent.includes('regular')) {
+        //btn.classList.add('selected');
+    //}
+
+    btn.dataset.value = infinitive;
+    btn.innerHTML = `
+      <span class="tick"></span>
+      <span class="label">${infinitive} — ${v.infinitive_en}</span>
+    `;
+    container.appendChild(btn);
+  });
+}
 	
 	// Recorre cada group-button y marca .active si TODOS sus verbos están seleccionados
 	function updateGroupButtons() {
-	  const container = document.getElementById('verb-buttons');
-	  const allBtns   = Array.from(container.querySelectorAll('.verb-button'));
+	  // Ya NO necesitas definir 'container' ni 'allBtns' localmente si usas las globales.
+	  // const container = document.getElementById('verb-buttons'); // COMENTA O QUITA ESTO
+	  // const allBtns   = Array.from(container.querySelectorAll('.verb-button')); // COMENTA O QUITA ESTO
+
+	  // Llama a la función global allBtns() para obtener el array de botones
+	  const currentVerbButtons = allBtns(); // <--- Esta línea obtiene el array de la función global
 
 	  document.querySelectorAll('#verb-groups-panel .group-button')
 		.forEach(gb => {
 		  const grp = gb.dataset.group;
-		  // Filtramos los botones de verbo que pertenecen a este grupo
-		  const matched = allBtns.filter(b => {
+
+		  // USA 'currentVerbButtons' para filtrar, NO 'allBtns' directamente
+		  const matched = currentVerbButtons.filter(b => { // <--- CAMBIO CRUCIAL AQUÍ: usa currentVerbButtons
 			const inf = b.dataset.value;
-			if (grp === 'all')        return true;
-			if (grp === 'reflexive')  return inf.endsWith('se');
-			return inf.endsWith(grp);
+			const normalizedInf = removeAccents(inf); // Asumo que tienes removeAccents globalmente
+
+			if (grp === 'all') return true;
+			if (grp === 'reflexive') return inf.endsWith('se');
+			// Tu lógica original para ar, er, ir:
+			if (grp === 'ar') return !inf.endsWith('se') && inf.endsWith('ar'); 
+			if (grp === 'er') return !inf.endsWith('se') && inf.endsWith('er');
+			if (grp === 'ir') return !inf.endsWith('se') && inf.endsWith('ir');
+			// Esto era de mi ejemplo, tu lógica puede ser diferente, adáptala si es necesario
+			// return inf.endsWith(grp); 
+			return false; // Fallback si no es ninguno de los anteriores
 		  });
-		  // Está activo si hay al menos uno y TODOS están .selected
+
 		  const allOn = matched.length > 0 && matched.every(b => b.classList.contains('selected'));
 		  gb.classList.toggle('active', allOn);
 		});
+	}
+	function updateSelectAllTensesButtonText() {
+	  const tenseButtons = document.querySelectorAll('#tense-buttons .tense-button');
+	  const selectAllTensesBtn = document.getElementById('select-all-tenses');
+
+	  if (!selectAllTensesBtn || tenseButtons.length === 0) {
+		if (selectAllTensesBtn) selectAllTensesBtn.textContent = 'Seleccionar Todo';
+		return;
+	  }
+
+	  const allSelected = Array.from(tenseButtons).every(btn => btn.classList.contains('selected'));
+	  selectAllTensesBtn.textContent = allSelected ? 'No tenses...' : 'All tenses!';
+	}
+	function updateDeselectAllButton() {
+	  const verbButtons = allBtns(); 
+	  const deselectAllBtn = document.getElementById('deselect-all-verbs'); // Asegúrate de tener la referencia
+
+	  if (verbButtons.length === 0) {
+		deselectAllBtn.textContent = 'Seleccionar Todo';
+		return;
+	  }
+	  // Comprueba si TODOS los botones de verbo están seleccionados
+	  const allSelected = verbButtons.every(b => b.classList.contains('selected'));
+	  deselectAllBtn.textContent = allSelected
+		? 'No verbs'
+		: 'All verbs';
 	}
 	function initVerbDropdown() {
 	  const ddBtn          = document.getElementById('verb-dropdown-button');
@@ -450,34 +862,38 @@ musicToggle.addEventListener('click', () => {
 	  const groupsBtn      = document.getElementById('verb-groups-button');
 	  const groupsPanel    = document.getElementById('verb-groups-panel');
 	  const searchInput    = document.getElementById('verb-search');
-	  const container      = document.getElementById('verb-buttons');
 
-	  const allBtns = () => Array.from(container.querySelectorAll('.verb-button'));
-
-	  // Función para alternar el texto del botón
-	  function updateDeselectAllButton() {
-		const anySelected = allBtns().some(b => b.classList.contains('selected'));
-		deselectAllBtn.textContent = anySelected
-		  ? 'Deseleccionar Todo'
-		  : 'Seleccionar Todo';
-	  }
 
 	  // 0) Abrir/Cerrar el menú
-	  ddBtn.addEventListener('click', e => {
-		e.stopPropagation();
-		menu.classList.toggle('hidden');
-		groupsPanel.classList.add('hidden');
-	  });
+		ddBtn.addEventListener('click', e => {
+			e.stopPropagation();
+			const isOpening = menu.classList.contains('hidden');
+
+			closeOtherFilterDropdowns(null); // Cierra otros o este mismo si estaba abierto
+
+			if (isOpening) {
+				menu.classList.remove('hidden');
+				openFilterDropdownMenu = menu; 
+				searchInput.focus();
+			}
+			// El panel de grupos debería permanecer oculto al abrir el menú principal de verbos
+			groupsPanel.classList.add('hidden'); 
+		});
 
 	  // 1) Toggle Selección total / Deselección total
-	  deselectAllBtn.addEventListener('click', () => {
-		const anySelected = allBtns().some(b => b.classList.contains('selected'));
-		// si hay alguno, quitamos todos; si no, marcamos todos
-		allBtns().forEach(b => b.classList.toggle('selected', !anySelected));
-		updateVerbDropdownCount();
-		updateDeselectAllButton();
-		updateGroupButtons();
-	  });
+		deselectAllBtn.addEventListener('click', () => {
+		  const verbButtons = allBtns();
+		  // Determina si todos están seleccionados ANTES de cambiar algo
+		  const allCurrentlySelected = verbButtons.length > 0 && verbButtons.every(b => b.classList.contains('selected'));
+
+		  // Si todos están seleccionados, deselecciona todos. Si no, selecciona todos.
+		  verbButtons.forEach(b => b.classList.toggle('selected', !allCurrentlySelected));
+		  
+		  updateVerbDropdownCount();
+		  updateDeselectAllButton(); // Actualiza el texto del botón
+		  updateGroupButtons();
+		  updateVerbTypeButtonsVisualState();
+		});
 
 	  // 2) Abrir/Ocultar panel de Grupos
 	  groupsBtn.addEventListener('click', e => {
@@ -489,13 +905,20 @@ musicToggle.addEventListener('click', () => {
 		groupsPanel.querySelectorAll('.group-button').forEach(gb => {
 		  gb.addEventListener('click', e => {
 			e.preventDefault();
+			if (soundClick) soundClick.play(); 
 			const grp = gb.dataset.group; // "all" | "reflexive" | "ar" | "er" | "ir"
 
 			// ① Recoger solo los botones de verbo que pertenecen a este grupo
 			const matched = allBtns().filter(b => {
 			  const inf = b.dataset.value;
+			  const normalizedInf = removeAccents(inf);
+			  
 			  if (grp === 'all') return true;
 			  if (grp === 'reflexive') return inf.endsWith('se');
+			  if (grp === 'ar') return normalizedInf.endsWith('ar');
+			  if (grp === 'er') return normalizedInf.endsWith('er');
+			  if (grp === 'ir') return normalizedInf.endsWith('ir');
+			  
 			  return inf.endsWith(grp);
 			});
 
@@ -512,35 +935,51 @@ musicToggle.addEventListener('click', () => {
 			updateVerbDropdownCount();
 			updateDeselectAllButton();
 			updateGroupButtons();
+			updateVerbTypeButtonsVisualState();
 		});
 	  });
 
-	  // 4) Búsqueda en vivo (solo visibilidad)
-	  searchInput.addEventListener('input', () => {
-		const q = searchInput.value.trim().toLowerCase();
-		allBtns().forEach(b => {
-		  b.style.display = b.textContent.toLowerCase().includes(q) ? '' : 'none';
-		});
-	  });
+		// Modificación en initVerbDropdown:
+		searchInput.addEventListener('input', () => {
+			const q = searchInput.value.trim().toLowerCase();
+			let visibleCount = 0;
+			const noResultsMessage = document.getElementById('verb-search-no-results');
 
+			allBtns().forEach(b => {
+				const isVisible = b.textContent.toLowerCase().includes(q);
+				b.style.display = isVisible ? '' : 'none';
+				if (isVisible) {
+					visibleCount++;
+				}
+			});
+
+			// Mostrar u ocultar el mensaje de "no resultados"
+			if (noResultsMessage) {
+				if (visibleCount === 0 && q !== '') { // Mostrar solo si hay búsqueda y 0 resultados
+					noResultsMessage.classList.remove('hidden');
+				} else {
+					noResultsMessage.classList.add('hidden');
+				}
+			}
+		});
+			searchInput.addEventListener('keydown', e => {
+				if (e.key === 'Enter' || e.keyCode === 13) { // 'Enter' o código 13 para Enter
+					e.preventDefault(); // Previene la acción por defecto (enviar el formulario)
+
+				}
+			});
 	  // 5) Delegación de clicks para toggle individual
-	  container.addEventListener('click', e => {
-		const btn = e.target.closest('.verb-button');
-		if (!btn) return;
-		soundClick.play();
-		btn.classList.toggle('selected');
-		updateVerbDropdownCount();
-		updateDeselectAllButton();
-		updateGroupButtons();
-	  });
+		container.addEventListener('click', e => {
+		  const btn = e.target.closest('.verb-button');
+		  if (!btn) return;
+		  soundClick.play();
+		  btn.classList.toggle('selected');
 
-	  // 6) Cerrar menú y panel de grupos al click fuera
-	  document.addEventListener('click', e => {
-		if (!ddBtn.contains(e.target) && !menu.contains(e.target)) {
-		  menu.classList.add('hidden');
-		  groupsPanel.classList.add('hidden');
-		}
-	  });
+		  updateVerbDropdownCount();
+		  updateDeselectAllButton(); // Texto del botón "Seleccionar/Deseleccionar Todos los Verbos"
+		  updateGroupButtons();      // Estado 'active' de -ar, -er, -ir, -se
+		  updateVerbTypeButtonsVisualState(); // << --- AÑADIR ESTA LLAMADA
+		});
 
 	  // 7) Inicializar contador y texto del botón la primera vez
 	  updateVerbDropdownCount();
@@ -563,46 +1002,175 @@ musicToggle.addEventListener('click', () => {
 	  });
 	}
 
-	function initPronounDropdown() {
-	  const ddBtn     = document.getElementById('pronoun-dropdown-button');
-	  const ddMenu    = document.getElementById('pronoun-dropdown-menu');
-	  const selectAll = document.getElementById('select-all-pronouns');
-	  const allBtns   = () => Array.from(document.querySelectorAll('.pronoun-group-button'));
-
-	  // 1) Abrir/cerrar menú
-	  ddBtn.addEventListener('click', e => {
-		e.stopPropagation();
-		ddMenu.classList.toggle('hidden');
-	  });
-
-	  // 2) “Seleccionar Todo” grupos
-	  selectAll.addEventListener('click', () => {
-		allBtns().forEach(b => b.classList.add('selected'));
-		updatePronounDropdownCount();
-	  });
-
-	  // 3) Toggle individual de cada grupo
-	  allBtns().forEach(b => {
-		b.addEventListener('click', () => {
-		  soundClick.play();
-		  b.classList.toggle('selected');
-		  updatePronounDropdownCount();
-		  updateCurrentPronouns();
-		});
-	  });
-
-	  // 4) Inicia el contador al abrir
-	  updatePronounDropdownCount();
-	  updateCurrentPronouns();
-
-	  // 5) Cerrar al hacer clic fuera
-	  document.addEventListener('click', e => {
-		if (!ddBtn.contains(e.target) && !ddMenu.contains(e.target)) {
-		  ddMenu.classList.add('hidden');
-		}
-	  });
-	}
+function initPronounDropdown() {
+  const ddBtn     = document.getElementById('pronoun-dropdown-button');
+  const ddMenu    = document.getElementById('pronoun-dropdown-menu');
+  const selectAll = document.getElementById('select-all-pronouns'); // Este es el botón "Seleccionar/Deseleccionar Todos los Pronombres"
   
+  // Función auxiliar para obtener todos los botones de grupo de pronombres
+  const getAllPronounGroupButtons = () => Array.from(document.querySelectorAll('#pronoun-buttons .pronoun-group-button'));
+
+  // 1) Abrir/cerrar menú (tu lógica actual está bien)
+  ddBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    const isOpening = ddMenu.classList.contains('hidden');
+    closeOtherFilterDropdowns(null); 
+    if (isOpening) {
+      ddMenu.classList.remove('hidden');
+      openFilterDropdownMenu = ddMenu;
+    }
+  });
+
+  // 2) Lógica para el botón “Seleccionar Todo / Deseleccionar Todo” de Pronombres
+  selectAll.addEventListener('click', () => {
+    if (typeof soundClick !== 'undefined' && soundClick.play) {
+        soundClick.play();
+    }
+    
+    const currentPronounButtons = getAllPronounGroupButtons();
+    
+    // Determinar si todos los botones de pronombre están actualmente seleccionados
+    const allCurrentlySelected = currentPronounButtons.length > 0 && currentPronounButtons.every(b => b.classList.contains('selected'));
+    
+    // Si todos están seleccionados, la acción es deseleccionar todos.
+    // Si no todos están seleccionados (o ninguno), la acción es seleccionar todos.
+    currentPronounButtons.forEach(b => {
+        b.classList.toggle('selected', !allCurrentlySelected);
+    });
+    
+    updatePronounDropdownCount();        // Actualiza el contador numérico (ej. "3/6")
+    updateSelectAllPronounsButtonText(); // << --- ¡Importante! Actualiza el texto de este botón
+    updateCurrentPronouns();             // Actualiza la lista global de pronombres
+  });
+
+  // 3) Toggle individual de cada botón de grupo de pronombre
+  getAllPronounGroupButtons().forEach(b => { // Itera sobre los botones obtenidos
+    b.addEventListener('click', () => {
+      if (typeof soundClick !== 'undefined' && soundClick.play) {
+          soundClick.play();
+      }
+      b.classList.toggle('selected');
+      updatePronounDropdownCount();
+      updateSelectAllPronounsButtonText(); // << --- ¡Importante! Actualiza el texto del botón principal
+      updateCurrentPronouns();
+    });
+  });
+
+  // 4) Inicia el contador y el texto del botón "Seleccionar/Deseleccionar Todo" con el estado actual
+  updatePronounDropdownCount();
+  updateSelectAllPronounsButtonText(); // << --- ¡Importante! Llamada inicial para el texto del botón
+  updateCurrentPronouns(); // Ya lo tenías, está bien
+}
+	
+document.addEventListener('click', e => {
+    if (openFilterDropdownMenu) { // Si hay un menú de filtro (Tense, Verb, o Pronoun) abierto
+
+        // Comprobamos si el clic fue en alguno de los botones que abren los menús
+        const isClickOnAnyToggleButton = 
+            document.getElementById('tense-dropdown-button').contains(e.target) ||
+            document.getElementById('verb-dropdown-button').contains(e.target) ||
+            document.getElementById('pronoun-dropdown-button').contains(e.target);
+
+        // Comprobamos si el clic fue dentro del menú que está actualmente abierto
+        const isClickInsideOpenMenu = openFilterDropdownMenu.contains(e.target);
+
+        if (!isClickOnAnyToggleButton && !isClickInsideOpenMenu) {
+            // Si el clic NO fue en un botón toggle Y NO fue dentro del menú abierto,
+            // entonces cerramos el menú.
+            openFilterDropdownMenu.classList.add('hidden');
+
+            // Importante: Si el menú de verbos está abierto y su panel de grupos también,
+            // también debemos cerrar el panel de grupos.
+            if (openFilterDropdownMenu.id === 'verb-dropdown-menu') {
+                const groupsPanel = document.getElementById('verb-groups-panel');
+                if (groupsPanel) {
+                    groupsPanel.classList.add('hidden');
+                }
+            }
+
+            openFilterDropdownMenu = null; // Ya no hay ninguno "oficialmente" abierto
+        }
+    }
+});  
+function handleReflexiveToggle() {
+    if (!toggleReflexiveBtn) return; 
+    toggleReflexiveBtn.classList.toggle('selected');
+    if (typeof soundClick !== 'undefined') soundClick.play();
+}
+function initStepButtons(container, stepType) {
+    const buttons = container.querySelectorAll('.config-flow-button');
+    buttons.forEach((button, index) => {
+        const dataMode = button.dataset.mode;
+        const infoKey = button.dataset.infokey; // Asegúrate que tus botones HTML tengan data-infokey
+        configButtonsData[dataMode] = { buttonElement: button, infoKey: infoKey };
+
+		button.addEventListener('click', () => {
+			if (button.classList.contains('confirmed-selection')) { // <<== AÑADIR ESTA CONDICIÓN
+				return; // No hacer nada si ya está confirmado
+			}
+			handleOptionProvisionalSelection(button, stepType, infoKey);
+		});
+
+        // Para navegación con teclado
+        button.addEventListener('focus', () => {
+            // Si no hay una selección provisional, el panel se actualiza con el foco
+            if (!provisionallySelectedOption || provisionallySelectedOption.parentElement !== container) {
+                const info = specificInfoData[infoKey];
+                if (info) {
+                    updateInfoPanelContent(info.title, info.html);
+                }
+            }
+        });
+    });
+
+    // Navegación con teclado para este grupo de botones
+    container.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+            e.preventDefault();
+            const currentFocused = Array.from(buttons).indexOf(document.activeElement);
+            const nextButton = buttons[(currentFocused + 1) % buttons.length];
+            if (nextButton) nextButton.focus();
+        } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+            e.preventDefault();
+            const currentFocused = Array.from(buttons).indexOf(document.activeElement);
+            const prevButton = buttons[(currentFocused - 1 + buttons.length) % buttons.length];
+            if (prevButton) prevButton.focus();
+        } else if (e.key === 'Enter' && document.activeElement.classList.contains('config-flow-button')) {
+            e.preventDefault();
+            const activeBtn = document.activeElement;
+            handleOptionProvisionalSelection(activeBtn, stepType, activeBtn.dataset.infokey);
+        }
+    });
+}
+
+function handleOptionProvisionalSelection(buttonElement, stepType, infoKeyToDisplay) {
+    if (soundClick) soundClick.play();
+    const container = buttonElement.parentElement;
+    container.querySelectorAll('.config-flow-button').forEach(btn => {
+        btn.classList.remove('provisional-selection');
+    });
+    buttonElement.classList.add('provisional-selection');
+    provisionallySelectedOption = buttonElement;
+
+    const info = specificInfoData[infoKeyToDisplay]; // Usa la infoKey del botón clickeado
+    if (info) {
+        updateInfoPanelContent(info.title, info.html);
+    }
+
+    if (stepType === 'mode') {
+        confirmModeButton.style.display = 'block';
+        confirmModeButton.focus(); // Enfocar el botón de confirmar
+    } else if (stepType === 'difficulty') {
+        confirmDifficultyButton.style.display = 'block';
+        confirmDifficultyButton.focus();
+    }
+}
+
+function focusOption(buttonElement, container) {
+    if (!buttonElement) return;
+    container.querySelectorAll('.config-flow-button').forEach(btn => btn.classList.remove('provisional-selection')); // Quitar otros parpadeos
+    buttonElement.focus(); // Esto debería activar el listener de focus en initStepButtons
+}
 function renderSetupRecords() {
   const container = document.getElementById('setup-records');
   if (!container) return;
@@ -661,7 +1229,7 @@ function renderSetupRecords() {
 
 
 async function loadVerbs() {
-  // 0) Carga JSON
+  console.log("loadVerbs se está ejecutando."); // Para depuración
   try {
     const resp = await fetch(`verbos.json?cb=${Date.now()}`);
     if (!resp.ok) throw new Error('Network response was not ok');
@@ -679,38 +1247,154 @@ async function loadVerbs() {
   const selectedTypes = selectedTypeBtns.map(b => b.dataset.value);
   if (selectedTypes.length === 0) {
     alert('Please select at least one verb type.');
+	allVerbData = []
     return false;
   }
 
-  // 2) Filtrado por tiempos seleccionados
-  let filtered = initialRawVerbData.filter(v =>
-    currentOptions.tenses.some(t =>
-      (v.types[t] || []).some(type => selectedTypes.includes(type))
-    )
-  );
-
-  // 3) Filtrado final según selección MANUAL en el dropdown de verbos
-  //    (es decir, respetar solo los que tengan .verb-button.selected)
-  const manualSel = Array.from(
+  // Verbos seleccionados manualmente por el usuario en la lista desplegable
+  const manuallySelectedVerbInfinitives = Array.from(
     document.querySelectorAll('#verb-buttons .verb-button.selected')
   ).map(b => b.dataset.value);
 
-  if (manualSel.length > 0) {
-    filtered = filtered.filter(v => manualSel.includes(v.infinitive_es));
+  let verbsToConsiderForGame = [];
+
+  if (manuallySelectedVerbInfinitives.length > 0) {
+    // **CASO 1: El usuario ha seleccionado verbos específicos manualmente.**
+    console.log("Manual verb selection active:", manuallySelectedVerbInfinitives);
+
+    // Empezamos con los verbos crudos que coinciden con la selección manual
+    verbsToConsiderForGame = initialRawVerbData.filter(v => 
+        manuallySelectedVerbInfinitives.includes(v.infinitive_es)
+    );
+
+    verbsToConsiderForGame = verbsToConsiderForGame.filter(v =>
+      currentOptions.tenses.some(tenseKey => v.conjugations[tenseKey] !== undefined)
+    );
+
+    if (verbsToConsiderForGame.length === 0) {
+      alert('None of the verbs you manually selected are available for the chosen tenses. Please adjust the tenses or your verb selection.');
+      allVerbData = [];
+      return false;
+    }
+    console.log("Verbos después de filtro manual y de tiempo:", verbsToConsiderForGame.map(v=>v.infinitive_es));
+
+  } else {
+    console.log("Sin selección manual de verbos. Filtrando por tipo de irregularidad y tiempo.");
+
+    if (selectedselectedTypes.length === 0) {
+      alert('Please select at least one type of irregularity if you do not choose specific verbs..');
+      allVerbData = [];
+      return false;
+    }
+
+    verbsToConsiderForGame = initialRawVerbData.filter(v =>
+      currentOptions.tenses.some(tenseKey => // Para cada tiempo seleccionado...
+        (v.types[tenseKey] || []).some(typeInVerb => // ...el verbo debe tener un tipo de irregularidad...
+          selectedIrregularityTypes.includes(typeInVerb) // ...que esté en los tipos de irregularidad seleccionados por el usuario.
+        )
+      )
+    );
+    console.log("Verbos después de filtro por irregularidad y tiempo:", verbsToConsiderForGame.map(v=>v.infinitive_es));
   }
 
-  // 4) Comprobación
-  if (filtered.length === 0) {
-    alert('No verbs available for the selected criteria.');
+  // Comprobación final y asignación
+  if (verbsToConsiderForGame.length === 0) {
+    alert('No verbs are available for the selected criteria. Try other filters.');
     allVerbData = [];
     return false;
   }
 
-  allVerbData = filtered;
-  console.log(`Using ${allVerbData.length} verbs after all filters.`);
+  allVerbData = verbsToConsiderForGame;
+  console.log(`Se usarán ${allVerbData.length} verbos para el juego.`);
   return true;
 }
+// Helper para obtener los tiempos seleccionados
+function getSelectedTenses() {
+    return Array.from(document.querySelectorAll('#tense-buttons .tense-button.selected'))
+                .map(btn => btn.dataset.value);
+}
 
+// Helper para obtener el objeto verbo completo desde initialRawVerbData
+function getVerbObjectByInfinitive(infinitiveEs) {
+    return initialRawVerbData.find(v => v.infinitive_es === infinitiveEs);
+}
+
+// Helper para obtener los tipos de irregularidad de un verbo para los tiempos seleccionados
+function getIrregularityTypesForVerb(verbObj, selectedTenses) {
+    const types = new Set();
+    if (verbObj && verbObj.types && selectedTenses) {
+        selectedTenses.forEach(tenseKey => {
+            (verbObj.types[tenseKey] || []).forEach(type => types.add(type));
+        });
+    }
+    return Array.from(types);
+}
+function updateVerbTypeButtonsVisualState() {
+    const selectedVerbElements = Array.from(document.querySelectorAll('#verb-buttons .verb-button.selected'));
+    const selectedVerbInfinitives = selectedVerbElements.map(btn => btn.dataset.value);
+    const currentSelectedTenses = getSelectedTenses();
+    const allActiveIrregularityTypes = new Set();
+
+    selectedVerbInfinitives.forEach(infinitiveEs => {
+        const verbObj = getVerbObjectByInfinitive(infinitiveEs);
+        if (verbObj) {
+            const typesForVerb = getIrregularityTypesForVerb(verbObj, currentSelectedTenses);
+            typesForVerb.forEach(type => allActiveIrregularityTypes.add(type));
+        }
+    });
+
+    document.querySelectorAll('.verb-type-button').forEach(typeButton => {
+        const typeValue = typeButton.dataset.value;
+        // Un tipo se marca como seleccionado si está presente en AL MENOS UNO de los verbos seleccionados
+        // Y si el botón no está deshabilitado por filterVerbTypes()
+        if (!typeButton.disabled && allActiveIrregularityTypes.has(typeValue)) {
+            typeButton.classList.add('selected');
+        } else {
+            // Se deselecciona si no hay verbos seleccionados que lo tengan, o si está deshabilitado
+            typeButton.classList.remove('selected');
+        }
+    });
+}
+function applyIrregularityAndTenseFiltersToVerbList() {
+    const currentSelectedTenses = getSelectedTenses();
+    const activeIrregularityTypes = Array.from(document.querySelectorAll('.verb-type-button.selected:not(:disabled)'))
+                                        .map(btn => btn.dataset.value);
+
+    document.querySelectorAll('#verb-buttons .verb-button').forEach(verbButton => {
+        const infinitiveEs = verbButton.dataset.value;
+
+        // IGNORAR VERBOS REFLEXIVOS para la selección basada en filtros de irregularidad.
+        // Su estado 'selected' se maneja por el botón de grupo 'Reflexive v.' o selección manual.
+        if (infinitiveEs.endsWith('se')) {
+            // Si deseas que los reflexivos se DESELECCIONEN si 'Reflexive v.' no está activo
+            // Y ningún filtro de irregularidad está activo (o el que está activo no los afecta),
+            // esa lógica iría aquí o en el manejador del botón de grupo reflexivo.
+            // Por ahora, esta función no altera los reflexivos.
+            return; 
+        }
+
+        // Para verbos NO REFLEXIVOS:
+        const verbObj = getVerbObjectByInfinitive(infinitiveEs);
+        if (!verbObj) return;
+
+        const typesForThisVerbInSelectedTenses = getIrregularityTypesForVerb(verbObj, currentSelectedTenses);
+        let verbShouldBeSelectedByIrregularity = false;
+
+        if (activeIrregularityTypes.length > 0) {
+
+            verbShouldBeSelectedByIrregularity = typesForThisVerbInSelectedTenses.some(verbIrregularityType =>
+                activeIrregularityTypes.includes(verbIrregularityType)
+            );
+        } else {
+            verbShouldBeSelectedByIrregularity = false;
+        }
+        verbButton.classList.toggle('selected', verbShouldBeSelectedByIrregularity);
+    });
+
+    updateVerbDropdownCount();
+    updateDeselectAllButton();
+    updateGroupButtons();
+}
   function updateRanking() {
     rankingBox.innerHTML = '<h3>🏆 Top 5</h3>';
   
@@ -763,7 +1447,27 @@ let usedVerbs = [];
 	const pronounsToShow = selectedPronouns.length > 0
 	  ? selectedPronouns
 	  : pronouns;*/
-  
+	configFlowScreen.style.display = 'flex'; // Mostrar la nueva pantalla
+
+
+	function handleInitialStart() {
+		if (soundClick) soundClick.play(); // Añadir sonido de clic si se desea
+		navigateToStep('mode');
+	}
+	function handleInitialKeyPress(event) {
+		if (event.key) { // Cualquier tecla
+			 handleInitialStart();
+		}
+	}
+	initialStartButton.addEventListener('click', handleInitialStart);
+	document.addEventListener('keydown', handleInitialKeyPress);
+
+
+	// Inicializar botones de modo y dificultad
+	initStepButtons(gameModesContainer, 'mode');
+	initStepButtons(difficultyButtonsContainer, 'difficulty');
+
+	navigateToStep('splash'); // Empezar en el splash screen  
 function prepareNextQuestion() {
   const oldNote = document.getElementById('prize-note');
   if (oldNote) oldNote.remove();
@@ -857,9 +1561,9 @@ function prepareNextQuestion() {
 	if (selectedGameMode === 'lives' && (currentOptions.mode === 'productive_easy' || currentOptions.mode === 'productive')) {
 	  let prizeChance = 0;
 	  if (currentOptions.mode === 'productive_easy') { // Conjugate
-		prizeChance = 1/40;
+		prizeChance = 1/30;
 	  } else if (currentOptions.mode === 'productive') { // Produce
-		prizeChance = 1/3;
+		prizeChance = 1/20;
 	  }
 
 	  const isVerbReflexive = currentQuestion.verb.infinitive_es.endsWith('se');
@@ -922,7 +1626,7 @@ function checkAnswer() {
   }
   
   const isReflexive = currentQuestion.verb.infinitive_es.endsWith('se');
-  if (isReflexive && toggleReflexiveBtn.classList.contains('selected')) {
+  if (isReflexive && toggleReflexiveBtn && toggleReflexiveBtn.classList.contains('selected')) {
   reflexiveBonus = 10;
   }
 
@@ -1063,30 +1767,26 @@ function checkAnswer() {
 	correct = possibleCorrectAnswers.includes(ans);
 }
 
-  if (correct) {
-    soundCorrect.play();
+  if (correct) { // INICIO DEL BLOQUE if (correct)
+    // Manejo del sonido
+    if (soundCorrect) {
+      soundCorrect.pause();
+      soundCorrect.currentTime = 0;
+      soundCorrect.play().catch(()=>{/* ignora errores por autoplay */});
+    } // CIERRE DEL if (soundCorrect)
 	
-	if (soundCorrect) {
-	  soundCorrect.pause();
-	  soundCorrect.currentTime = 0;
-	  soundCorrect.play().catch(()=>{/* ignora errores por autoplay */});
-}
-	
+    // El resto de la lógica para una respuesta correcta DEBE ESTAR AQUÍ DENTRO
     streak++;
-	if (streak > bestStreak) bestStreak = streak;
+    if (streak > bestStreak) bestStreak = streak;
     multiplier = Math.min(5, multiplier + 0.5);
-
     
-	let basePoints = 10;  
-	if (currentOptions.mode === 'receptive') {  
-
-	  basePoints = 5;  
-	} else if (currentOptions.mode === 'productive') {  
-  
- 	 basePoints = 15;  
-	}  
-  
-	multiplier = 1 + 0.1 * streak;  // o el incremento que prefieras
+    let basePoints = 10;  
+    if (currentOptions.mode === 'receptive') {  
+      basePoints = 5;  
+    } else if (currentOptions.mode === 'productive') {  
+      basePoints = 15;  
+    }  
+    multiplier = 1 + 0.1 * streak;
 	
 	const pts = Math.round(basePoints * multiplier * bonus)
 			  + accentBonus
@@ -1175,7 +1875,6 @@ function checkAnswer() {
       updateStreakForLifeDisplay();
     }
     updateStreakForLifeDisplay();
-    // ---> FIN MECÁNICA 2 <---
 	// ---> INICIO MECÁNICA 3 <---
     if (isPrizeVerbActive) {
       remainingLives++;
@@ -1243,7 +1942,7 @@ function checkAnswer() {
 		ansES.disabled = true;
 
         if (name) {
-		  db.collection("records").add({
+		db.collection("records").add({
         name: name,
         score: score,
         mode: selectedGameMode,
@@ -1314,7 +2013,7 @@ function startTimerMode() {
   feedback.classList.remove('vibrate');
   score = 0; streak = 0; multiplier = 1.0;
   updateScore();
-  setupScreen.style.display = 'none';
+  configFlowScreen.style.display = 'none';
   gameScreen.style.display = 'block';
   updateGameTitle();
   soundStart.play();
@@ -1509,7 +2208,7 @@ function updateStreakForLifeDisplay() {
   el.innerHTML = `🔥 <span class="math-inline">${remaining}</span> to get 1❤️`;
 }
 
-function quitToSettings() {
+ function quitToSettings() {
   document.getElementById('timer-container').style.display = 'none';
   clearInterval(countdownTimer);
   music.pause();
@@ -1519,183 +2218,384 @@ function quitToSettings() {
   volumeSlider.disabled = true;
   musicPlaying = false;
   
-  
-  gameScreen.style.display = 'none';
-  setupScreen.style.display = 'block';
-  
-  document.getElementById('setup-records').classList.remove('hidden');
+    gameScreen.style.display = 'none';
+    configFlowScreen.style.display = 'flex'; // Mostrar la nueva pantalla de flujo
+    //document.getElementById('setup-records').classList.remove('hidden');
 
-    // Restablecer selecciones de botones a sus valores predeterminados
-    selectedGameMode = 'infinite'; // Modo de juego por defecto
-    document.querySelectorAll('#game-modes .mode-button').forEach(btn => {
-        btn.classList.toggle('selected-mode', btn.dataset.mode === 'infinite');
+    // Resetear el estado del flujo de configuración
+    selectedMode = null;
+    selectedDifficulty = null;
+    gameModesContainer.querySelectorAll('.config-flow-button').forEach(btn => {
+        btn.classList.remove('confirmed-selection', 'provisional-selection');
+        btn.disabled = false;
     });
-    document.querySelectorAll('.config-button').forEach(btn => {
-        // Asegúrate de que 'productive' es el modo de configuración por defecto deseado
-        btn.classList.toggle('selected-mode', btn.dataset.mode === 'productive');
+    difficultyButtonsContainer.querySelectorAll('.config-flow-button').forEach(btn => {
+        btn.classList.remove('confirmed-selection', 'provisional-selection');
+        btn.disabled = false;
     });
-     // Actualizar currentOptions.mode al modo por defecto
-    const defaultConfigButton = document.querySelector('.config-button[data-mode="productive"]');
-    if (defaultConfigButton) {
-        currentOptions.mode = defaultConfigButton.dataset.mode;
-    }
-	playHeaderIntro();
-    renderTenseButtons(); // Restaura los botones de tiempo (Presente seleccionado por defecto)
-	initTenseDropdown();
-    renderVerbTypeButtons(); // Restaura los botones de tipo de verbo (todos seleccionados por defecto)
-    filterVerbTypes(); // Aplica filtros basados en los tiempos por defecto
 
-    // Asegurar que el botón de reflexivos esté en su estado HTML por defecto (seleccionado)
+    // Resetear selecciones de detalles a sus valores por defecto (tus funciones renderTenseButtons, etc.)
+    renderTenseButtons(); // Esto debería seleccionar "Present" por defecto
+    initTenseDropdown(); // Reinicializar listeners de dropdown si es necesario
+    renderVerbButtons(); // Debería seleccionar los regulares no reflexivos por defecto
+    initVerbDropdown();
+    renderPronounButtons(); // Debería seleccionar todos por defecto
+    initPronounDropdown();
+    renderVerbTypeButtons(); // Debería seleccionar "regular" por defecto
+    filterVerbTypes(); // Aplicar filtros basados en los tiempos por defecto
+
     const reflexBtn = document.getElementById('toggle-reflexive');
-    if (reflexBtn && !reflexBtn.classList.contains('selected')) { // Si no está seleccionado, selecciónalo
-        reflexBtn.classList.add('selected');
-    } else if (reflexBtn && reflexBtn.classList.contains('selected')) {
-        // Si ya está seleccionado (estado por defecto), no hagas nada o asegúralo.
+    if (reflexBtn) {
+        reflexBtn.classList.remove('selected');
     }
 
-  loadVerbs();
-
-    checkButton.disabled = false; skipButton.disabled = false; endButton.disabled = false;
-    document.getElementById('game-modes').style.display = 'flex';
+    navigateToStep('splash'); // Volver al inicio del flujo
+    playHeaderIntro();
+    checkFinalStartButtonState(); // Para el estado inicial del botón
+}
     updateRanking();
     remainingLives = 5;
+
+
+finalStartGameButton.addEventListener('click', async () => {
+    configFlowScreen.style.display = 'none'; // Esto ocultará todo dentro, incluyendo #setup-records
+    gameScreen.style.display = 'block'; // O 'flex' si es el caso
+    const selTenses = Array.from(
+        document.querySelectorAll('#tense-buttons .tense-button.selected')
+    ).map(btn => btn.dataset.value);
+
+    // Validar que haya selecciones mínimas
+    if (!selectedMode || !selectedDifficulty) {
+        alert('Please complete mode and difficulty selection.');
+        return;
+    }
+    if (selTenses.length === 0) {
+        alert('Please select at least one tense.');
+        return;
+    }
+     // Validar tipos de verbos si no hay selección manual de verbos
+    const manuallySelectedVerbsCount = document.querySelectorAll('#verb-buttons .verb-button.selected').length;
+    const selectedVerbTypesCount = document.querySelectorAll('.verb-type-button.selected:not(:disabled)').length;
+
+    if (manuallySelectedVerbsCount === 0 && selectedVerbTypesCount === 0) {
+        alert('Please select at least one verb type if no specific verbs are chosen.');
+        return;
+    }
+
+
+    currentOptions = {
+        mode: selectedDifficulty, // Este es el modo de juego (receptive, productive_easy, productive)
+        tenses: selTenses,
+        ignoreAccents: document.getElementById('ignore-accents').checked
+    };
+    // selectedGameMode ya debería estar seteado por el `selectedMode` de este nuevo flujo
+    // Asegúrate de que `selectedGameMode` (variable global) se actualice con `selectedMode`
+    // cuando se confirma el modo. Ej: selectedGameMode = selectedMode;
+
+    if (!await loadVerbs()) return; // loadVerbs necesita usar los filtros correctos
+
+    // Ocultar pantalla de configuración de flujo y mostrar pantalla de juego
+    configFlowScreen.style.display = 'none';
+    gameScreen.style.display = 'block';
+    // El resto de tu lógica de inicio de juego (setupScreen.style.display = 'none'; gameScreen.style.display = 'block'; etc.)
+    // ...
+    feedback.innerHTML = '';
+    feedback.classList.remove('vibrate');
+    score = 0; streak = 0; multiplier = 1.0; bestStreak = 0; // Resetear bestStreak también
+    updateScore();
+    // updateGameTitle(); // Ya debería tener selectedDifficulty y selTenses
+    // updateRanking(); // Si aplica
+
+    const livesMechanicsDisplay = document.getElementById('lives-mechanics-display');
+    if (window.selectedGameMode === 'lives') { // Usar window.selectedGameMode que se actualizó
+        livesMechanicsDisplay.style.display = 'block';
+        remainingLives = 5;
+        totalCorrectAnswersForLife = 0;
+        currentStreakForLife = 0;
+        nextLifeIncrement = 10; // O tu valor inicial
+        correctAnswersToNextLife = 10; // O tu valor inicial
+        streakGoalForLife = 5; // O tu valor inicial
+        lastStreakGoalAchieved = 0;
+        updateTotalCorrectForLifeDisplay();
+        updateStreakForLifeDisplay();
+    } else {
+        livesMechanicsDisplay.style.display = 'none';
+    }
+    updateGameTitle(); // Actualiza el título con todo
+
+    if (window.selectedGameMode === 'timer') {
+        // ... tu lógica de countdown para timer mode ...
+        startTimerMode(); // O como se llame tu función
+    } else {
+        soundStart.play();
+        setTimeout(() => {
+            if (music.paused && musicPlaying) { // musicPlaying es una variable que deberías tener para controlar si el usuario quiere música
+                music.volume = targetVolume;
+                music.play();
+            }
+            musicToggle.style.display = 'block';
+            volumeSlider.style.display = 'block';
+            volumeSlider.value = targetVolume; // targetVolume es tu variable de volumen
+            volumeSlider.disabled = music.paused;
+        }, 1000); // Retraso menor si no hay countdown
+        prepareNextQuestion();
+    }
+}); 
+
+function checkFinalStartButtonState() {
+    const selTenses = document.querySelectorAll('#tense-buttons .tense-button.selected').length;
+    const manuallySelectedVerbs = document.querySelectorAll('#verb-buttons .verb-button.selected').length;
+    const selectedVerbTypes = document.querySelectorAll('.verb-type-button.selected:not(:disabled)').length;
+    let 조건 = false;
+
+    if (manuallySelectedVerbs > 0) { 
+        조건 = selTenses > 0;
+    } else { 
+        조건 = selTenses > 0 && selectedVerbTypes > 0;
+    }
+
+    finalStartGameButton.disabled = !조건;
+    if (!조건 && finalStartGameButton.title !== "Please select tenses and verb types/specific verbs.") {
+        finalStartGameButton.title = "Please select tenses and verb types/specific verbs.";
+    } else if (조건) {
+        finalStartGameButton.title = "";
+    }
 }
+	document.getElementById('tense-buttons').addEventListener('click', checkFinalStartButtonState);
+	document.getElementById('verb-buttons').addEventListener('click', checkFinalStartButtonState);
+	document.getElementById('verb-type-buttons').addEventListener('click', checkFinalStartButtonState);
 
-  setupForm.addEventListener('submit', async e => {
-  e.preventDefault();
-  const selTenses = Array.from(
-    document.querySelectorAll('.tense-button.selected')
-  ).map(btn => btn.dataset.value);
-  document.getElementById('setup-records').classList.add('hidden');
-  currentOptions = {
-    mode: document.querySelector('.config-button.selected-mode').dataset.mode,
-    tenses:  selTenses,
-    ignoreAccents: document.getElementById('ignore-accents').checked
-};
-  if (!await loadVerbs()) return;
-  feedback.innerHTML = '';
-  feedback.classList.remove('vibrate');
-  score = 0; streak = 0; multiplier = 1.0;
-  updateScore();
-  setupScreen.style.display = 'none';
-  gameScreen.style.display = 'block';
-  updateGameTitle();
-  updateRanking();
-const livesMechanicsDisplay = document.getElementById('lives-mechanics-display');
-if (selectedGameMode === 'lives') {
-  livesMechanicsDisplay.style.display = 'block';
-  remainingLives = 5; // Reset
-  // ... resetear variables de Mecánica 1 y 2 ...
-  updateTotalCorrectForLifeDisplay();
-  updateStreakForLifeDisplay();
-} else {
-  livesMechanicsDisplay.style.display = 'none';
-}
-updateGameTitle(); // Para que muestre las vidas
+    //prepareNextQuestion(); // Mantenla comentada por ahora hasta que todo el flujo funcione
+    // <<<< INICIO DE LAS LÍNEAS MOVIDAS >>>>
+    const checkButton  = document.getElementById('check-button'); // Asegúrate que estas constantes estén definidas
+    const skipButton   = document.getElementById('skip-button');   // dentro de DOMContentLoaded si no son globales
+    const endButton    = document.getElementById('end-button');
+    const ansES        = document.getElementById('answer-input-es');
+    const ansEN        = document.getElementById('answer-input-en');
+    // (Estas ya las tienes definidas más arriba, así que no necesitas redeclararlas, solo asegúrate de que su ámbito sea accesible aquí)
 
-  if (selectedGameMode === 'timer') {
-    const countdownDiv = document.createElement('div');
-    countdownDiv.id = 'countdown-overlay';
-    countdownDiv.style.position = 'fixed';
-    countdownDiv.style.top = '50%';
-    countdownDiv.style.left = '50%';
-    countdownDiv.style.transform = 'translate(-50%, -50%)';
-    countdownDiv.style.fontSize = '80px';
-    countdownDiv.style.fontWeight = 'bold';
-    countdownDiv.style.color = '#fff';
-    countdownDiv.style.zIndex = '9999';
-    countdownDiv.style.fontFamily = 'inherit';
-    document.body.appendChild(countdownDiv);
+    if (checkButton) checkButton.addEventListener('click', checkAnswer);
+    if (skipButton) skipButton.addEventListener('click', skipQuestion);
+    if (endButton) {
+        endButton.addEventListener('click', () => {
+            const name = prompt('¿Cómo te llamas?'); // La variable name debe ser local a este scope
+            if (name) {
+                const recordData = {
+                    name: name,
+                    score: score,
+                    mode: selectedGameMode, // Asegúrate que selectedGameMode esté disponible (global o en este ámbito)
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    tense: currentOptions.tenses, // currentOptions debe estar disponible
+                    verb: currentQuestion.verb.infinitive_es, // currentQuestion debe estar disponible
+                    streak: bestStreak 
+                };
+                console.log("Intentando guardar este récord (endButton):", JSON.stringify(recordData, null, 2));
+                db.collection("records").add(recordData)
+                  .then(() => {
+                    console.log("Record saved online!");
+                    renderSetupRecords(); 
+                  })
+                  .catch(error => {
+                    console.error("Error saving record (endButton):", error);
+                  });
+            }
+            quitToSettings(); // quitToSettings debe estar definida
+        });
+    }
 
-    let countdown = 3;
-    countdownDiv.textContent = countdown;
-    const preTimer = setInterval(() => {
-      countdown--;
-      if (countdown === 0) {
-        clearInterval(preTimer);
-        document.body.removeChild(countdownDiv);
-        startTimerMode(); // ⏲️ inicia modo contrarreloj
-      } else {
-        countdownDiv.textContent = countdown;
-      }
-    }, 1000);
-    return; // 👉 evita iniciar el juego normalmente en modo contrarreloj
-  }
-
-  soundStart.play();
-
-  // 👇 Espera 3 segundos para empezar la música, PERO el juego arranca de inmediato
-  setTimeout(() => {
-    music.volume = 0;                // reinicia a 0
-    music.play();
- 
-    musicToggle.style.display = 'block';
-    volumeSlider.style.display = 'block';
-    volumeSlider.value = targetVolume;
-    volumeSlider.disabled = false;
-  }, 3000);
-
-  prepareNextQuestion(); 
-});
-
-  checkButton.addEventListener('click', checkAnswer);
-  skipButton.addEventListener('click', skipQuestion);
-  endButton.addEventListener('click', () => {
-    const name = prompt('¿Cómo te llamas?');
-    if (name) {
-	  db.collection("records").add({
-        name: name,
-        score: score,
-        mode: selectedGameMode,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-		tense: currentOptions.tenses,
-		verb: currentQuestion.verb.infinitive_es,
-		streak: streak
-      })
-      .then(() => {
-        console.log("Record saved online!");
-		renderSetupRecords(); // refresca la lista con el nuevo récord
-      })
-      .catch(error => console.error("Error saving record:", error));
-	}
-    quitToSettings();
-  });
-
-  ansES.addEventListener('keypress', e => { if (e.key === 'Enter') checkAnswer(); });
-  ansEN.addEventListener('keypress', e => { if (e.key === 'Enter') checkAnswer(); });
-// ---> AÑADIR ESTA NUEVA FUNCIÓN <---
+    if (ansES) ansES.addEventListener('keypress', e => { if (e.key === 'Enter') checkAnswer(); });
+    if (ansEN) ansEN.addEventListener('keypress', e => { if (e.key === 'Enter') checkAnswer(); });
 function renderVerbTypeButtons() {
   const container = document.getElementById('verb-type-buttons');
-  container.innerHTML = ''; // Limpiar botones anteriores
+  container.innerHTML = ''; 
 
-  irregularityTypes.forEach(type => {
+  irregularityTypes.forEach(type => { // 'type' es el objeto de irregularityTypes
     const button = document.createElement('button');
-    button.type = 'button'; // Importante para que no envíe el formulario
+    // ... (configuración del botón: type, classList, dataset.value, dataset.times, innerHTML) ...
+    button.type = 'button'; 
     button.classList.add('verb-type-button');
-    button.dataset.value = type.value; // Guardar el valor interno (regular, stem_changing, etc.)
-    button.dataset.times = type.times.join(','); // Guardar tiempos aplicables
-
-    // Contenido del botón (nombre y pista)
+    button.dataset.value = type.value; 
+    button.dataset.times = type.times.join(',');
     button.innerHTML = `
       <span class="verb-type-name">${type.name}</span>
       ${type.hint ? `<br><span class="verb-type-hint">${type.hint}</span>` : ''}
-    `; // Añadir pista si existe
+    `; 
 
-    // Marcar TODOS por defecto (petición 4)
-    button.classList.add('selected');
+    // Selección por defecto: solo "regular"
+    if (type.value === 'regular') {
+      button.classList.add('selected');
+    }
 
-    // Añadir manejador de clic para seleccionar/deseleccionar
-    button.addEventListener('click', () => {
-      soundClick.play(); // Sonido clic
-      button.classList.toggle('selected'); // Alternar clase 'selected'
+    // --- LISTENER DE CLIC COMPLETO Y CORRECTO ---
+    button.addEventListener('click', () => { // (el listener permanece como estaba en tu código original)
+      if (soundClick) soundClick.play();
+      
+      button.classList.toggle('selected'); 
+      const isNowSelected = button.classList.contains('selected');
+
+      // Lógica de dependencia (Presente)
+      const currentSelectedTenses = getSelectedTenses();
+      if (currentSelectedTenses.includes('present')) {
+        const multipleIrrBtn = document.querySelector('.verb-type-button[data-value="multiple_irregularities"]');
+        if (multipleIrrBtn && multipleIrrBtn.classList.contains('selected')) { 
+          const irregularRootDef = irregularityTypes.find(it => it.value === 'irregular_root');
+          const irregularRootAppliesToPresent = irregularRootDef ? irregularRootDef.times.includes('present') : false;
+          
+          if ((button.dataset.value === 'first_person_irregular' || 
+              (button.dataset.value === 'irregular_root' && irregularRootAppliesToPresent)) && 
+              !isNowSelected) { 
+            console.log(`Deseleccionando 'multiple_irregularities' por dependencia con ${button.dataset.value}`);
+            multipleIrrBtn.classList.remove('selected');
+          }
+        }
+      }
+      
+		console.log(`Clic en tipo irregular: ${button.dataset.value}, ahora seleccionado: ${isNowSelected}`);
+		console.log("Listener de Tipo Irregular -> llamando a applyIrregularityAndTenseFiltersToVerbList");
+		applyIrregularityAndTenseFiltersToVerbList(); 
+        updateVerbTypeButtonsVisualState(); // Añadido en tu código original, mantenerlo.
     });
 
     container.appendChild(button);
   });
 }
 
+const specificModal = document.getElementById('specific-info-modal');
+const specificModalBackdrop = document.getElementById('specific-modal-backdrop');
+const specificModalContent = specificModal.querySelector('.specific-modal-content');
+const closeSpecificModalBtn = document.getElementById('close-specific-modal-btn');
+
+// Contenido para cada clave de información
+// A medida que crees más, los añades aquí.
+const specificInfoData = {
+  infiniteMode: {
+    title: "♾️ Infinite Mode",
+    html: `<p>Play without time or life limits. Ideal for practicing at your own pace.</p>
+           <p><strong class="modal-subtitle">Goal:</strong> Achieve the highest score and longest streak possible!</p>
+           <p><strong class="modal-subtitle">Bonuses:</strong> Awarded for speed and accuracy.</p>`
+  },
+  timerMode: {
+    title: "⏱️ Timer Mode (4 Minutes)",
+    html: `You have <strong>4 minutes</strong> to score as many points as possible.<br>
+           <strong class="modal-subtitle">Time Mechanics:</strong><br>
+           - Start with 4:00 minutes.<br>
+           - Correct answers ✅ add time based on your streak (<span class="emphasis-mechanic">+5s to +10s</span>). Max time is 4:00.<br>
+           - Incorrect/Skipped answers ❌ deduct <span class="emphasis-mechanic">3 seconds</span>.<br><br>
+           <strong class="modal-subtitle">Time UI:</strong><br>
+           - ⏳ Remaining Time: Main clock (turns <span class="text-red">red</span> and pulses in the last 10s).<br>
+           - ➕➖ Time Change: Brief notes like "<span class="text-green">+5s</span>" or "<span class="text-red">-3s</span>".<br>
+           - 🏁 Total Time Played: Shows your current session duration.<br><br>
+           <strong class="modal-subtitle">Scoring Bonuses (per question):</strong><br>
+           - Streak Bonus: Multiplies points for consecutive correct answers.<br>
+           - Speed Bonus: Answering in under 5 seconds gives an additional score multiplier (up to <span class="points-value">x2.0</span>).<br><br>
+           <strong class="modal-subtitle">Goal:</strong> Maximize your score before time runs out!`
+  },
+  livesMode: {
+    title: "💖 Lives Mode",
+    html: `Survive as long as you can! You start with <strong>5 lives</strong> (❤️).<br>
+           Each incorrect or skipped answer costs one life.<br><br>
+           <strong class="modal-subtitle">Gaining Extra Lives:</strong><br>
+           1. <strong>Accumulated Correct Answers:</strong> Earn a life by getting a specific total number of correct answers (e.g., <code>🎯 X to get 1❤️</code>). The target increases each time.<br>
+           2. <strong>Streaks:</strong> Achieve specific streaks of consecutive correct answers (e.g., <code>🔥 Y in a row for 1❤️</code>). This target also increases.<br>
+           3. <strong class="emphasis-mechanic">🎁 Prize Verbs:</strong>
+              - Appear randomly in "<span class="difficulty-normal">Conjugate</span>" (⚙️) and "<span class="difficulty-hard">Produce</span>" (⌨️) difficulties if the verb is irregular or reflexive.<br>
+              - Chance: Approx. <span class="emphasis-mechanic">1 in 30</span> for "Conjugate", approx. <span class="emphasis-mechanic">1 in 20</span> for "Produce".<br>
+              - Correctly conjugating a prize verb (marked with 🎁) grants an <span class="emphasis-mechanic">extra life!</span><br>
+           <br><strong class="modal-subtitle">Goal:</strong> Stay alive and get the highest score!`
+  },
+  receptiveConfig: {
+    title: "💭 Recall Mode",
+    html: `<strong>Difficulty:</strong> <span class="difficulty-easy">Easy to Medium</span><br>
+           You'll see a conjugated Spanish verb and its tense. Your task is to provide the correct <strong>English subject pronoun AND the conjugated English verb</strong>.<br><br>
+           <strong class="modal-subtitle">Quick Tense Translation Guide (Spanish to English):</strong><br>
+             <li><strong>Present (Presente):</strong> Usually like "<span class="tense-example">I eat</span>", "<span class="tense-example">he eats</span>".</li>
+             <li><strong>Simple Past (Pretérito):</strong> Usually "<span class="tense-example">I ate</span>", "<span class="tense-example">he ate</span>".</li>
+             <li><strong>Present Perfect (Pret. Perfecto):</strong> "<span class="tense-example">I have eaten</span>", "<span class="tense-example">he has eaten</span>".</li>
+             <li><strong>Imperfect (Imperfecto):</strong> Often "<span class="tense-example">I was eating</span>" (ongoing past) or "<span class="tense-example">I used to eat</span>" (habitual past). Context is key!</li>
+             <li><strong>Future (Futuro):</strong> "<span class="tense-example">I will eat</span>", "<span class="tense-example">he will eat</span>".</li>
+             <li><strong>Conditional (Condicional):</strong> "<span class="tense-example">I would eat</span>", "<span class="tense-example">he would eat</span>".</li>
+           </ul>
+           <em>Example:</em> <span class="example-prompt-text">SIMPLE PAST: comí</span> You type:
+           <div class="typing-animation-container"><div class="typing-animation" id="recall-example-anim"></div></div>
+           <strong>Base Points:</strong> <span class="points-value">+5</span> per correct answer.<br>
+           While this is the easiest mode, translation can be tricky! Some Spanish verbs don't have a single, direct English equivalent, and tenses can translate in multiple ways.`
+  },
+  productiveEasyConfig: {
+    title: "⚙️ Conjugate Mode",
+    html: `<strong>Difficulty:</strong> <span class="difficulty-normal">Normal</span><br>
+           This mode is a direct test of your Spanish conjugation skills. You'll be given a Spanish verb infinitive, a Spanish pronoun, and the tense.<br><br>
+           Your mission is to type the correctly conjugated Spanish verb form. Focus on standard conjugation rules and irregularities.<br>
+           <em>Example:</em> <span class="example-prompt-text">Presente: conjugar – nosotros</span> You type:
+           <div class="typing-animation-container"><div class="typing-animation" id="conjugate-example-anim"></div></div>
+           <strong>Base Points:</strong> <span class="points-value">+10</span> per correct answer.<br>
+           <strong class="emphasis-mechanic">💖 Lives Mode Bonus:</strong> When playing in "Lives Mode", irregular or reflexive verbs in "Conjugate" have a <span class="emphasis-mechanic">~1 in 30</span> chance of being a 🎁 Prize Verb for an extra life!`
+  },
+  productiveConfig: {
+    title: "⌨️ Produce Mode",
+    html: `<strong>Difficulty:</strong> <span class="difficulty-hard">Hard</span><br>
+           The most challenging mode! You'll get an English verb infinitive, a Spanish pronoun, and the tense.<br><br>
+           You need to:<br>
+             <li>Know the correct Spanish infinitive for the English verb.</li>
+             <li>Correctly conjugate that Spanish verb according to the pronoun and tense, including irregularities.</li>
+           </ol>
+           This truly tests your ability to think in Spanish.<br>
+           <em>Example:</em> <span class="example-prompt-text">Present: to love – yo</span> You type:
+           <div class="typing-animation-container"><div class="typing-animation" id="produce-example-anim"></div></div>
+           <strong>Base Points:</strong> <span class="points-value">+15</span> per correct answer.<br>
+           <strong class="emphasis-mechanic">💖 Lives Mode Bonus:</strong> When playing in "Lives Mode", irregular or reflexive verbs in "Produce" have a <span class="emphasis-mechanic">~1 in 20</span> chance of being a 🎁 Prize Verb for an extra life!`
+  },
+};
+
+function openSpecificModal(infoKey) {
+  const info = specificInfoData[infoKey];
+  if (info && specificModal && specificModalContent && specificModalBackdrop) {
+    specificModalContent.innerHTML = `<h2>${info.title}</h2>${info.html}`;
+    specificModal.style.display = 'flex';
+    specificModalBackdrop.style.display = 'block';
+    document.body.classList.add('tooltip-open-no-scroll');
+
+    // Limpiar intervalo anterior si existiera (de la función typeWriter global)
+    if (window.typeInterval) clearInterval(window.typeInterval);
+    
+    // Activar nuevas animaciones de typewriter
+    const recallAnim = specificModalContent.querySelector('#recall-example-anim');
+    const conjugateAnim = specificModalContent.querySelector('#conjugate-example-anim');
+    const produceAnim = specificModalContent.querySelector('#produce-example-anim');
+
+    if (recallAnim) setTimeout(() => typeWriter(recallAnim, 'I ate', 150), 50);
+    if (conjugateAnim) setTimeout(() => typeWriter(conjugateAnim, 'conjugamos', 150), 50);
+    if (produceAnim) setTimeout(() => typeWriter(produceAnim, 'amo', 150), 50);
+
+  } else {
+    console.warn('Modal, content area, backdrop not found, or infoKey invalid:', infoKey);
+  }
+}
+
+function closeSpecificModal() {
+  if (specificModal && specificModalBackdrop) {
+    specificModal.style.display = 'none';
+    specificModalBackdrop.style.display = 'none';
+    document.body.classList.remove('tooltip-open-no-scroll');
+  }
+}
+
+const infoIcons = document.querySelectorAll('.context-info-icon');
+infoIcons.forEach(icon => {
+  icon.addEventListener('click', function() {
+    if (typeof soundClick !== 'undefined') soundClick.play();
+    const infoKey = this.dataset.infoKey;
+    openSpecificModal(infoKey);
+  });
+});
+
+if (closeSpecificModalBtn) {
+  closeSpecificModalBtn.addEventListener('click', closeSpecificModal);
+}
+if (specificModalBackdrop) {
+  specificModalBackdrop.addEventListener('click', closeSpecificModal);
+}
+
 function updateGameTitle() {
-  // 1) Define etiquetas amigables para cada modo
   const modeLabels = {
     'infinite':   'Infinite',
     'timer':      'Timer 4m',
@@ -1738,103 +2638,109 @@ function typewriterEffect(textElement, text, interval) {
 }
 
 
-  if (helpButton && tooltip) {
-      helpButton.addEventListener('mouseover', (event) => {
-          const tooltipContentHTML = `
-              <div class="tooltip-row">
-                  <div class="tooltip-box">
-                      <h5>♾️ Infinite </h5>
-                      <p>Play without time or life limits. Aim for the highest score and longest streak!</p>
-                  </div>
-                  <div class="tooltip-box">
-                      <h5>⏱️ Timer</h5>
-                      <p>Score as many points as possible within the 4-minute time limit.</p>
-                  </div>
-                  <div class="tooltip-box">
-                      <h5>💖 Lives</h5>
-                      <p>You have 5 lives. Each incorrect answer costs one life. Survive as long as you can!</p>
-                  </div>
-              </div>
-              <div class="tooltip-row">
-                  <div class="tooltip-box">
-                      <h5>💭 Recall</h5>
-                      <p>EASY - Given a Spanish tense and conjugation, type the English pronoun and <strong>base verb in present tense</strong>.<p><strong>Base points:</strong> +5
-                      <div class="example-prompt">"SIMPLE PAST: recordé"</div>
-                      <div class="typing-animation" id="recall-anim"></div>
-                  </div>
-                  <div class="tooltip-box">
-                      <h5>⚙️ Conjugate</h5>
-                      <p>NORMAL - Given a Spanish verb and pronoun, type the correct conjugated form in Spanish.<p><strong>Base points:</strong> +10
-                      <div class="example-prompt">"conjugar – nosotros"</div>
-                      <div class="typing-animation" id="easy-anim"></div>
-                  </div>
-				  <div class="tooltip-box">
-				      <h5>⌨️ Produce</h5>
-				      <p>HARD - Given the English verb and a Spanish pronoun, type the correct conjugation in Spanish. <p><strong>Base points:</strong> +15
-	                  <div class="example-prompt">"Present: to love – yo"</div>
-                      <div class="typing-animation" id="produce-anim"></div>
-				  </div>
-              </div>
-          `;
-          tooltip.innerHTML = tooltipContentHTML; 
-          /*const btnRect = helpButton.getBoundingClientRect(); // Posición del botón
-          const bodyRect = document.body.getBoundingClientRect(); // Posición del body
-          const scrollOffsetY = window.scrollY; // Cuánto se ha hecho scroll vertical
-          const scrollOffsetX = window.scrollX; // Cuánto se ha hecho scroll horizontal
-		  
+	if (helpButton && tooltip) {
+		helpButton.addEventListener('click', function(event) { // Cambiado a 'click' para móviles
+			event.stopPropagation(); // Evita que el clic se propague al listener del documento
 
-          let topPos = btnRect.bottom + scrollOffsetY + 10; // Más margen hacia abajo
-          let leftPos = btnRect.left + scrollOffsetX - 50;  // Desplaza a la izquierda
-          
+			if (tooltip.style.display === 'block') {
+				tooltip.style.display = 'none';
+				document.body.classList.remove('tooltip-open-no-scroll');
+				if (typeInterval) clearInterval(typeInterval); // Limpiar intervalo si se cierra
+			} else {
+				const tooltipContentHTML = `
+					<div class="tooltip-content-wrapper"> 
+						<div class="tooltip-row">
+							<div class="tooltip-box">
+								<h5>♾️ Infinite </h5>
+								<p>Play without time or life limits. Aim for the highest score and longest streak!</p>
+							</div>
+							<div class="tooltip-box">
+								<h5>⏱️ Timer</h5>
+								<p>Score as many points as possible within the 4-minute time limit.</p>
+							</div>
+							<div class="tooltip-box">
+								<h5>💖 Lives</h5>
+								<p>You have 5 lives. Each incorrect answer costs one life. Survive as long as you can!</p>
+							</div>
+						</div>
+						<div class="tooltip-row">
+							<div class="tooltip-box">
+								<h5>💭 Recall</h5>
+								<p>EASY - Given a Spanish tense and conjugation, type the English pronoun and <strong>base verb in present tense</strong>.</p><p><strong>Base points:</strong> +5</p>
+								<div class="example-prompt">"SIMPLE PAST: recordé"</div>
+								<div class="typing-animation" id="recall-anim"></div>
+							</div>
+							<div class="tooltip-box">
+								<h5>⚙️ Conjugate</h5>
+								<p>NORMAL - Given a Spanish verb and pronoun, type the correct conjugated form in Spanish.</p><p><strong>Base points:</strong> +10</p>
+								<div class="example-prompt">"conjugar – nosotros"</div>
+								<div class="typing-animation" id="easy-anim"></div>
+							</div>
+							<div class="tooltip-box">
+								<h5>⌨️ Produce</h5>
+								<p>HARD - Given the English verb and a Spanish pronoun, type the correct conjugation in Spanish.</p><p><strong>Base points:</strong> +15</p>
+								<div class="example-prompt">"Present: to love – yo"</div>
+								<div class="typing-animation" id="produce-anim"></div>
+							</div>
+						</div>
+					</div>
+					<button id="close-tooltip-btn" style="margin-top: 15px; background-color: var(--accent-color-blue); color: #333;">Close Help</button>
+				`;
+				tooltip.innerHTML = tooltipContentHTML;
+				tooltip.style.display = 'block';
+				document.body.classList.add('tooltip-open-no-scroll'); // Prevenir scroll del body
 
-          tooltip.style.top = `${topPos}px`;
-          tooltip.style.left = `${leftPos}px`;*/
-          tooltip.style.display = 'block';
+				// Iniciar animaciones de typewriter
+				const produceAnimElement = document.getElementById('produce-anim');
+				const recallAnimElement = document.getElementById('recall-anim');
+				const easyAnimElement = document.getElementById('easy-anim');
 
-          /*const tooltipRect = tooltip.getBoundingClientRect(); // Tamaño y posición REAL del tooltip mostrado
+				if (produceAnimElement) setTimeout(() => typeWriter(produceAnimElement, 'amo', 150), 50);
+				if (recallAnimElement) setTimeout(() => typeWriter(recallAnimElement, 'I remember', 150), 50);
+				if (easyAnimElement) setTimeout(() => typeWriter(easyAnimElement, 'conjugamos', 150), 50);
 
-          // Ajustar izquierda si se sale por la derecha
-          if (tooltipRect.right > window.innerWidth - 10) {
-             leftPos = window.innerWidth - tooltipRect.width - 10 - bodyRect.left + scrollOffsetX;
-          }
-          // Ajustar arriba si se sale por abajo (preferir ponerlo arriba del botón)
-          if (tooltipRect.bottom > window.innerHeight - 10) {
-             topPos = btnRect.top - bodyRect.top + scrollOffsetY - tooltipRect.height - 5; // Arriba - 5px margen
-          }
-¡          leftPos = Math.max(10 + scrollOffsetX, leftPos);
+				// Añadir listener para el botón de cerrar tooltip
+				const closeTooltipBtn = document.getElementById('close-tooltip-btn');
+				if (closeTooltipBtn) {
+					closeTooltipBtn.addEventListener('click', () => {
+						tooltip.style.display = 'none';
+						document.body.classList.remove('tooltip-open-no-scroll');
+						if (typeInterval) clearInterval(typeInterval);
+					});
+				}
+			}
+		});
 
-          // Reaplica la posición ajustada
-          tooltip.style.top = `${topPos}px`;
-          tooltip.style.left = `${leftPos}px`;*/
+		// Listener para cerrar el tooltip si se hace clic fuera de él (cuando está abierto)
+		document.addEventListener('click', function(event) {
+			if (tooltip.style.display === 'block' && !tooltip.contains(event.target) && event.target !== helpButton && !helpButton.contains(event.target)) {
+				tooltip.style.display = 'none';
+				document.body.classList.remove('tooltip-open-no-scroll');
+				if (typeInterval) clearInterval(typeInterval);
+			}
+		});
 
-          const produceAnimElement = document.getElementById('produce-anim');
-          const recallAnimElement = document.getElementById('recall-anim');
+		// Evitar que el scroll dentro del tooltip propague al body (para algunos dispositivos táctiles)
+		tooltip.addEventListener('wheel', function(event) {
+			// Si el tooltip tiene scroll y no está en el límite superior o inferior, previene el scroll del body.
+			if (this.scrollHeight > this.clientHeight) { // Solo si el tooltip es scrolleable
+				 if ((this.scrollTop === 0 && event.deltaY < 0) || (this.scrollTop + this.clientHeight === this.scrollHeight && event.deltaY > 0)) {
+					// No prevenir si está en el borde y el scroll es en la dirección que "escaparía"
+				 } else {
+					event.stopPropagation();
+				 }
+			}
+		});
+		tooltip.addEventListener('touchmove', function(event) {
+			// Similar lógica para touchmove
+			if (this.scrollHeight > this.clientHeight) {
+				event.stopPropagation();
+			}
+		});
 
-          if (produceAnimElement) {
-              // Usar setTimeout pequeño para asegurar que el DOM se actualice antes de animar
-              setTimeout(() => typeWriter(produceAnimElement, 'amo', 300), 50);
-          }
-          if (recallAnimElement) {
-               setTimeout(() => typeWriter(recallAnimElement, 'I remember', 300), 50);
-          }
-		  const easyAnimElement = document.getElementById('easy-anim');
-          if (easyAnimElement) {
-               setTimeout(() => typeWriter(easyAnimElement, 'conjugamos', 300), 50);
-}
-
-      }); // Fin del listener 'mouseover'
-
-      helpButton.addEventListener('mouseout', () => {
-          tooltip.style.display = 'none'; // Ocultar el tooltip
-          clearInterval(typeInterval); // DETENER la animación de escritura si está en curso
-          tooltip.innerHTML = ''; // Limpiar el contenido para evitar problemas
-      }); // Fin del listener 'mouseout'
-
-
-  } else {
-      // Este console.error ahora sí debería poder encontrar los elementos
-      console.error("Help button (?) or tooltip container (#tooltip) not found OR script order issue.");
-  }
+	} else {
+		console.error("Help button (?) or tooltip container (#tooltip) not found.");
+	}
 
 const leftBubbles = document.getElementById('left-bubbles');
 const rightBubbles = document.getElementById('right-bubbles');
@@ -1945,7 +2851,15 @@ function showLifeGainedAnimation() {
 }
 
 
+  if (specificModal) specificModal.style.display = 'none';
+  if (specificModalBackdrop) specificModalBackdrop.style.display = 'none';
 
+  const generalTooltip = document.getElementById('tooltip'); // Asegúrate de tener esta referencia si no la tienes global
+  const generalBackdrop = document.querySelector('.modal-backdrop'); // El primer backdrop que tenías
+
+  if (generalTooltip) generalTooltip.style.display = 'none';
+  if (generalBackdrop) generalBackdrop.style.display = 'none';
+  
 function startBubbles() {
   if (bubblesActive) return;   // ya arrancadas
   bubblesActive = true;
@@ -1964,6 +2878,7 @@ function stopBubbles() {
   leftBubbles.innerHTML  = '';
   rightBubbles.innerHTML = '';
 }
+
 function createBubble(side) {
   const bubble = document.createElement('div');
   bubble.classList.add('bubble');
@@ -1971,7 +2886,8 @@ function createBubble(side) {
   const verb = allVerbData[Math.floor(Math.random() * allVerbData.length)];
   if (!verb) return;
 
-  const tense = Math.random() < 0.5 ? 'present' : 'past_simple';
+  const availableTenseValues = tenses.map(t => t.value);
+  const tense = availableTenseValues[Math.floor(Math.random() * availableTenseValues.length)];
   const pronoun = Object.keys(verb.conjugations[tense] || {})[Math.floor(Math.random() * 6)];
   const conjugation = verb.conjugations[tense]?.[pronoun];
 
@@ -2000,7 +2916,18 @@ window.addEventListener('resize', () => {
   }
 });
 if (window.innerWidth > 1200) startBubbles();
-});                      // cierra DOMContentLoaded', …)
+  document.body.classList.remove('is-loading'); 
+
+  if (specificModal) specificModal.style.display = 'none';
+  if (specificModalBackdrop) specificModalBackdrop.style.display = 'none';
+  
+  const generalTooltipForHiding = document.getElementById('tooltip');
+  const generalBackdropForHiding = document.querySelector('.modal-backdrop:not(.specific-modal-backdrop)');
+
+  if (generalTooltipForHiding) generalTooltipForHiding.style.display = 'none';
+  if (generalBackdropForHiding) generalBackdropForHiding.style.display = 'none';
+
+});                     
 
 // © 2025 Pablo Torrado, University of Hong Kong.
 // Licensed under CC BY-NC-ND 4.0: https://creativecommons.org/licenses/by-nc-nd/4.0/

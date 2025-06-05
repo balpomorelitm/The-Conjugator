@@ -21,148 +21,176 @@
 <audio id="sound-click" preload="auto" src="sounds/click.mp3"></audio>
 <audio id="sound-start" src="sounds/start-verb.mp3"></audio>
 <audio id="sound-bubble-pop" src="sounds/soundbubblepop.mp3"></audio>
-<script src="https://www.google.com/recaptcha/enterprise.js?render=6LeocycrAAAAAADtYPa2_d2PCH5mpEi-zx1yw_j4"></script>
+<script src="https://www.google.com/recaptcha/enterprise.js?render=6LfwDVErAAAAAJSaqfJCAJXQBO9Ivm7zH6NC8bJZ"></script>
 </head>
-  
-
-<body>
+<body class="is-loading">
+  <div id="specific-modal-backdrop" class="specific-modal-backdrop"></div>
+  <div id="specific-info-modal" class="specific-modal">
+    <div class="specific-modal-content">
+    </div>
+    <button id="close-specific-modal-btn" class="specific-modal-close-btn">&times;</button>
+  </div>
+  <div class="modal-backdrop"></div> 
   <div id="tooltip" class="tooltip-popup"></div>
 
-	<header class="main-header">
+  <header class="main-header">
 	  <img src="images/conjucityhk.png" class="header-city" alt="city"/>
 	  <img src="images/conjuchuache.png" class="header-char" alt="char"/>
-	  
 	  <h1 class="glitch-title">
 		<span class="big-letter">T</span>HE 
 		<span class="big-letter">C</span>ONJUGATOR
 	  </h1>
 	</header>
-<div class="music-controls">
+
+  <div class="music-controls">
     <button id="music-toggle" class="music-button" title="Toggle music">🔊</button>
-	
-  </div>
-<input  type="range" id="volume-slider"
-    min="0" max="1" step="0.05" value="0.6"
-    style="position:fixed; bottom:20px; right:130px; width:120px;
-          cursor:pointer; display:none;">
-		 
-<!-- 🔘 BOTONES DE MODO -->
-<div id="setup-screen" class="screen">
-  <div id="game-modes" class="mode-selector">
-    <button class="mode-button selected-mode" data-mode="infinite">♾️Infinite♾️</button>
-    <button class="mode-button" data-mode="timer">⏱️Timer 4m⏱️</button>
-    <button class="mode-button" data-mode="lives">5x💖</button>
-	<button id="help-button" type="button">?</button>
+    <input type="range" id="volume-slider"
+        min="0" max="1" step="0.05" value="0.6"
+        style="position:fixed; bottom:20px; right:130px; width:120px;
+              cursor:pointer; display:none;">
   </div>
 
-   <form id="setup-form">
-    <p><strong>Settings:</strong></p>
-    <div class="mode-selector"> 
-	    <button type="button" class="mode-button config-button" data-mode="receptive">💭ReCall💭</button>
-		<button type="button" class="mode-button config-button selected-mode" data-mode="productive_easy">⚙️conjugATE⚙️</button>
-	    <button type="button" class="mode-button config-button" data-mode="productive">⌨️Pr0duc€⌨️</button>
-    </div>
-	<p><strong>Verb Options:</strong></p>
-
-  <div class="filter-bar">	
-	<div id="tense-dropdown" class="dropdown">
-	<button type="button" id="tense-dropdown-button" class="dropdown-toggle">
-	  Tenses <span id="tense-dropdown-count">(1/3)</span> ▾
-	</button>
-	  <div id="tense-dropdown-menu" class="dropdown-menu hidden">
-		<div class="dropdown-header">
-		  <button type="button" id="select-all-tenses" class="select-all-button">
-			All of them!
-		  </button>
-		</div>
-		<div id="tense-buttons" class="verb-type-selector"></div>
-	  </div>
-	</div>
-<!-- 2) Verbs -->
-
-	<div id="verb-dropdown" class="dropdown">
-	  <button type="button" id="verb-dropdown-button" class="dropdown-toggle">
-		Verbs <span id="verb-dropdown-count">(64/64)</span> ▾
-	  </button>
-
-	  <div id="verb-dropdown-menu" class="dropdown-menu hidden">
-		<div class="dropdown-header">
-		  <button type="button" id="deselect-all-verbs" class="select-all-button">
-			Deseleccionar Todo
-		  </button>
-		  <button type="button" id="verb-groups-button" class="select-groups-button">
-			Grupos de Verbos ▾
-		  </button>
+  <div id="config-flow-screen" class="screen" style="display: flex;"> 
+    <div class="config-main-panel"> 
+		<div id="splash-step" class="config-step active-step"> 
+			<p id="press-key-text">Press any key to start...</p>
+			<button id="initial-start-button">Start Game</button> 
+		    <div style="text-align: center; margin-top: 20px;">
+			  <button id="help-button" type="button">Game Summary</button>
+		    </div>			
 		</div>
 
-		<div id="verb-groups-panel" class="groups-panel hidden">
-		   <button type="button" data-group="all"      class="group-button">Todos</button>
-		   <button type="button" data-group="reflexive" class="group-button">Reflexivos</button>
-		   <button type="button" data-group="ar"       class="group-button">-ar</button>
-		   <button type="button" data-group="er"       class="group-button">-er</button>
-		   <button type="button" data-group="ir"       class="group-button">-ir</button>
-		</div>
+      <div id="mode-step" class="config-step">
+        <h3>Select Game Mode:</h3>
+        <div id="game-modes-container">
+          <button class="mode-button config-flow-button" data-mode="infinite" data-infokey="infiniteMode">
+            ♾️Infinite♾️
+            <span class="context-info-icon" data-info-key="infiniteMode"></span>
+          </button>
+          <button class="mode-button config-flow-button" data-mode="timer" data-infokey="timerMode">
+            Timer 4m⏱️
+            <span class="context-info-icon" data-info-key="timerMode"></span>
+          </button>
+          <button class="mode-button config-flow-button" data-mode="lives" data-infokey="livesMode">
+            5x💖
+            <span class="context-info-icon" data-info-key="livesMode"></span>
+          </button>
+        </div>
+        <button id="confirm-mode-button" class="confirm-button" style="display: none;">Confirm Mode</button>
+      </div>
 
-		<div class="search-container">
-		  <input type="text" id="verb-search" placeholder="Buscar..." />
-		</div>
+      <div id="difficulty-step" class="config-step">
+        <h3>Select Difficulty:</h3>
+        <div id="difficulty-buttons-container">
+          <button class="mode-button config-flow-button" data-mode="receptive" data-infokey="receptiveConfig">
+            💭ReCall💭
+            <span class="context-info-icon" data-info-key="receptiveConfig"></span>
+          </button>
+          <button class="mode-button config-flow-button" data-mode="productive_easy" data-infokey="productiveEasyConfig">
+            ⚙️conjugATE⚙️
+            <span class="context-info-icon" data-info-key="productiveEasyConfig"></span>
+          </button>
+          <button class="mode-button config-flow-button" data-mode="productive" data-infokey="productiveConfig">
+            ⌨️Pr0duc€⌨️
+            <span class="context-info-icon" data-info-key="productiveConfig"></span>
+          </button>
+        </div>
+        <button id="confirm-difficulty-button" class="confirm-button" style="display: none;">Confirm Difficulty</button>
+      </div>
 
-		<div id="verb-buttons" class="verb-buttons-list"></div>
-	  </div>
-	</div>
+      <div id="details-step" class="config-step">
+        <h3>Customize Your Game:</h3>
+        <div id="filter-bar-container">
+          <div class="filter-bar">
+            <div id="tense-dropdown" class="dropdown">
+              <button type="button" id="tense-dropdown-button" class="dropdown-toggle">
+                Tenses <span id="tense-dropdown-count"></span> ▾ </button>
+              <div id="tense-dropdown-menu" class="dropdown-menu hidden">
+                <div class="dropdown-header">
+                  <button type="button" id="select-all-tenses" class="select-all-button">
+                    All of them!
+                  </button>
+                </div>
+                <div id="tense-buttons" class="verb-type-selector"></div>
+              </div>
+            </div>
+            <div id="verb-dropdown" class="dropdown">
+              <button type="button" id="verb-dropdown-button" class="dropdown-toggle">
+                Verbs <span id="verb-dropdown-count"></span> ▾
+              </button>
+              <div id="verb-dropdown-menu" class="dropdown-menu hidden">
+                <div class="dropdown-header">
+                  <button type="button" id="deselect-all-verbs" class="select-all-button"> 
+                    None!
+                  </button>
+                  <button type="button" id="verb-groups-button" class="select-groups-button">
+                    Verb Groups ▾
+                  </button>
+                </div>
+                <div id="verb-groups-panel" class="groups-panel hidden">
+                  <button type="button" data-group="reflexive" class="group-button">Reflexive v.</button>
+                  <button type="button" data-group="ar" class="group-button">-ar</button>
+                  <button type="button" data-group="er" class="group-button">-er</button>
+                  <button type="button" data-group="ir" class="group-button">-ir</button>
+                </div>
+                <div class="search-container">
+                  <input type="text" id="verb-search" placeholder="🔎Search verbs..." />
+                </div>
+                <div id="verb-search-no-results" class="search-no-results hidden">
+                  No verbs found.🙇🏻‍♂️
+                </div>
+                <div id="verb-buttons" class="verb-buttons-list"></div>
+              </div>
+            </div>
+            <div id="pronoun-dropdown" class="dropdown">
+              <button type="button" id="pronoun-dropdown-button" class="dropdown-toggle">
+                Pronouns <span id="pronoun-dropdown-count"></span> ▾
+              </button>
+              <div id="pronoun-dropdown-menu" class="dropdown-menu hidden">
+                <div class="dropdown-header">
+                  <button type="button" id="select-all-pronouns" class="select-all-button">
+                    All of them!
+                  </button>
+                </div>
+                <div id="pronoun-buttons" class="verb-type-selector"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="verb-irregularities-container">
+          <p><strong>☠️Verb Irregularities☠️</strong></p>
+          <div id="verb-type-buttons" class="verb-type-selector"></div>
+        </div>
+        <label id="ignore-accents-label-container">
+          <input type="checkbox" id="ignore-accents" checked> Ignore accents (remember that accents give extra points)
+        </label>
+        <button id="final-start-game-button" class="start-button">Start Game</button>
+      </div>
 
-	  <!-- 3) Pronouns -->
-	  <div id="pronoun-dropdown" class="dropdown">
-		<button type="button" id="pronoun-dropdown-button" class="dropdown-toggle">
-		  Pronouns <span id="pronoun-dropdown-count">(0/7)</span> ▾
-		</button>
-		<div id="pronoun-dropdown-menu" class="dropdown-menu hidden">
-		  <div class="dropdown-header">
-			<span class="dropdown-title">Pronombres</span>
-			<button type="button" id="select-all-pronouns" class="select-all-button">
-			  Seleccionar Todo
-			</button>
-		  </div>
-		  <div id="pronoun-buttons" class="verb-type-selector"></div>
-		</div>
-	  </div>
+      <button id="back-button" style="display: none;">Back</button>
 
-	</div>
-    <p><strong>Verb Types:</strong></p>
-	    <div id="reflexive-toggle-container" style="margin: 10px 0; text-align:center;">
-
-
+    </div> <div class="config-info-panel"> 
+      <h4 id="info-panel-title">Welcome to The Conjugator!</h4>
+      <div id="info-panel-content"></div>
+        <p>Select an option from the left to see more details here, or press the start button to begin your configuration.</p>
+      </div>
+    </div> 
+    <div id="setup-records" style="margin-top:20px;">
+        <h3>🏆 Los mejores de los mejores / Best of the Best 🏆</h3>
+        <div class="mode-records" data-mode="infinite">
+          <h4>♾️InFiNiTeRs♾️</h4>
+          <ul class="record-list"></ul>
+        </div>
+        <div class="mode-records" data-mode="timer">
+          <h4>⏱DesPaCiToS⏱️</h4>
+          <ul class="record-list"></ul>
+        </div>
+        <div class="mode-records" data-mode="lives">
+          <h4>💖SuRvIvOrS💖</h4>
+          <ul class="record-list"></ul>
+        </div>
     </div>
-    <div id="verb-type-buttons" class="verb-type-selector">
-    </div>
-
-    <label>
-      <input type="checkbox" id="ignore-accents" checked>
-      Ignore accents (remember that accents give extra points)
-    </label>
-    <div style="text-align:center; margin-top:20px;">
-      <button type="submit" id="start-button">Start Game</button>
-    </div>
-  </form>
-  
-  <div id="setup-records" style="margin-top:20px;">
-    <h3>🏆 Los mejores de los mejores / Best of the Best 🏆</h3>
-    <div class="mode-records" data-mode="infinite">
-      <h4>♾️InFiNiTeRs♾️</h4>
-      <ul class="record-list"></ul>
-    </div>
-    <div class="mode-records" data-mode="timer">
-      <h4>⏱DesPaCiToS⏱️</h4>
-      <ul class="record-list"></ul>
-    </div>
-    <div class="mode-records" data-mode="lives">
-      <h4>💖SuRvIvOrS💖</h4>
-      <ul class="record-list"></ul>
-    </div>
-  </div> <!-- /#setup-screen -->
-   </div> <!-- /#setup-records -->
-  </div>
-  <div id="game-screen" class="screen">
+  </div> <div id="game-screen" class="screen" style="display: none;">
     <canvas id="life-confetti-canvas"></canvas> 
     <h2 id="game-title"></h2>
 
@@ -171,17 +199,16 @@
 		<span id="streak-for-life-display"></span>
 	  </div>
 	  
-	<!-- ① Contenedor de relojes y feedback -->
     <div id="timer-container" class="timer-container" style="display:none;">
       <div id="timer-clock" class="timer-item">⏳ 4:00</div>
       <div id="time-change" class="timer-item"></div>
       <div id="total-time" class="timer-item">🏁 0:00</div>
     </div>
     <div id="question-area">
-	<div id="tense-label" class="tense-label"></div>
-    <div id="question-prompt">Loading…</div>
+      <div id="tense-label" class="tense-label"></div>
+      <div id="question-prompt">Loading…</div>
       <p>Your goal:</p>
-      </div>
+    </div>
     <div id="answer-area">
       <div id="input-es-container">
         <label for="answer-input-es">Conjugate in Spanish:</label>
@@ -189,23 +216,16 @@
       </div>
       <div id="input-en-container" style="display:none;">
         <label for="answer-input-en">Conjugate in English:</label>
-        <input 
-           type="text"
-           id="answer-input-en"
-           placeholder="e.g. You all ate"
-           autocomplete="off"
-           autocapitalize="none"
-           autocorrect="off"
-           spellcheck="false"
-			<div id="pronoun-hints" style="margin-top:8px;">
-				<span class="pronoun-button">I</span>
-				<span class="pronoun-button">you</span>
-				<span class="pronoun-button">he</span>
-				<span class="pronoun-button">she</span>
-				<span class="pronoun-button">we</span>
-				<span class="pronoun-button">you all</span>
-				<span class="pronoun-button">they</span>
-			  </div>		   
+        <input type="text" id="answer-input-en" placeholder="e.g. You all ate" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false">
+        <div id="pronoun-hints" style="margin-top:8px;">
+            <span class="pronoun-button">I</span>
+            <span class="pronoun-button">you</span>
+            <span class="pronoun-button">he</span>
+            <span class="pronoun-button">she</span>
+            <span class="pronoun-button">we</span>
+            <span class="pronoun-button">you all</span>
+            <span class="pronoun-button">they</span>
+        </div>		   
       </div>
 	  
       <button id="check-button">Get Clue / Check Answer</button>
@@ -221,50 +241,42 @@
       <div id="ranking-box"></div>
       <button id="end-button">Finish</button>
     </div>
-  </div>
-
-<!-- Cargar los SDKs de Firebase (NO usar "import", usar "src") -->
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-analytics-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-check-compat.js"></script>
-
-<script>
-  //self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
-</script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-check-compat.js"></script>
-<script>
-  // 1. Config de Firebase
-  const firebaseConfig = {
-    apiKey: "AIzaSyAhM7lmdO1TN__8X6728EPJfqxBXjFE5ds",
-    authDomain: "el-conjugador.firebaseapp.com",
-    projectId: "el-conjugador",
-    storageBucket: "el-conjugador.appspot.com",
-    messagingSenderId: "1042408130577",
-    appId: "1:1042408130577:web:ecfdf6121cf191282689b0",
-    measurementId: "G-GCCQW0PMH9"
-  };
-  firebase.initializeApp(firebaseConfig);
-
-  // 2. Inicializa App Check con el provider correcto
-  const appCheck = firebase.appCheck();
-   appCheck.activate(
-      new firebase.appCheck.ReCaptchaEnterpriseProvider(
-        '6LeocycrAAAAAADtYPa2_d2PCH5mpEi-z1yw_j4'
-      ),
-      true  // auto-refresh
-    );
-
-  // 3. Ahora sí crea tu instancia de Firestore
-  const db = firebase.firestore();
-</script>
-<div id="left-bubbles"></div>
-<div id="right-bubbles"></div>
+  </div> <div id="left-bubbles"></div>
+  <div id="right-bubbles"></div>
   <footer class="game-footer">
     <p>© 2025 Pablo Torrado, University of Hong Kong. All rights reserved.</p>
   </footer>
   
-<script src="script.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-analytics-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-check-compat.js"></script> 
+  <script>
+    //self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+  </script>
+  <script>
+    const firebaseConfig = {
+	  apiKey: "AIzaSyBBMKtz9xX6HZ0qBJPW0zNaYjHsP0t1poE",
+	  authDomain: "el-conjugador.firebaseapp.com",
+	  projectId: "el-conjugador",
+	  storageBucket: "el-conjugador.firebasestorage.app",
+	  messagingSenderId: "1042408130577",
+	  appId: "1:1042408130577:web:ecfdf6121cf191282689b0",
+	  measurementId: "G-GCCQW0PMH9"
+    };
+    firebase.initializeApp(firebaseConfig);
+
+    const appCheck = firebase.appCheck();
+    appCheck.activate(
+        new firebase.appCheck.ReCaptchaEnterpriseProvider(
+          '6LfwDVErAAAAAJSaqfJCAJXQBO9Ivm7zH6NC8bJZ' // Clave ReCaptcha
+        ),
+        true  
+      );
+
+    const db = firebase.firestore();
+  </script>
+  <script src="script.js"></script> 
 </body>
 </html>
 
