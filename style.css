@@ -362,7 +362,7 @@ button:active {
   user-select: none;
   cursor: default;
 }
-#pronoun-buttons-container p {
+#pronoun-buttons-container {
   margin-bottom: 5px;
 }
 .spark-effect {
@@ -465,13 +465,13 @@ button:active {
 .mode-button {
   background-color: #222;
   color: white;
-  font-size: 25px;
+  font-size: 23px;
   padding: 12px 20px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.2s ease;
-  font-family: 'm6x11', monospace;
+  font-family: 'PixelSerif', monospace;
 }
 
 .mode-button:hover {
@@ -492,55 +492,51 @@ button:active {
 
 .verb-type-selector {
   display: grid; /* Usar grid para organizar en columnas */
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Columnas auto-ajustables */
-  gap: 10px; /* Espacio entre botones */
-  margin-bottom: 15px;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
+  gap: 6px;
+  margin-bottom: 5px;
 }
 
-/* Estilo base del botón de tipo de verbo */
 .verb-type-button {
   font-family: var(--font-pixel);
-  font-size: 0.9em; /* Un poco más pequeño que botones normales */
-  background-color: #444; /* Fondo gris oscuro */
+  font-size: 0.8em; 
+  background-color: #444; 
   color: var(--text-color);
   border: 1px solid var(--border-color);
-  padding: 8px;
-  text-align: left; /* Alinear texto a la izquierda */
+  padding: 6px;
+  text-align: left; 
   cursor: pointer;
   border-radius: 0;
   box-shadow: 1px 1px 0px rgba(0,0,0,0.2);
   transition: background-color 0.2s, border-color 0.2s, opacity 0.3s;
-  line-height: 1.3; /* Espaciado para las dos líneas */
-  min-height: 55px; /* Altura mínima para acomodar pista */
-  display: flex; /* Usar flex para alinear contenido interno */
-  flex-direction: column; /* Poner nombre arriba y pista abajo */
-  justify-content: center; /* Centrar verticalmente si solo hay nombre */
+  line-height: 1.2; 
+  min-height: 40px; 
+  display: flex; 
+  flex-direction: column; 
+  justify-content: center; 
   }
 
 .verb-type-button:hover {
   background-color: #555;
   border-color: #777;
-   /* Sobrescribir efecto hover general si no lo quieres */
-   transform: none;
-   box-shadow: 1px 1px 0px rgba(0,0,0,0.4);
    }
 
-/* Estilo del nombre de la irregularidad */
+
 .verb-type-name {
-  font-size: 1.1em; /* Nombre un poco más grande */
-  font-weight: bold; /* En negrita */
+  font-size: 1em; 
+  font-weight: bold; 
   color: var(--title-color);
-  display: block; /* Ocupar línea */
-  margin-bottom: 3px; /* Pequeño espacio bajo el nombre */
-  text-shadow: 2px 2px #111; /* Sombra sutil para darle profundidad */
+  display: block; 
+  margin-bottom: 2px; 
+  text-shadow: none;
   }
 
-/* Estilo de la pista/hint */
 .verb-type-hint {
-  font-size: 0.85em; /* Pista más pequeña */
+  font-size: 0.8em; /* Pista más pequeña */
   color: #ccc; /* Color más apagado */
   font-style: italic;
   display: block; /* Ocupar línea */
+  text-shadow: none;
 }
 
 /* Estilo cuando el botón está seleccionado */
@@ -548,8 +544,8 @@ button:active {
   background-color: #fe9600;
   border-color: var(--title-color);
   color: white;
-  padding: 12px 20px;
-  letter-spacing: 1px;  
+  padding: 8px 10px;
+  letter-spacing: 0.5px;  
 }
 .verb-type-button.selected .verb-type-name {
      color: white;
@@ -561,18 +557,18 @@ button:active {
 
 /* Estilo cuando el botón está desactivado */
 .verb-type-button.disabled {
-  background-color: #333; /* Más oscuro */
+  background-color: #333; 
   border-color: #444;
-  color: #777; /* Texto muy apagado */
-  opacity: 0.6; /* Hacerlo semitransparente */
-  cursor: not-allowed; /* Cambiar cursor */
-  pointer-events: none; /* Evitar clics */
-  padding: 12px 20px;
+  color: #777; 
+  opacity: 0.6; 
+  cursor: not-allowed; 
+  pointer-events: none; 
+  padding: 10px 15px;
   letter-spacing: 1px;
 }
  .verb-type-button.disabled .verb-type-name,
  .verb-type-button.disabled .verb-type-hint {
-     color: #777 !important; /* Forzar color apagado */
+     color: #777 !important; 
  }
 /* --- Vibración para feedback --- */
 @keyframes vibrate {
@@ -851,12 +847,14 @@ button:active {
 }
 
 .mode-button {
-  background-color: #444; /* Gris oscuro por defecto */
+  background-color: #444; 
   color: white;
   border: none;
   cursor: pointer;
   padding: 10px 20px;
   margin: 5px;
+  position: relative; 
+  padding-right: 30px;
 }
 
 .mode-button.config-button[data-mode="productive"].selected-mode {
@@ -881,12 +879,47 @@ button:active {
     padding: 10px;
     width: 100%;
     max-width: 100%;
-    font-size: 18px;
+    font-size: 17px;
     display: flex;
     flex-direction: column;
     align-items: center;
   }
+  .specific-modal {
+    width: 90vw;
+    padding-top: 60px;  /* Espacio suficiente arriba para el botón */
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-bottom: 20px; /* Padding inferior normal */
+    height: auto;
+    max-height: 85vh;
+  }
 
+  .specific-modal-content {
+    font-size: 0.9em; /* Ajusta el tamaño del texto del contenido si es necesario */
+    line-height: 1.45;
+  }
+  
+  .specific-modal-content h2 {
+    font-size: 1.1em;
+    margin-top: 0; 
+    padding-bottom: 6px;
+    margin-bottom: 10px;
+  }
+
+  /* ESTOS SON LOS ESTILOS CORRECTOS PARA EL BOTÓN ARRIBA A LA DERECHA EN MÓVIL */
+  .specific-modal-close-btn {
+    position: absolute;
+    top: 15px;       /* Ajusta según el nuevo padding-top del modal */
+    right: 15px;       /* Ajusta según el nuevo padding-right del modal */
+    font-size: 2em; 
+    line-height: 1;
+    padding: 5px;
+    color: var(--text-color);
+    background: transparent;
+    border: none;
+    text-shadow: none; /* Asegura que no haya sombra en la 'X' */
+    cursor: pointer; /* Para que se vea como clickeable */
+  }
   .main-header {
     width: 100%;
     text-align: center;
@@ -995,7 +1028,7 @@ button:active {
     display: none;
   }
 }
-/* Alternar rojo/amarillo y glow */
+
 .glitch-title .letter:nth-child(odd) {
   color: #AA151B;           /* rojo */
   text-shadow:
@@ -1321,98 +1354,226 @@ button:active {
  }
 
 
- 
+ body.tooltip-open-no-scroll {
+  overflow: hidden !important; /* Previene el scroll en el body */
+}
 
 
 @media (max-width: 600px) {
-  /* Usamos el ID para ganar en especificidad */
-  #tooltip.tooltip-popup {
-    position: fixed !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-
-    /* Mucho más estrecho y alto: panel alargado */
-    width: 60vw !important;      /* Ajusta este valor al que te guste */
-    max-width: none !important;
-    height: 85vh !important;
-    max-height: none !important;
-
-    overflow-y: auto !important;
-    box-sizing: border-box !important;
-
-    /* Espaciado interior */
-    padding: 8px !important;
+	#tooltip.tooltip-popup {
+	  position: fixed !important;
+	  top: 50% !important;
+	  left: 50% !important;
+	  transform: translate(-50%, -50%) !important;
+	  
+	  width: 90vw !important; /* Ancho del 90% del viewport */
+	  max-width: 450px !important; /* Un máximo para que no sea demasiado ancho en tablets pequeñas en esta vista */
+	  padding: 10px !important; 
+	  height: auto !important; /* La altura se ajustará al contenido */
+	  max-height: 90vh !important; /* Altura máxima del 90% del viewport */
+	  
+	  overflow-y: auto !important; /* Mantenemos esto por si acaso, pero idealmente no se necesitará si todo cabe */
+	  -webkit-overflow-scrolling: touch; 
+	  
+	  background-color: rgba(26, 42, 26, 0.98) !important; 
+	  color: var(--text-color);
+	  border: 2px solid var(--border-color);
+	  box-shadow: 4px 4px 0px rgba(0,0,0,0.5);
+	  z-index: 1001 !important; 
+	  
+	  padding: 0px !important; /* Padding interno reducido */
+	  box-sizing: border-box !important;
+	  
+	  font-size: 0.82em !important; /* Reducir tamaño de fuente base DENTRO del tooltip */
+	  line-height: 1.3 !important; /* Ajustar altura de línea para la nueva fuente */
+	}
+  
+    background-color: var(--accent-color-red); /* Para que parezca un botón de acción */
+    color: white;
+    border-radius: 4px; /* Pequeño redondeo */
+    padding: 8px 20px;  /* Padding para hacerlo más clickeable */
+    margin-top: 20px;   /* Espacio entre el contenido y el botón */
+    font-size: 1.1em;   /* Un tamaño de fuente más de "botón" */
+    font-weight: normal;
+    text-shadow: none;    /* Quitar la sombra de texto si la tiene */
+    align-self: center; /* Centrar el botón si el modal es flex container */
+    width: auto;        /* Ancho automático según el texto */
+    display: inline-block; /* Para que width: auto funcione bien con text-align: center del padre si lo tuviera */
   }
+	    #verb-dropdown-menu {
+        width: 90vw; /* Que ocupe el 90% del ancho de la pantalla */
+        max-width: 350px; /* Un máximo absoluto para que no sea demasiado ancho en móviles "grandes" */
+        left: 50%;
+        transform: translateX(-50%); /* Estas dos líneas centran el menú si tiene position: absolute/fixed */
+        right: auto; /* Asegúrate de anular 'right' si estaba definido */
+        box-sizing: border-box; /* Importante para que el padding/border no lo hagan más ancho */
+        max-height: 70vh; 
+    }
+	
+	#verb-buttons .verb-button {
+        font-size: 13px; /* Reduce el tamaño de fuente general del botón */
+        padding: 6px 8px; /* Ajusta el padding si es necesario */
+    }
+    .verb-type-button {
+        padding-top: 4px;    
+        padding-bottom: 4px; 
+	}
+	.verb-type-name {
+	  font-size: 1em; 
+	  font-weight: bold; 
+	  color: var(--title-color);
+	  display: block; 
+	  margin-bottom: 2px; 
+	  /* text-shadow: 2px 2px #111; */ /* Comenta o reduce esto */
+	  text-shadow: 1px 1px #111; /* O prueba una sombra más sutil */
+	}
+    .verb-type-button .verb-type-hint {
+        font-size: 10px;     
+        line-height: 1;    /* Reduce la altura de línea para la pista. */
+        display: block;      /* Asegura que ocupe su propia línea (aunque <br> ya lo hace) */
+        margin-top: 1px;     
+    }	
+    #verb-buttons .verb-button .label {
+        font-size: 13px; 
+    }
+	    #pronoun-dropdown-menu {
+        position: absolute; /
+        width: 90vw;        
+        max-width: 250px;   
 
-  #tooltip .tooltip-row {
-    flex-direction: column !important;
-    gap: 8px !important;
-    margin-bottom: 10px !important;
-  }
+        box-sizing: border-box;
+
+        /* ANCLAR AL LADO DERECHO DE LA PANTALLA */
+        right: 5vw;       /* Posiciona el borde derecho del menú a 5% del borde derecho de la pantalla */
+                          /* O un valor fijo como '10px' si prefieres: right: 10px; */
+        left: auto;       /* Anula cualquier posicionamiento izquierdo para que 'right' tenga precedencia */
+        transform: none;  /* Si estabas usando transform: translateX(-50%) para centrar otros menús,
+                               anúlalo aquí ya que estamos alineando a la derecha. */
+        
+        /* Estilos para el scroll interno y altura máxima */
+        max-height: 60vh; /* Que no ocupe más del 60% de la altura de la pantalla */
+        /* Si el contenido total del menú (incluyendo el botón "All pronouns" y la lista) 
+           necesita scroll, puedes añadir overflow-y: auto; aquí. */
+    }
+
+    /* Para la lista específica de botones de pronombres dentro del menú */
+    #pronoun-buttons {
+        max-height: 200px;  /* Ajusta según la cantidad de botones y el espacio deseado. 
+                               Podrías usar también unidades vh, ej: 30vh o 40vh */
+        overflow-y: auto;   /* Habilita el scroll vertical para la lista */
+        overflow-x: hidden; /* Previene el scroll horizontal */
+    }
+	#tense-dropdown-menu {
+        /* Asumimos que ya tiene position: absolute; de una regla general para .dropdown-menu */
+        
+        width: auto;        /* Permitir que el contenido defina el ancho inicial */
+        min-width: 200px;   /* Un ancho mínimo para que no se vea demasiado apretado. Ajusta según necesidad. */
+        max-width: 260px;
+		box-sizing: border-box;
+		max-height: 60vh;
+   }
+    #tense-buttons {
+        max-height: 250px;  /* Ajusta la altura máxima para la lista de botones.
+                               Unidades como 35vh o 40vh también podrían funcionar. */
+        overflow-y: auto;   /* Habilita el scroll vertical para la lista de tiempos */
+        overflow-x: hidden; /* Previene el scroll horizontal */
+    }
+.tooltip-content-wrapper {
+  display: flex !important;         /* <<<< Convertir en contenedor flex */
+  flex-direction: row !important;  /* <<<< Para poner las "filas" (ahora columnas) una al lado de la otra */
+  gap: 8px !important;             /* Espacio entre las dos columnas */
+}
+
+.tooltip-row { /* Cada .tooltip-row ahora actúa como una columna en móvil */
+  flex-direction: column !important; /* Los .tooltip-box dentro de esta "columna" se apilan verticalmente */
+  flex: 1 !important;                /* Cada "columna" toma la mitad del espacio */
+  margin-bottom: 0 !important;       /* Quitar margen inferior ya que ahora son columnas */
+  gap: 8px !important;               /* Espacio entre los tooltip-box dentro de esta "columna" */
+}
+
+/* Títulos de Columna (opcional, si los añades en el HTML como te sugerí para la versión de 2 columnas) */
+/* Si no los usas, puedes ignorar este .tooltip-column-title */
+.tooltip-column-title {
+  font-family: var(--font-pixel);
+  color: var(--accent-color-blue);
+  font-size: 1.1em !important; /* Relativo al font-size del tooltip */
+  text-align: center;
+  margin-bottom: 6px !important;
+  padding-bottom: 3px !important;
+  border-bottom: 1px solid var(--border-color);
+  /* Añadir order para asegurar que el título va primero en cada columna si reestructuras más el HTML */
+  /* order: -1; */ 
+}
+
+
+#tooltip .tooltip-box {
+  padding: 8px !important; 
+  min-width: 0; /* Permitir que las cajas se encojan */
+  /* No necesitan flex: 1 aquí si .tooltip-row (ahora columna) es column flex */
+}
+
+/* Ajustes de fuente y padding para el contenido DENTRO de las cajas en MÓVIL */
+#tooltip .tooltip-box h5 {
+  font-size: 1.05em !important; 
+  margin-bottom: 5px !important;
+}
+
+#tooltip .tooltip-box p {
+  font-size: 0.95em !important; 
+  line-height: 1.25 !important;
+  margin-bottom: 5px !important;
+}
+#tooltip .tooltip-box p:last-of-type {
+    margin-bottom: 8px !important;
+}
+
+#tooltip .example-prompt {
+    font-size: 0.85em !important; 
+    margin-bottom: 4px !important;
+}
+
+#tooltip .typing-animation {
+    font-size: 0.9em !important; 
+    padding: 3px 5px !important;
+    min-height: 1.1em !important;
+}
+#tooltip .typing-cursor {
+    height: 0.9em !important;
+    width: 5px !important;
+}
+#tooltip #close-tooltip-btn {
+    font-size: 0.9em !important;
+    padding: 6px 10px !important;
+    margin-top: 10px !important;
+}
   #tooltip .tooltip-box {
     width: 100% !important;
     margin: 0 0 12px 0 !important;
-    padding: 10px !important;
+    padding: 2px !important;
+	box-sizing: border-box !important;
+	margin-bottom: 0 !important;
   }
 }
-@media (max-width: 600px) {
-  /* Contenedor principal del Tooltip */
-  #tooltip.tooltip-popup {
-    position: fixed !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    width: 85vw !important; /* Más ancho para mejor legibilidad en móvil */
-    max-width: none !important;
-    height: auto !important; /* Altura automática basada en contenido */
-    max-height: 80vh !important; /* Límite de altura para evitar que ocupe toda la pantalla */
-    overflow-y: auto !important;
-    box-sizing: border-box !important;
-    padding: 15px !important; /* Un poco más de padding */
-    font-size: 0.9em !important; /* Reducir tamaño de fuente base del tooltip */
-    background-color: rgba(26, 42, 26, 0.95) !important; /* Fondo un poco más opaco */
-  }
-
-  /* Filas dentro del Tooltip */
-  #tooltip .tooltip-row {
-    flex-direction: column !important;
-    gap: 12px !important; /* Espacio entre cajas en la columna */
-    margin-bottom: 0 !important; /* Quitar margen inferior si solo hay una columna */
-  }
-
-  /* Cajas individuales dentro del Tooltip */
-  #tooltip .tooltip-box {
-    width: 100% !important; /* Cada caja ocupa el ancho completo del tooltip */
-    margin: 0 0 12px 0 !important;
-    padding: 12px !important; /* Ajustar padding interno de las cajas */
-    box-sizing: border-box !important;
-  }
-  #tooltip .tooltip-box:last-child {
-    margin-bottom: 0 !important; /* No margen inferior para la última caja */
-  }
-
-  /* Títulos dentro de cada caja del Tooltip */
   #tooltip .tooltip-box h5 {
     font-size: 1.1em !important; /* Ajustar tamaño del título */
     margin-bottom: 8px !important;
-    padding-bottom: 6px !important;
+    padding-bottom: 2px !important;
   }
 
   /* Párrafos dentro de cada caja del Tooltip */
   #tooltip .tooltip-box p {
     font-size: 0.9em !important; /* Ajustar tamaño del texto */
-    line-height: 1.5 !important;
-    margin-bottom: 8px !important;
+    line-height: 1.35 !important;
+    margin-bottom: 2px !important;
   }
   #tooltip .tooltip-box p:last-of-type {
-    margin-bottom: 10px !important;
+    margin-bottom: 2px !important;
   }
 
   /* Contenido de ejemplo (prompt y animación) */
   #tooltip .example-prompt {
     font-size: 0.85em !important;
-    margin-bottom: 6px !important;
+    margin-bottom: 2px !important;
   }
 
   #tooltip .typing-animation {
@@ -1426,8 +1587,13 @@ button:active {
   /* Cursor de la animación de tipeo */
   #tooltip .typing-cursor {
     height: 1em !important; /* Ajustar altura del cursor */
-    width: 7px !important;
+    width: 6px !important;
   }
+  #tooltip #close-tooltip-btn {
+    font-size: 1em !important; /* Relativo al font-size del tooltip */
+    padding: 8px 12px !important;
+    margin-top: 10px !important;
+ }
 }
 
  @keyframes electric-spark {
@@ -1639,31 +1805,21 @@ body.game-active, html.game-active {
   color: var(--title-color);
   font-size: 1.1em;
 }
-.select-all-button {
-  background: linear-gradient(45deg, #ff6ec4, #7873f5);
-  color: white;
-  border: none;
-  padding: 4px 8px;
-  cursor: pointer;
-  font-family: var(--font-pixel);
-  font-size: 0.9em;
-}
 
-/* Reusa tu grid existente para #tense-buttons */
 
-/* Opcional: cerrar panel al hacer clic fuera */
 body.dropdown-open .dropdown-menu {
   display: block;
 }
 .filter-bar {
   display: flex;
   align-items: center;
-  gap: 12px;           /* separación entre dropdowns */
+  justify-content: center; 
+  gap: 12px;
   margin-bottom: 16px;
 }
-/* Pronoun group buttons: estado normal */
+
 .pronoun-group-button {
-  background-color: #444;           /* mismo gris oscuro que tus menus */
+  background-color: #444;          
   color: white;
   border: 1px solid var(--border-color);
   padding: 8px 12px;
@@ -1675,26 +1831,29 @@ body.dropdown-open .dropdown-menu {
   transition: background-color 0.2s, opacity 0.2s;
 }
 
-/* Pronoun group buttons: estado “selected” */
+
 .pronoun-group-button.selected {
-  background-color: #1976d2;        /* un azul vivo, o tu --accent-color */
+  background-color: #1976d2;        
   opacity: 1;
+  
 }
 #verb-dropdown-menu #verb-buttons .verb-button {
-  background: #444;               /* gris oscuro */
   color: white;
   border: 1px solid var(--border-color);
   padding: 8px 12px;
   margin-bottom: 6px;
   width: 100%;
   text-align: left;
-  opacity: 0.5;                   /* semi-transparente si NO está .selected */
+  opacity: 0.6;                 
   cursor: pointer;
-  transition: background 0.2s, opacity 0.2s;
+  transition: background-color 0.2s, background-image 0.2s, border-color 0.2s, opacity 0.2s, transform 0.1s ease;
+  border-radius: 6px; /* Añadido de tus estilos posteriores para consistencia */
+  display: flex;      /* Añadido de tus estilos posteriores */
+  align-items: center;/* Añadido de tus estilos posteriores */
+  font-size: 0.85rem; /* Tomado de .verb-buttons-list .verb-button */
 }
 
-#verb-dropdown-menu #verb-buttons .verb-button.selected {
-  background: #1976d2;            /* azul acento cuando SÍ tiene .selected */
+#verb-dropdown-menu #verb-buttons .verb-button.selected {    
   opacity: 1;
 }
 
@@ -1707,8 +1866,10 @@ body.dropdown-open .dropdown-menu {
 }
 #verb-dropdown-menu .dropdown-header {
   display: flex;
+  align-items: stretch;
+  gap: 8px;
+  margin-bottom: 10px;
   justify-content: space-between;
-  margin-bottom: 4px;
 }
 .select-all-button,
 .select-groups-button {
@@ -1737,13 +1898,41 @@ body.dropdown-open .dropdown-menu {
 .search-container {
   padding: 4px 0;
 }
+/* Para el botón "Seleccionar/Deseleccionar Todos los Tiempos" */
+#select-all-tenses {
+    display: block; /* Hace que el botón ocupe toda la línea */
+    width: 100%;    /* Asegura que se extienda a todo el ancho disponible */
+    box-sizing: border-box; /* Para que el padding y borde no añadan al ancho total */
+    margin-bottom: 10px; /* Espacio entre este botón y los botones de tiempo individuales debajo */
+    /* Puedes ajustar el padding o text-align si es necesario,
+       por ejemplo, si quieres el texto centrado:
+       text-align: center;
+    */
+}
+
+/* Para el botón "Seleccionar/Deseleccionar Todos los Pronombres" */
+#select-all-pronouns {
+    display: block; /* Hace que el botón ocupe toda la línea */
+    width: 100%;    /* Asegura que se extienda a todo el ancho disponible */
+    box-sizing: border-box; /* Para que el padding y borde no añadan al ancho total */
+    margin-bottom: 10px; /* Espacio entre este botón y los botones de pronombres individuales debajo */
+    /* Puedes ajustar el padding o text-align si es necesario:
+       text-align: center;
+    */
+}
 #verb-search {
-  width: 100%;
-  padding: 4px 6px;
-  font-size: 0.85rem;
-  border: 1px solid var(--border-color);
-  background: var(--bg-dark-light);
-  color: var(--fg);
+    background-color: #ffffff; /* Fondo blanco */
+    color: #333333;           /* Texto oscuro (gris oscuro) */
+    border: 1px solid #cccccc; /* Borde estándar gris claro */
+    padding: 8px 10px;         /* Un poco de padding interno */
+    border-radius: 5px;      /* Bordes ligeramente redondeados */
+    box-sizing: border-box;  /* Asegura que el padding y borde no aumenten el tamaño total */
+    width: 100%;             /* Ocupa el ancho disponible en su contenedor */
+    margin-bottom: 10px;     /* Espacio debajo, si es necesario */
+}
+#verb-search::placeholder {
+    color: #999999; /* Color del placeholder un poco más claro */
+    opacity: 1; /* Para asegurar visibilidad en todos los navegadores */
 }
 .verb-buttons-list {
   overflow-y: auto;
@@ -1762,35 +1951,62 @@ body.dropdown-open .dropdown-menu {
   border-radius: 4;
   height: 30px; 
 }
-.verb-buttons-list .verb-button .tick {
-  display: inline-block;
-  width: 16px; height: 16px;
-  margin-right: 8px;
-  border: 1px solid var(--border-color);
-  background: var(--bg-dark);
+
+#verb-buttons .verb-button .tick {
+  display: inline-flex;   /* Para centrar la marca ✓ con flexbox */
+  align-items: center;
+  justify-content: center;
+  
+  width: 1em;             /* Tamaño de la caja del tick, relativo al font-size del botón */
+  height: 1em;
+  
+  background-color: rgba(0, 0, 0, 0.2); /* Fondo oscuro sutil para la caja vacía */
+  border: 1px solid var(--text-color-light, white); /* Borde blanco/claro para que se vea el cuadrado */
+  border-radius: 3px;
+  
+  margin-right: 0.7em;    /* Espacio a la derecha del tick */
+  flex-shrink: 0;         /* Evita que la caja se encoja */
+  
+  /* Asegurarse de que el contenido del pseudo-elemento ::before sea el que aparezca */
+  color: transparent; /* Oculta cualquier texto que pudiera haber en el span.tick directamente */
+  overflow: hidden;   /* Para asegurar que el ::before no se salga si es muy grande */
 }
-.verb-buttons-list .verb-button.selected .tick {
-  background: var(--accent);
-  mask: url('icons/check.svg') center/contain no-repeat;
+
+/* 2. La marca de verificación (✓) que aparece DENTRO del .tick cuando .verb-button tiene .selected */
+#verb-buttons .verb-button.selected .tick::before {
+  content: '✔';         /* Carácter Unicode para la marca (✔). Puedes usar '\\2713' para ✓ */
+  color: var(--text-color-light, white); /* Color de la marca ✓. Debe contrastar con el fondo del .tick */
+  font-size: 0.8em;          /* Tamaño de la marca ✓, un poco más pequeña que la caja .tick */
+  font-weight: bold;
+  line-height: 1;            /* Para ayudar a centrarla verticalmente */
+  font-family: sans-serif;   /* Usar una fuente genérica para asegurar buena visualización del checkmark */
+}
+
+/* 3. Estilo de la cajita .tick cuando el verbo está seleccionado */
+#verb-buttons .verb-button.selected .tick {
+  background-color: transparent; /* Hacemos el fondo de la caja transparente */
+                                 /* El color de fondo será el del botón padre (.verb-button-ar, etc.) */
+  border-color: transparent;     /* También hacemos el borde de la caja transparente */
+                                 /* De esta forma, solo se verá la marca ✓ blanca sobre el color del botón */
+  /* Si prefieres que la caja del tick tenga su propio color de fondo cuando está seleccionada: */
+  /* background-color: var(--accent-color-green, #4CAF50); */ /* Ejemplo: fondo verde */
+  /* border-color: var(--accent-color-green-dark, #388E3C); */ /* Ejemplo: borde verde oscuro */
 }
 .verb-buttons-list .verb-button:hover {
   background: var(--bg-dark-light);
 }
 
 .glitch-title .letter.big-letter {
-  font-size: 1.4em;     /* ajusta a tu gusto */
-  line-height: 1;       /* no rompe la caja de línea */
-  /* mantén tu look pixelado */
+  font-size: 1.4em;     
+  line-height: 1;       
   -webkit-font-smoothing: none;
   -moz-osx-font-smoothing: grayscale;
   image-rendering: pixelated;
 }
-/* ——————————————
-   CIUDAD: parte de abajo y sube
-—————————————— */
+
 .header-city {
   position: absolute;
-  bottom: -5px;              /* posición final */
+  bottom: -5px;              
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
@@ -1798,13 +2014,11 @@ body.dropdown-open .dropdown-menu {
   z-index: 0;
   pointer-events: none;
 }
-/* ——————————————
-   PERSONAJE: parte de la derecha y entra
-—————————————— */
+
 .header-char {
   position: absolute;
-  bottom: -10px;        /* mismo “perfecto” que ya tenías */
-  right: -200px;        /* inicial OFF-SCREEN, igual que tu keyframe `from` */
+  bottom: -10px;        
+  right: -200px;        
   transform: scale(0.15);
   transform-origin: bottom right;
   width: auto;
@@ -1885,7 +2099,7 @@ body.dropdown-open .dropdown-menu {
 
 /* 7) “-er” — azul */
 .group-button[data-group="er"].active {
-  background: #2196f3;
+  background: #1976d2;
   box-shadow: 0 0 6px rgba(33,150,243,0.6);
 }
 
@@ -1896,17 +2110,27 @@ body.dropdown-open .dropdown-menu {
 }
 #verb-dropdown-menu,
 #verb-buttons {
+  max-height: 600px; /* O un valor que deje espacio para el groups-panel y search */
   overflow-x: hidden;      /* no permitimos desplazamiento horizontal */
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
 }
 
 /* Ajusta anchura si sigue cambiando: */
 #verb-dropdown-menu {
-  width: 250px;            /* ajústalo a tu gusto para que no desborde */
+  width: 210px;            /* ajústalo a tu gusto para que no desborde */
 }
 
 /* ── 2) Redondear esquinas de los verb-buttons ── */
 .verb-button {
-  border-radius: 6px;      /* prueba 4px, 6px o más según prefieras */
+  display: flex;           
+  align-items: center;     
+  border-radius: 6px;    
+  padding: 4px 8px;       
+  font-size: 0.9rem;
+  color: var(--text-color-light, white); /* Texto claro si los fondos son oscuros */
+  border: 1px solid transparent; /* Borde base, se puede sobreescribir */
+  transition: background-color 0.2s ease, background-image 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
 }
 
 /* Si quieres redondear también el dropdown en su conjunto: */
@@ -1920,33 +2144,656 @@ body.dropdown-open .dropdown-menu {
   padding: 4px 8px;        /* menos padding horizontal para que no desborde */
   font-size: 0.85rem;      /* también más compacto si lo deseas */
 }
-/* 1) La cajita en reposo */
-.verb-button .tick {
-  flex: 0 0 auto;          /* evita que el tick cambie de tamaño */
-  display: inline-block;
-  width: 1em;
-  height: 1em;
-  border: 2px solid #555;
-  border-radius: 3px;
-  margin-right: 0.6em;
-  box-sizing: border-box;
-}
 
-/* 2) Cuando está seleccionado: fondo + símbolo */
-.verb-button.selected .tick {
-  background-color: #4caf50;
-  border-color: #4caf50;
+.verb-button .tick {
+  display: inline-flex;   /* Para alinear y centrar el contenido (la marca ✓) */
+  align-items: center;    /* Centrado vertical del ✓ */
+  justify-content: center;/* Centrado horizontal del ✓ */
+
+  width: 1.1em;           
+  height: 1.1em;          
+
+  border: 1px solid var(--border-color, #555); /* Borde de la cajita */
+  background-color: rgba(0,0,0,0.2); /* Un fondo sutil para la cajita vacía */
+  border-radius: 3px;     /* Bordes ligeramente redondeados para la cajita */
+
+  margin-right: 0.6em;    /* Espacio entre la cajita y el texto del verbo */
+  color: transparent;     /* Por si acaso, para ocultar cualquier contenido de texto directo */
+
+  flex-shrink: 0;         /* Evita que la cajita se encoja si el texto del verbo es largo */
+  transition: background-color 0.2s, border-color 0.2s; /* Transición suave */
 }
 .verb-button.selected .tick::before {
-  content: '👌';
-  display: block;
-  color: white;
-  font-size: 0.8em;
-  line-height: 1em;
-  text-align: center;
+  content: '\\2714';         /* Carácter Unicode para la marca de verificación (✔) */
+                             /* Puedes probar también con '\\2713' (✓) si prefieres otro estilo de tick */
+  color: white;              
+                             /* Si algunos fondos de botón son muy claros, podrías necesitar un color oscuro. */
+  font-size: 0.85em;         /* Tamaño de la marca ✓ dentro de su cajita */
+  line-height: 1;            /* Ayuda a centrarla si es necesario */
+  font-weight: bold;         /* Para que la marca sea más visible */
+}
+.verb-button.selected .tick {
+  background-color: var(--accent-color-green, #4CAF50); /* Ejemplo: Fondo verde para la cajita del tick seleccionado */
+  border-color: var(--accent-color-green, #388E3C);     /* Borde verde más oscuro */
+}
+/* Verbos -AR (Verde) */
+.verb-button-ar {
+    background-color: var(--accent-color-green, #4CAF50);
+    border-color: #388E3C; /* Un verde un poco más oscuro para el borde */
+}
+.verb-button-ar:hover {
+    background-color: #5cb85c; /* Un verde más claro para hover */
+    border-color: #4CAF50;
+}
+
+/* Verbos -ER (Azul - como están ahora) */
+.verb-button-er {
+    background-color: #2196F3;
+    border-color: #1976D2; /* Un azul un poco más oscuro para el borde */
+}
+.verb-button-er:hover {
+    background-color: #64B5F6; /* Un azul más claro para hover */
+    border-color: #2196F3;
+}
+
+/* Verbos -IR (Morado) */
+.verb-button-ir {
+    background-color: var(--accent-color-purple, #673AB7);
+    border-color: #512DA8; /* Un morado un poco más oscuro para el borde */
+}
+.verb-button-ir:hover {
+    background-color: #7E57C2; /* Un morado más claro para hover */
+    border-color: #673AB7;
+}
+
+/* Verbos Reflexivos (-SE) (Degradado Rosa-Lila) */
+.verb-button-reflexive {
+    background-image: linear-gradient(to right, var(--accent-color-purple, #673AB7), var(--accent-color-pink, #E91E63));
+    border: 1px solid var(--accent-color-pink, #E91E63); /* Borde basado en uno de los colores del degradado */
+}
+.verb-button-reflexive:hover {
+    /* Para el hover en degradados, a veces es más fácil oscurecerlo un poco o cambiar la intensidad */
+    /* Podrías usar box-shadow o un ligero cambio en la opacidad o un degradado ligeramente diferente */
+    background-image: linear-gradient(to right, #7E57C2, #EC407A); /* Versión ligeramente más clara/brillante */
+    border-color: #EC407A;
+}
+.verb-button:active {
+    transform: translateY(1px);
+}
+.verb-button-ar:active { background-color: #388E3C; }
+.verb-button-er:active { background-color: #1976D2; }
+.verb-button-ir:active { background-color: #512DA8; }
+.verb-button-reflexive:active {
+    background-image: linear-gradient(to right, #512DA8, #C2185B); /* Versión más oscura */
 }
 
 /* 3) Ajuste de la etiqueta para que no se descuelgue */
 .verb-button .label {
   flex: 1 1 auto;
+  overflow: hidden;
+  
+}
+
+.search-no-results {
+  padding: 10px;
+  text-align: center;
+  color: #aaa; /* Un color un poco apagado */
+  font-style: italic;
+  font-size: 0.9em;
+}
+
+#pronoun-buttons .pronoun-group-button {
+  font-family: var(--font-pixel);
+  font-size: 0.95rem;     
+  padding: 5px 8px;      
+  margin: 3px;            
+  width: auto;            
+  display: inline-block;  
+  text-align: center;
+  min-height: auto;  
+  flex-direction: row;
+  box-shadow: 1px 1px 0px rgba(0,0,0,0.2);
+}
+
+#pronoun-buttons.verb-type-selector {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); 
+  gap: 5px; 
+}
+#verb-groups-panel .group-button[data-group="reflexive"] {
+    flex-basis: 100%; 
+}
+.select-all-button {
+    background-color: #FFC107;  /* Amarillo ámbar (Material Design) - ¡REEMPLAZA SI ENCUENTRAS EL TUYO! */
+    color: #212529;              /* Texto oscuro para buen contraste */
+    border: 1px solid #FFA000;   /* Borde ámbar más oscuro - ¡REEMPLAZA SI ENCUENTRAS EL TUYO! */
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-weight: 500;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, transform 0.1s ease;
+
+    /* Estilos para que ocupe toda la línea */
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 10px; 
+}
+
+.select-all-button:hover {
+    background-color: #FFCA28;  /* Un poco más claro para hover - ¡AJUSTA SEGÚN TU COLOR BASE! */
+    border-color: #FFB300;       /* ¡AJUSTA SEGÚN TU COLOR BASE! */
+}
+
+.select-all-button:active {
+    background-color: #FFA000;  /* Un poco más oscuro para active - ¡AJUSTA SEGÚN TU COLOR BASE! */
+    transform: translateY(1px);
+}
+.select-groups-button { /* O #verb-groups-button si prefieres más especificidad */
+    /* Mantén o define su color de fondo y texto distintivo si ya lo tiene. Ejemplo: */
+    background-color: #D32F2F; /* Un rojo estándar, ajústalo al tuyo si es diferente */
+    color: white;
+    border: 1px solid #B71C1C; /* Un borde rojo más oscuro */
+
+    /* Propiedades para igualar la forma y tamaño con .select-all-button */
+    padding: 8px 12px;         /* IGUALA este padding al de .select-all-button */
+    border-radius: 5px;        /* IGUALA este border-radius al de .select-all-button */
+    font-weight: 500;          /* IGUALA este font-weight si quieres la misma "grosura" de texto */
+
+    /* Otras propiedades comunes de botón */
+    text-align: center;
+    cursor: pointer;
+    line-height: normal;       /* Ayuda a alinear el texto verticalmente de forma consistente */
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
+    vertical-align: middle;    /* Puede ayudar si están en línea y tienen alturas ligeramente diferentes */
+}
+
+.select-groups-button:hover {
+    background-color: #E53935; /* Un rojo un poco más claro para el hover */
+    border-color: #C62828;
+}
+
+.select-groups-button:active {
+    background-color: #B71C1C; /* Rojo más oscuro para el estado activo/clic */
+    transform: translateY(1px);
+}
+/* Para todas las barras de scroll (principal de la página y de elementos internos) */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+.dropdown-menu::-webkit-scrollbar,
+#verb-buttons::-webkit-scrollbar,
+#tense-buttons::-webkit-scrollbar,
+#pronoun-buttons::-webkit-scrollbar,
+#tooltip::-webkit-scrollbar { /* Añade otros selectores de elementos con scroll si es necesario */
+    width: 10px;  /* Ancho de la barra de scroll vertical */
+    height: 10px; /* Altura de la barra de scroll horizontal (si la hay) */
+}
+
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track,
+.dropdown-menu::-webkit-scrollbar-track,
+#verb-buttons::-webkit-scrollbar-track,
+#tense-buttons::-webkit-scrollbar-track,
+#pronoun-buttons::-webkit-scrollbar-track,
+#tooltip::-webkit-scrollbar-track {
+    background: var(--container-bg, #2a3a2a); /* Color del riel (la base de la barra) */
+    border-radius: 0; /* Esquinas cuadradas para un look más retro/pixelado */
+}
+
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb,
+.dropdown-menu::-webkit-scrollbar-thumb,
+#verb-buttons::-webkit-scrollbar-thumb,
+#tense-buttons::-webkit-scrollbar-thumb,
+#pronoun-buttons::-webkit-scrollbar-thumb,
+#tooltip::-webkit-scrollbar-thumb {
+    background-color: var(--accent-color-green, #4CAF50); /* Color del pulgar (la parte móvil) */
+    border-radius: 0; /* Esquinas cuadradas */
+    border: 1px solid var(--bg-color, #1a2a1a); /* Un borde sutil alrededor del pulgar */
+}
+
+html::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover,
+.dropdown-menu::-webkit-scrollbar-thumb:hover,
+#verb-buttons::-webkit-scrollbar-thumb:hover,
+#tense-buttons::-webkit-scrollbar-thumb:hover,
+#pronoun-buttons::-webkit-scrollbar-thumb:hover,
+#tooltip::-webkit-scrollbar-thumb:hover {
+    background-color: #5cb85c; /* Un verde un poco más claro al pasar el ratón */
+}
+
+/* Estilos de la barra de scroll para Firefox */
+html, 
+body, 
+.dropdown-menu, 
+#verb-buttons, 
+#tense-buttons, 
+#pronoun-buttons, 
+#tooltip { /* Aplica a los elementos que puedan tener scroll */
+    scrollbar-width: thin; /* Opciones: 'auto', 'thin', 'none' */
+    scrollbar-color: var(--accent-color-green, #4CAF50) var(--container-bg, #2a3a2a); /* color del pulgar, color del riel */
+}
+/* --- Nuevo Modal Específico --- */
+.specific-modal-backdrop {
+  display: none; /* Oculto por defecto */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8); /* Más oscuro, 80% opacidad */
+  z-index: 1050; /* Encima del backdrop del tooltip general si ambos estuvieran activos */
+}
+
+.specific-modal {
+  display: none; /* Oculto por defecto */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 85vw; /* Más ancho */
+  max-width: 700px; /* Un máximo razonable */
+  height: 75vh; /* Más alto */
+  max-height: 600px; /* Un máximo razonable */
+  background-color: var(--container-bg);
+  color: var(--text-color);
+  border: 2px solid var(--accent-color-blue);
+  border-radius: 8px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+  z-index: 1051; /* Encima de su propio backdrop */
+  padding: 20px; /* Padding uniforme en top, left, right */
+  padding-bottom: 60px;
+  box-sizing: border-box;
+  display: flex; /* Para organizar el contenido y el botón de cerrar */
+  flex-direction: column;
+}
+
+.specific-modal-content {
+  flex-grow: 1; /* Hace que esta área ocupe el espacio disponible */
+  overflow-y: auto; /* Scroll si el contenido excede la altura */
+  padding-right: 15px; /* Espacio para la barra de scroll, si aparece */
+  font-size: 1.1em;
+  line-height: 1.4;
+  font-size: 0.9em;
+}
+
+.specific-modal-close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  color: var(--text-color);
+  font-size: 2.5em; /* Más grande */
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+}
+.specific-modal-close-btn:hover {
+  color: var(--accent-color-red);
+}
+
+.context-info-icon {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 20px;
+  height: 20px;
+  background-image: url('images/iconquestion.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: help;
+  user-select: none;
+  z-index: 2;
+  filter: drop-shadow(1px 1px 0px rgba(0, 0, 0, 0.5)); /* Sombra sutil */
+  transition: transform 0.3s ease-out, filter 0.2s ease-out; /* Transición para filter también */
+  text-shadow: none !important;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: grayscale;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges; /* Para Firefox */
+  image-rendering: crisp-edges;    /* Estándar */
+}
+
+.context-info-icon:hover {
+  animation: spinAndFloat 1.2s ease-in-out infinite;
+
+   filter: brightness(1.5) drop-shadow(1px 1px 1px rgba(0,0,0,0.4)); */
+}
+
+/* La animación @keyframes spinAndFloat se mantiene igual */
+@keyframes spinAndFloat {
+  0% {
+    transform: translateY(0) rotate(0deg) scale(1.1);
+  }
+  25% {
+    transform: translateY(-2px) rotate(90deg) scale(1.15);
+  }
+  50% {
+    transform: translateY(0) rotate(180deg) scale(1.1);
+  }
+  75% {
+    transform: translateY(-2px) rotate(270deg) scale(1.15);
+  }
+  100% {
+    transform: translateY(0) rotate(360deg) scale(1.1);
+  }
+}
+.difficulty-easy { color: #81C784; font-weight: bold; }
+.difficulty-normal { color: #FFB74D; font-weight: bold; }
+.difficulty-hard { color: #E57373; font-weight: bold; }
+.emphasis-mechanic { color: #FF80AB; font-weight: bold; } /* Rosa */
+.tense-example { color: #90CAF9; font-style: italic; } /* Azul claro */
+.points-value { color: #FFF176; font-weight: bold; } /* Amarillo */
+.text-red { color: #E57373; }
+.text-green { color: #81C784; }
+.modal-subtitle { /* Nueva clase para subtítulos como "Goal:", "Time Mechanics:" */
+  color: var(--title-color, #f0f0f0); /* Usa tu variable de color de texto o un blanco roto */
+  display: block; 
+  margin-top: 8px;
+  margin-bottom: 2px; /* Menos espacio después del subtítulo */
+  font-weight: bold;
+  font-size: 1.05em; /* Ligeramente más grande que el texto normal del modal */
+}
+.example-prompt-text {
+    font-style: italic;
+    color: #ccc;
+    font-size: 0.9em; /* Relativo al font-size del modal-content */
+    display: block; 
+    margin-bottom: 4px;
+}
+body.is-loading #specific-info-modal,
+body.is-loading .specific-modal-backdrop,
+body.is-loading #tooltip,
+body.is-loading .modal-backdrop:not(.specific-modal-backdrop) { /* :not para no afectar el backdrop del modal específico si se usa el mismo nombre de clase general */
+  display: none !important;
+}
+/* --- Nueva Pantalla de Configuración --- */
+#config-flow-screen {
+    display: flex; /* Para el layout 60/40 */
+    /* display: none; /* Asegúrate que esté oculto si se muestra el splash primero */
+    /* width: 100%; Ya lo gestiona .screen */
+    /* max-width: 1000px; /* O el ancho que prefieras */
+    /* margin: 20px auto; */
+}
+
+.config-main-panel {
+    width: 60%;
+    padding: 20px;
+    box-sizing: border-box;
+    /* Podrías añadir un borde derecho si quieres separación visual */
+     border-right: 1px solid var(--border-color); */
+}
+
+.config-info-panel {
+    width: 40%;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: rgba(0,0,0,0.1); /* Un fondo ligeramente diferente */
+    /*height: calc(100vh - 40px); /* Ajusta según tu padding/margin de body */
+	max-height: 50vh;
+    overflow-y: auto;
+}
+.config-info-panel #info-panel-content p { /* Selector más específico */
+    line-height: 1.5; /* Un interlineado ligeramente menor si lo deseas */
+    font-size: 0.9em; /* Texto un poco más pequeño (ajusta a tu gusto) */
+    text-align: left; /* Alineación a la izquierda */
+    margin-bottom: 8px; /* Espacio entre párrafos */
+}
+
+#info-panel-title {
+    margin-top: 0;
+    color: var(--title-color);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+.config-info-panel #info-panel-content h2,
+.config-info-panel #info-panel-content h3,
+.config-info-panel #info-panel-content .modal-subtitle { /* Si usas modal-subtitle aquí */
+    text-align: left; /* Alinear también los títulos si es necesario */
+	font-size: 0.9em;
+}
+.config-info-panel #info-panel-content li {
+    font-size: 1em; /* Relativo al 0.85em */
+    text-align: left;
+    margin-bottom: 4px;
+}
+.config-step {
+    display: none; /* Ocultos por defecto */
+    animation: fadeInStep 0.5s ease-in-out;
+}
+
+.config-step.active-step {
+    display: block;
+}
+
+@keyframes fadeInStep {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Estilos para botones dentro del nuevo flujo --- */
+.config-flow-button {
+    background-color: #555 !important; /* GRIS OSCURO POR DEFECTO */
+    color: var(--text-color) !important;
+    border: 1px solid #444 !important;
+    /* Asegúrate que otros estilos base como padding, margin, text-align estén aquí o heredados */
+    display: block; 
+    width: 100%; /* Por defecto, para los de modo. Se ajustará para los de dificultad. */
+    margin-bottom: 10px;
+    padding: 12px;
+    text-align: center;
+    animation: none !important; /* Quitar cualquier animación de pulse-border por defecto */
+    box-shadow: 2px 2px 0px rgba(0,0,0,0.4); /* Sombra base */
+    transition: background-color 0.2s, box-shadow 0.2s, transform 0.1s;
+}
+.config-flow-button:hover {
+    background-color: #666 !important; /* GRIS MÁS CLARO EN HOVER */
+    box-shadow: 1px 1px 0px rgba(0,0,0,0.4);
+    transform: translate(1px, 1px);
+}
+.config-flow-button:active {
+    box-shadow: none !important;
+    transform: translate(2px, 2px) !important;
+}
+.config-flow-button.provisional-selection {
+    animation: pulse-border 1s infinite;
+    /* background-color: #555; /* Color de preselección */
+}
+.config-flow-button.confirmed-selection {
+    background-color: #2a5a2a !important; 
+    color: #ccc !important;
+    border: 2px solid lightgreen !important;
+    display: block !important; /* ASEGURA que el botón confirmado sea visible */
+    pointer-events: auto; /* Permite hacer clic si quieres esa funcionalidad */
+}
+.config-flow-button:not(.confirmed-selection):not(.provisional-selection):hover {
+     /* Estilo hover normal */
+}
+/* 2. ESTADO DE SELECCIÓN PROVISIONAL (COLORES "CHULOS") */
+
+/* --- Botones de MODO DE JUEGO en estado provisional --- */
+.config-flow-button[data-infokey="infiniteMode"].provisional-selection {
+    background-color: #e68a00 !important; /* Naranja para Infinite */
+    border-color: #c07000 !important;
+    color: white !important;
+}
+.config-flow-button[data-infokey="infiniteMode"].provisional-selection:hover {
+    background-color: #ff9800 !important; /* Naranja más claro */
+}
+
+.config-flow-button[data-infokey="timerMode"].provisional-selection {
+    background-color: #ee3c30 !important; /* Rojo para Timer */
+    border-color: #c72e21 !important;
+    color: white !important;
+}
+.config-flow-button[data-infokey="timerMode"].provisional-selection:hover {
+    background-color: #fd4b3f !important; /* Rojo más claro */
+}
+
+.config-flow-button[data-infokey="livesMode"].provisional-selection {
+    background-color: #0b5ac8 !important; /* Azul para Lives */
+    border-color: #094aa0 !important;
+    color: white !important;
+}
+.config-flow-button[data-infokey="livesMode"].provisional-selection:hover {
+    background-color: #0d6efd !important; /* Azul más claro */
+}
+
+/* --- Botones de DIFICULTAD en estado provisional --- */
+.config-flow-button[data-infokey="receptiveConfig"].provisional-selection { /* Recall */
+    background-color: #dc3545 !important; /* Rojo */
+    border-color: #b02a37 !important;
+    color: white !important;
+}
+.config-flow-button[data-infokey="receptiveConfig"].provisional-selection:hover {
+    background-color: #c82333 !important; 
+}
+
+.config-flow-button[data-infokey="productiveEasyConfig"].provisional-selection { /* Conjugate */
+    background-color: #6f42c1 !important; /* Morado */
+    border-color: #5a32a3 !important;
+    color: white !important;
+}
+.config-flow-button[data-infokey="productiveEasyConfig"].provisional-selection:hover {
+    background-color: #8358cf !important; 
+}
+
+.config-flow-button[data-infokey="productiveConfig"].provisional-selection { /* Produce */
+    background-color: #28a745 !important; /* Verde */
+    border-color: #1e7e34 !important;
+    color: white !important;
+}
+.config-flow-button[data-infokey="productiveConfig"].provisional-selection:hover {
+    background-color: #218838 !important; 
+}
+
+/* General para provisional-selection si no tiene animación específica */
+.config-flow-button.provisional-selection {
+    animation: none !important; /* Anula el pulse-border si lo tenías */
+}
+
+.confirm-button, .start-button, #back-button {
+    display: block;
+    width: 80%;
+    margin: 20px auto;
+    padding: 15px;
+    font-size: 1.2em;
+    /* ... otros estilos de tus botones principales ... */
+}
+#final-start-game-button:disabled {
+    background-color: #555;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+
+/* Splash Step */
+#splash-step {
+    text-align: center;
+    padding-top: 50px; /* Más espacio arriba */
+}
+#splash-step h2 {
+    font-size: 2.5em; /* Más grande */
+    color: var(--accent-color-blue);
+    margin-bottom: 20px;
+}
+#press-key-text, #initial-start-button {
+    font-size: 1.5em;
+    color: var(--text-color);
+    margin-top: 30px;
+}
+#press-key-text {
+     animation: blink-text 1.5s infinite;
+}
+@keyframes blink-text {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+@keyframes pulse-border {
+    0% { box-shadow: 0 0 5px rgba(255, 255, 100, 0.5); }
+    50% { box-shadow: 0 0 15px rgba(255, 255, 100, 1); }
+    100% { box-shadow: 0 0 5px rgba(255, 255, 100, 0.5); }
+}
+/* Ajustes para móvil si es necesario para el nuevo layout */
+@media (max-width: 768px) {
+    #config-flow-screen {
+        flex-direction: column;
+    }
+    .config-main-panel, .config-info-panel {
+        width: 100%;
+        height: auto; /* El panel de info ya no necesita altura fija */
+        border-right: none;
+    }
+    .config-info-panel {
+        max-height: 300px; /* O una altura que te parezca adecuada para móvil */
+        overflow-y: auto;
+        margin-top: 15px;
+    }
+}
+.config-flow-button.confirmed-selection {
+    background-color: #2a5a2a !important; /* Tono verdoso fijo */
+    color: #ccc !important;
+    border: 2px solid lightgreen !important; /* Borde para destacar */
+    opacity: 1 !important;
+    /* pointer-events: none;  // Considera quitar esto si quieres que sea clickeable para volver */
+    display: block !important; /* Asegurar que sea visible */
+}
+.config-step.step-section-completed .config-flow-button:not(.confirmed-selection) {
+    display: none !important; /* Oculta los otros botones */
+}
+
+/* Estilo para el contenedor del paso completado */
+.config-step.step-section-completed {
+    padding-bottom: 15px; /* Menos espacio si solo muestra una opción */
+    margin-bottom: 15px; 
+    border-bottom: 1px dashed var(--border-color); 
+}
+
+/* Ocultar el botón de "Confirmar" de un paso ya completado */
+.config-step.step-section-completed .confirm-button {
+    display: none !important;
+}
+#config-flow-screen.splash-active .config-main-panel {
+    width: 100%;
+    border-right: none;
+    max-height: 400px;  /* Ejemplo */
+    /* O podrías hacer que el splash-step tenga un padding específico */
+}
+
+#config-flow-screen.splash-active .config-info-panel {
+    display: none;
+}
+#splash-step.active-step { /* Cuando el splash es el paso activo */
+    padding-top: 20px; /* Reduce el padding superior si antes era mucho */
+    padding-bottom: 20px; /* Reduce el padding inferior */
+    /* Puedes intentar darle una altura fija o máxima al splash-step directamente */
+    /* max-height: 300px; */
+    /* overflow-y: auto; /* Si el contenido interno es más grande que la altura */
+}
+#difficulty-buttons-container {
+    display: flex;
+    justify-content: center; /* Centra los botones horizontalmente */
+    flex-wrap: wrap;         /* Permite que bajen si no caben en una línea */
+    gap: 10px;               /* Espacio entre botones */
+    margin-bottom: 15px;     /* Espacio debajo del contenedor */
+}
+#difficulty-buttons-container .config-flow-button {
+    width: auto; /* Ancho basado en el contenido y padding */
+    flex-basis: calc(33.333% - 20px); /* Intenta que quepan 3 en una línea, ajusta el "20px" según tu 'gap' */
+    min-width: 150px; /* Un ancho mínimo para que no se vean muy pequeños */
+    flex-grow: 0;     /* No crecen para llenar el espacio */
+}
+
+/* Para pantallas más pequeñas, podrías querer que vuelvan a ser de ancho completo */
+@media (max-width: 600px) { /* Ajusta este breakpoint según necesites */
+    #difficulty-buttons-container .config-flow-button {
+        flex-basis: 100%;
+        width: 100%;
+    }
 }
