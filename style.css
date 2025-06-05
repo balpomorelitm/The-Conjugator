@@ -1,4 +1,5 @@
 
+
 @font-face {
   font-family: 'PixelSerif';
   src: url('fonts/PixelSerif_16px_v02.woff2') format('woff2');
@@ -2796,4 +2797,5 @@ body.is-loading .modal-backdrop:not(.specific-modal-backdrop) { /* :not para no 
         flex-basis: 100%;
         width: 100%;
     }
+
 }
