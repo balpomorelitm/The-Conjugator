@@ -1978,9 +1978,15 @@ updateGameTitle(); // Para que muestre las vidas
   prepareNextQuestion(); 
 });
 
-	checkButton.addEventListener('click', checkAnswer);
-	skipButton.addEventListener('click', skipQuestion);
-	endButton.addEventListener('click', () => {
+        checkButton.addEventListener('click', checkAnswer);
+        skipButton.addEventListener('click', skipQuestion);
+        if (quitButton) {
+          quitButton.addEventListener('click', () => {
+            if (soundClick) soundClick.play();
+            quitToSettings();
+          });
+        }
+        endButton.addEventListener('click', () => {
 	  const name = prompt('¿Cómo te llamas?');
 	  if (name) {
 		// 1. Crear el objeto de datos para Firestore
