@@ -1014,9 +1014,13 @@ button:active {
     right: 10px;
     padding: 8px 14px;
     font-size: 24px;
-	display: none;
+        display: none;
   }
-  
+  /* Hide the volume slider on small screens */
+  #volume-slider {
+    display: none !important;
+  }
+
 }
   @media (min-width: 900px) {
   .glitch-title {

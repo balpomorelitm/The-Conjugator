@@ -476,7 +476,12 @@ function filterVerbTypes() {
 
 const musicToggle = document.getElementById('music-toggle');
 const volumeSlider = document.getElementById('volume-slider');
-volumeSlider.value = targetVolume;  
+const isMobile = window.matchMedia('(max-width: 768px)').matches;
+
+if (isMobile) {
+  volumeSlider.style.display = 'none';
+}
+volumeSlider.value = targetVolume;
 volumeSlider.addEventListener('input', () => {
   targetVolume = parseFloat(volumeSlider.value);
   music.volume = targetVolume;
@@ -1666,10 +1671,12 @@ function startTimerMode() {
     music.volume = 0;                // reinicia a 0
     music.play();
 
-    musicToggle.style.display = 'block';
-    volumeSlider.style.display = 'block';
-    volumeSlider.value = targetVolume;
-    volumeSlider.disabled = false;
+    if (!isMobile) {
+      musicToggle.style.display = 'block';
+      volumeSlider.style.display = 'block';
+      volumeSlider.value = targetVolume;
+      volumeSlider.disabled = false;
+    }
   }, 3000);
 
   prepareNextQuestion();
@@ -1968,11 +1975,13 @@ updateGameTitle(); // Para que muestre las vidas
   setTimeout(() => {
     music.volume = 0;                // reinicia a 0
     music.play();
- 
-    musicToggle.style.display = 'block';
-    volumeSlider.style.display = 'block';
-    volumeSlider.value = targetVolume;
-    volumeSlider.disabled = false;
+
+    if (!isMobile) {
+      musicToggle.style.display = 'block';
+      volumeSlider.style.display = 'block';
+      volumeSlider.value = targetVolume;
+      volumeSlider.disabled = false;
+    }
   }, 3000);
 
   prepareNextQuestion(); 
