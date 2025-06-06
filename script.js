@@ -240,6 +240,24 @@ function playHeaderIntro() {
 }
 playHeaderIntro();
 
+function fadeOutAudio(audio, duration = 1000) {
+  const startVolume = audio.volume;
+  if (startVolume === 0) return Promise.resolve();
+  const step = startVolume / (duration / 50);
+  return new Promise(resolve => {
+    const fade = setInterval(() => {
+      const newVolume = Math.max(0, audio.volume - step);
+      audio.volume = newVolume;
+      if (newVolume <= 0) {
+        clearInterval(fade);
+        audio.pause();
+        audio.currentTime = 0;
+        resolve();
+      }
+    }, 50);
+  });
+}
+
 function updateSelectAllPronounsButtonText() {
   const pronounButtons = document.querySelectorAll('#pronoun-buttons .pronoun-group-button');
   const selectAllPronounsBtn = document.getElementById('select-all-pronouns');
@@ -1903,6 +1921,7 @@ function quitToSettings() {
 
   setupForm.addEventListener('submit', async e => {
   e.preventDefault();
+  fadeOutAudio(music, 1000);
   const selTenses = Array.from(
     document.querySelectorAll('.tense-button.selected')
   ).map(btn => btn.dataset.value);
